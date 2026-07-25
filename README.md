@@ -106,6 +106,30 @@ A **five-center, eight-layer** decision loop. Market data flows in; research lay
 
 > **Each layer contributes evidence to the final CIO decision memo** — the architecture is readable and auditable end to end. The implementation also includes a pre-market *narrative layer* (L0) and an *industry-chain drill-down* (L3.5); see [`docs/architecture.md`](docs/architecture.md) for the detailed mapping.
 
+### Decision Engine / 投资委员会
+
+Most AI investment projects collapse to a single line: `data → LLM → buy/sell`. This system inserts a **structured Investment Committee** between the research layers and the final memo — multiple dimensions debate, then vote with fixed weights. The CIO agent only synthesizes *after* the committee reaches a verdict.
+
+| Dimension | Weight | What it answers |
+|-----------|:------:|-----------------|
+| 💰 Capital Flow (资金) | **40%** | Where is money *actually* moving? |
+| 🏭 Industry (产业) | **25%** | Which sectors have real catalysts? |
+| 🌐 Macro (宏观) | **15%** | Headwind or tailwind for risk assets? |
+| 📈 Technical (技术) | **10%** | Is the entry timing confirmed? |
+| 🛡️ Risk (风险) | **10%** | What is the position budget / guardrail? |
+
+```
+Capital Flow   40%  ████████████████████████
+Industry       25%  ████████████████
+Macro          15%  ███████████
+Technical      10%  ████████
+Risk           10%  ████████
+```
+
+The weighted score drives a single decision: **can_buy / direction / position_pct / debate / verdict**.
+
+> **Trust guardrail (by design):** the system *never* executes a trade. The committee and CIO produce research and a recommended stance; the **final buy/sell is always a human reading the chart**. See [`docs/design-principles.md`](docs/design-principles.md).
+
 ### Key modules
 
 | Module | Responsibility |
@@ -127,6 +151,19 @@ A **five-center, eight-layer** decision loop. Market data flows in; research lay
 `执行摘要 → 最终裁决(加权IC评分) → 盯盘清单 → 候选主线 → 为什么 → 失效条件 → 系统学习 → 今日Alpha → 附录`
 
 A-share convention is respected throughout: **red = up, green = down** (涨红跌绿).
+
+---
+
+## Screenshots / 截图（规划中）
+
+> Visual proof is the next pre-launch task — the React dashboard is this project's biggest asset. Four captures are planned before the first public push:
+>
+> 1. **Dashboard** — market environment + sector heatmap
+> 2. **Daily CIO Memo** — the compressed 9-block decision report
+> 3. **Investment Committee** — the weighted-score voting panel
+> 4. **Learning Center** — prediction replay & self-calibration
+>
+> *To be captured from a running local instance. Not yet included.*
 
 ---
 
