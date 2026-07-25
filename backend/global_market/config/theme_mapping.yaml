@@ -1,0 +1,83 @@
+﻿# =============================================
+# 全球产业链映射配置
+# =============================================
+
+themes:
+  - name: AI计算
+    description: AI算力产业链
+    global_drivers:
+      - symbol: NVDA
+        name: NVIDIA
+        role: GPU设计
+      - symbol: AMD
+        name: AMD
+        role: GPU/CPU
+      - symbol: AVGO
+        name: Broadcom
+        role: 网络芯片
+    china_mapping:
+      - name: 国产GPU
+        stocks:
+          - {code: "688256", name: "寒武纪"}
+          - {code: "688041", name: "海光信息"}
+      - name: 服务器
+        stocks:
+          - {code: "000977", name: "浪潮信息"}
+          - {code: "603019", name: "中科曙光"}
+      - name: 光模块
+        stocks:
+          - {code: "300308", name: "中际旭创"}
+          - {code: "300502", name: "新易盛"}
+
+  - name: 半导体设备
+    description: 半导体制造设备
+    global_drivers:
+      - symbol: ASML
+        name: ASML
+        role: 光刻机
+      - symbol: AMAT
+        name: Applied Materials
+        role: 刻蚀/沉积
+      - symbol: LRCX
+        name: Lam Research
+        role: 刻蚀
+    china_mapping:
+      - name: 国产设备
+        stocks:
+          - {code: "002371", name: "北方华创"}
+          - {code: "688012", name: "中微公司"}
+          - {code: "688037", name: "芯源微"}
+
+  - name: 存储
+    description: 半导体存储
+    global_drivers:
+      - symbol: MU
+        name: Micron
+        role: DRAM/NAND
+      - symbol: WDC
+        name: Western Digital
+        role: NAND
+    china_mapping:
+      - name: 国产存储
+        stocks:
+          - {code: "300308", name: "中际旭创"}
+          - {code: "603986", name: "兆易创新"}
+
+  - name: 机器人
+    description: 人形机器人产业链
+    global_drivers:
+      - symbol: ISRG
+        name: Intuitive Surgical
+        role: 手术机器人
+    china_mapping:
+      - name: 零部件
+        stocks:
+          - {code: "002475", name: "立讯精密"}
+          - {code: "300124", name: "汇川技术"}
+
+# 映射输出配置
+output:
+  format: json
+  include_global: true
+  include_china: true
+  include_stocks: true

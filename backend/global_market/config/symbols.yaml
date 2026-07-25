@@ -1,0 +1,107 @@
+﻿# =============================================
+# 全球市场标的配置
+# =============================================
+
+# 美国市场
+us_indices:
+  - symbol: NDX
+    name: 纳斯达克
+    secid: "100.NDX"
+    region: US
+    category: index
+    
+  - symbol: SPX
+    name: 标普500
+    secid: "100.SPX"
+    region: US
+    category: index
+    
+  - symbol: SOX
+    name: 费城半导体
+    secid: "100.SOX"
+    region: US
+    category: index
+
+us_tech:
+  - symbol: NVDA
+    name: NVIDIA
+    region: US
+    category: stock
+    
+  - symbol: AMD
+    name: AMD
+    region: US
+    category: stock
+    
+  - symbol: AVGO
+    name: Broadcom
+    region: US
+    category: stock
+
+# 亚洲市场
+asia_indices:
+  - symbol: KS11
+    name: KOSPI
+    secid: "100.KS11"
+    region: Asia
+    category: index
+    
+  - symbol: TWSE
+    name: 台湾加权
+    region: Asia
+    category: index
+    
+  - symbol: N225
+    name: 日经225
+    region: Asia
+    category: index
+    
+  - symbol: HSTECH
+    name: 恒生科技
+    secid: "124.HSTECH"
+    region: Asia
+    category: index
+
+# 商品与宏观
+commodities:
+  - symbol: XAU
+    name: 黄金
+    futures_code: GC
+    region: Global
+    category: commodity
+    
+  - symbol: CL
+    name: 原油
+    futures_code: CL
+    region: Global
+    category: commodity
+    
+  - symbol: HG
+    name: 铜
+    futures_code: HG
+    region: Global
+    category: commodity
+
+# 外汇
+forex:
+  - symbol: DXY
+    name: 美元指数
+    region: Global
+    category: forex
+    
+  - symbol: USDCNH
+    name: 美元/离岸人民币
+    region: Global
+    category: forex
+    
+  - symbol: USDJPY
+    name: 美元/日元
+    region: Global
+    category: forex
+
+# 利率
+bonds:
+  - symbol: US10Y
+    name: 美国10年期国债
+    region: US
+    categories: bond

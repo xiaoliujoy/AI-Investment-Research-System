@@ -1,0 +1,10 @@
+.venv/
+__pycache__/
+*.pyc
+.cache/
+.env
+
+# Agent / 个人记忆（勿入库）
+.workbuddy/
+output/
+*.log.json

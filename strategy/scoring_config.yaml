@@ -1,0 +1,357 @@
+﻿# =============================================================================
+# 评分引擎配置文件
+# 所有评分权重、阈值、过滤条件均在此配置，代码中不硬编码
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 市场情绪评分 (0-100)
+# -----------------------------------------------------------------------------
+market_score:
+  weights:
+    amount_factor: 0.25        # 成交额因子
+    profit_factor: 0.30        # 赚钱效应因子
+    height_factor: 0.20        # 连板高度因子
+    activity_factor: 0.15      # 资金活跃度因子
+    continuation_factor: 0.10  # 昨日涨停表现因子
+
+  # 成交额因子阈值
+  amount:
+    total_amount:
+      - {threshold: 30000, score: 60}  # 3万亿+
+      - {threshold: 20000, score: 45}  # 2-3万亿
+      - {threshold: 15000, score: 30}  # 1.5-2万亿
+      - {threshold: 10000, score: 15}  # 1-1.5万亿
+      - {threshold: 0, score: 5}       # <1万亿
+    change_rate:
+      - {threshold: 0.30, score: 40}
+      - {threshold: 0.15, score: 30}
+      - {threshold: 0.00, score: 20}
+      - {threshold: -0.15, score: 10}
+      - {threshold: -1.00, score: 0}
+
+  # 赚钱效应因子阈值
+  profit:
+    ad_ratio:  # 涨跌比
+      - {threshold: 2.0, score: 30}
+      - {threshold: 1.5, score: 25}
+      - {threshold: 1.0, score: 15}
+      - {threshold: 0.7, score: 10}
+      - {threshold: 0.0, score: 5}
+    zt_dt_ratio:  # 涨停跌停比
+      - {threshold: 5.0, score: 30}
+      - {threshold: 3.0, score: 25}
+      - {threshold: 2.0, score: 15}
+      - {threshold: 1.0, score: 10}
+      - {threshold: 0.0, score: 5}
+    seal_rate_max: 40  # 封板率最高分
+
+  # 连板高度因子阈值
+  height:
+    max_boards:
+      - {threshold: 8, score: 40}
+      - {threshold: 6, score: 35}
+      - {threshold: 4, score: 25}
+      - {threshold: 3, score: 15}
+      - {threshold: 2, score: 10}
+      - {threshold: 0, score: 5}
+    lianban_count:
+      - {threshold: 15, score: 30}
+      - {threshold: 10, score: 25}
+      - {threshold: 6, score: 20}
+      - {threshold: 3, score: 15}
+      - {threshold: 0, score: 5}
+    promotion_rate_max: 30  # 晋级率最高分
+
+  # 资金活跃度因子阈值
+  activity:
+    active_ratio:
+      - {threshold: 0.60, score: 50}
+      - {threshold: 0.45, score: 40}
+      - {threshold: 0.30, score: 30}
+      - {threshold: 0.20, score: 20}
+      - {threshold: 0.00, score: 10}
+    concentration:
+      - {threshold: 0.25, score: 50}
+      - {threshold: 0.20, score: 40}
+      - {threshold: 0.15, score: 30}
+      - {threshold: 0.10, score: 20}
+      - {threshold: 0.00, score: 10}
+
+  # 昨日涨停表现因子阈值
+  continuation:
+    avg_pct:
+      - {threshold: 5, score: 50}
+      - {threshold: 3, score: 40}
+      - {threshold: 1, score: 30}
+      - {threshold: 0, score: 20}
+      - {threshold: -2, score: 10}
+      - {threshold: -10, score: 0}
+    win_rate:
+      - {threshold: 0.70, score: 50}
+      - {threshold: 0.60, score: 40}
+      - {threshold: 0.50, score: 30}
+      - {threshold: 0.40, score: 20}
+      - {threshold: 0.00, score: 10}
+
+  # 阶段判定阈值
+  stage:
+    启动期: {min: 20, max: 35}
+    发酵期: {min: 35, max: 50}
+    加速期: {min: 50, max: 70}
+    高潮期: {min: 70, max: 85}
+    分歧期: {min: 50, max: 65}
+    修复期: {min: 35, max: 50}
+    退潮期: {min: 0, max: 35}
+
+
+# -----------------------------------------------------------------------------
+# 板块热度评分 (0-100)
+# -----------------------------------------------------------------------------
+sector_score:
+  weights:
+    amount_concentration: 0.25   # 成交额占比
+    amount_momentum: 0.20       # 成交额增速
+    limitup: 0.15               # 涨停数量
+    gain: 0.10                  # 涨幅
+    duration: 0.15              # 持续性
+    leader_strength: 0.15       # 龙头强度
+
+  # 成交额占比因子阈值
+  amount_concentration:
+    - {threshold: 0.10, score: 100}
+    - {threshold: 0.08, score: 90}
+    - {threshold: 0.06, score: 80}
+    - {threshold: 0.05, score: 70}
+    - {threshold: 0.04, score: 60}
+    - {threshold: 0.03, score: 50}
+    - {threshold: 0.02, score: 40}
+    - {threshold: 0.01, score: 25}
+    - {threshold: 0.00, score: 10}
+
+  # 成交额增速因子阈值
+  amount_momentum:
+    - {threshold: 1.0, score: 100}
+    - {threshold: 0.6, score: 90}
+    - {threshold: 0.3, score: 80}
+    - {threshold: 0.15, score: 70}
+    - {threshold: 0.0, score: 60}
+    - {threshold: -0.15, score: 40}
+    - {threshold: -0.3, score: 20}
+    - {threshold: -1.0, score: 10}
+
+  # 涨停数量因子阈值
+  limitup:
+    zt_count:
+      - {threshold: 15, score: 50}
+      - {threshold: 10, score: 45}
+      - {threshold: 6, score: 35}
+      - {threshold: 3, score: 25}
+      - {threshold: 1, score: 15}
+      - {threshold: 0, score: 0}
+    zt_firms_ratio:
+      - {threshold: 0.10, score: 30}
+      - {threshold: 0.07, score: 25}
+      - {threshold: 0.05, score: 20}
+      - {threshold: 0.03, score: 15}
+      - {threshold: 0.00, score: 5}
+    cm20_count:
+      - {threshold: 5, score: 20}
+      - {threshold: 3, score: 15}
+      - {threshold: 1, score: 10}
+      - {threshold: 0, score: 0}
+
+  # 涨幅因子阈值
+  gain:
+    sector_pct:
+      - {threshold: 7, score: 50}
+      - {threshold: 5, score: 40}
+      - {threshold: 3, score: 30}
+      - {threshold: 2, score: 20}
+      - {threshold: 0, score: 15}
+      - {threshold: -100, score: 5}
+    weighted_pct:
+      - {threshold: 7, score: 50}
+      - {threshold: 5, score: 40}
+      - {threshold: 3, score: 30}
+      - {threshold: 2, score: 20}
+      - {threshold: 0, score: 15}
+      - {threshold: -100, score: 5}
+
+  # 持续性因子阈值
+  duration:
+    days_in_top10:
+      - {threshold: 5, score: 40}
+      - {threshold: 4, score: 35}
+      - {threshold: 3, score: 25}
+      - {threshold: 2, score: 15}
+      - {threshold: 1, score: 10}
+      - {threshold: 0, score: 0}
+    consecutive_days:
+      - {threshold: 5, score: 40}
+      - {threshold: 3, score: 30}
+      - {threshold: 2, score: 20}
+      - {threshold: 1, score: 10}
+      - {threshold: 0, score: 0}
+
+  # 龙头强度因子阈值
+  leader_strength:
+    leader_pct:
+      - {threshold: 10, score: 25}
+      - {threshold: 7, score: 22}
+      - {threshold: 5, score: 18}
+      - {threshold: 3, score: 12}
+      - {threshold: 0, score: 8}
+      - {threshold: -100, score: 0}
+    leader_turnover:
+      - {threshold: 100, score: 25}
+      - {threshold: 50, score: 22}
+      - {threshold: 30, score: 18}
+      - {threshold: 10, score: 12}
+      - {threshold: 0, score: 5}
+    leader_board:
+      - {threshold: 5, score: 25}
+      - {threshold: 3, score: 22}
+      - {threshold: 2, score: 15}
+      - {threshold: 1, score: 10}
+      - {threshold: 0, score: 0}
+    leader_rps:
+      - {threshold: 80, score: 25}
+      - {threshold: 60, score: 20}
+      - {threshold: 40, score: 15}
+      - {threshold: 20, score: 10}
+      - {threshold: 0, score: 5}
+
+  # 梯队划分
+  tier:
+    T0: {min: 80, label: "绝对主线"}
+    T1: {min: 70, label: "强主线"}
+    T2: {min: 60, label: "次主线"}
+    T3: {min: 40, label: "轮动"}
+    T4: {min: 0, label: "冷门"}
+
+
+# -----------------------------------------------------------------------------
+# 龙头评分 (0-100)
+# -----------------------------------------------------------------------------
+leader_score:
+  # 基础过滤条件（不满足直接淘汰）
+  filters:
+    min_amount: 10000000000  # 10亿
+    min_turnover_rate: 0.05  # 5%
+    min_sector_score: 70
+    max_rank_in_sector: 3
+
+  weights:
+    capital: 0.25             # 资金因子
+    space: 0.20               # 空间因子
+    strength: 0.15            # 强度因子
+    quality: 0.15             # 质量因子
+    rps: 0.15                 # RPS因子
+    consensus: 0.10           # 共识因子
+
+  # 资金因子阈值
+  capital:
+    amount_ratio:
+      - {threshold: 0.15, score: 40}
+      - {threshold: 0.10, score: 35}
+      - {threshold: 0.07, score: 25}
+      - {threshold: 0.05, score: 15}
+      - {threshold: 0.03, score: 10}
+      - {threshold: 0.00, score: 5}
+    amount_rank:
+      - {threshold: 10, score: 30}
+      - {threshold: 30, score: 25}
+      - {threshold: 50, score: 20}
+      - {threshold: 100, score: 15}
+      - {threshold: 200, score: 10}
+      - {threshold: 9999, score: 5}
+
+  # 空间因子阈值
+  space:
+    board_height:
+      - {threshold: 6, score: 50}
+      - {threshold: 4, score: 45}
+      - {threshold: 3, score: 35}
+      - {threshold: 2, score: 25}
+      - {threshold: 1, score: 15}
+      - {threshold: 0, score: 5}
+    first_board_bonus: 25
+    open_height_bonus: 25
+    no_open_height_bonus: 10
+
+  # 强度因子阈值
+  strength:
+    pct:
+      - {threshold: 10, score: 30}
+      - {threshold: 7, score: 25}
+      - {threshold: 5, score: 20}
+      - {threshold: 3, score: 15}
+      - {threshold: 0, score: 10}
+      - {threshold: -100, score: 0}
+    percentile:
+      - {threshold: 0.95, score: 40}
+      - {threshold: 0.90, score: 35}
+      - {threshold: 0.80, score: 25}
+      - {threshold: 0.70, score: 15}
+      - {threshold: 0.00, score: 5}
+
+  # 质量因子阈值
+  quality:
+    turnover:
+      healthy_min: 0.05
+      healthy_max: 0.15
+      healthy_score: 30
+      caution_min: 0.15
+      caution_max: 0.25
+      caution_score: 25
+      high_min: 0.25
+      high_max: 0.35
+      high_score: 15
+      danger_threshold: 0.35
+      danger_score: 5
+      inactive_threshold: 0.05
+      inactive_score: 10
+
+  # RPS因子阈值
+  rps:
+    rps_20:
+      - {threshold: 90, score: 60}
+      - {threshold: 80, score: 55}
+      - {threshold: 70, score: 45}
+      - {threshold: 60, score: 35}
+      - {threshold: 50, score: 25}
+      - {threshold: 40, score: 15}
+      - {threshold: 0, score: 5}
+    rps_60:
+      - {threshold: 90, score: 40}
+      - {threshold: 80, score: 35}
+      - {threshold: 70, score: 30}
+      - {threshold: 60, score: 25}
+      - {threshold: 50, score: 15}
+      - {threshold: 40, score: 10}
+      - {threshold: 0, score: 5}
+
+  # 共识因子阈值
+  consensus:
+    lhm_net_buy:
+      - {threshold: 100000000, score: 40}
+      - {threshold: 50000000, score: 35}
+      - {threshold: 0, score: 25}
+      - {threshold: -50000000, score: 15}
+      - {threshold: -999999999, score: 5}
+    follower_count:
+      - {threshold: 5, score: 30}
+      - {threshold: 3, score: 25}
+      - {threshold: 2, score: 15}
+      - {threshold: 1, score: 10}
+      - {threshold: 0, score: 0}
+
+  # 龙头类型
+  category:
+    绝对龙头: {min: 85, condition: "score > 85 AND board_height >= 4 AND amount_rank == 1 AND rps > 70"}
+    核心龙头: {min: 70, condition: "score > 70 AND board_height >= 2 AND amount_rank <= 3 AND rps > 60"}
+    趋势龙头: {min: 70, condition: "score > 70 AND rps_20 > 80 AND rps_60 > 70 AND board_height == 0"}
+    次龙: {min: 55, condition: "score > 55"}
+    跟风: {min: 0, condition: "score < 55"}
+
+

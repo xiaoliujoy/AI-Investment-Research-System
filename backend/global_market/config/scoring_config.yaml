@@ -1,0 +1,99 @@
+﻿# =============================================
+# 全球评分配置
+# =============================================
+
+global_score:
+  weights:
+    risk_appetite: 0.30      # 风险偏好
+    tech_cycle: 0.30         # 科技周期
+    liquidity: 0.20          # 流动性
+    china_relative: 0.20     # 中国资产相对强度
+
+  # 风险偏好指标
+  risk_appetite:
+    indicators:
+      - name: NASDAQ_20d
+        weight: 0.4
+        source: us_indices.NDX
+      - name: VIX
+        weight: 0.3
+        inverse: true        # VIX越低越好
+      - name: HIGH_YIELD
+        weight: 0.3
+        inverse: true        # 利差越小越好
+    thresholds:
+      high: 70
+      medium: 40
+      low: 0
+
+  # 科技周期指标
+  tech_cycle:
+    indicators:
+      - name: SOX_20d
+        weight: 0.4
+        source: us_indices.SOX
+      - name: NVDA_vs_SP500
+        weight: 0.3
+        source: relative_strength.NVDA_SP500
+      - name: SEMI_CAPEX
+        weight: 0.3
+        source: theme_mapping.semi_capex
+    thresholds:
+      strong: 70
+      neutral: 40
+      weak: 0
+
+  # 流动性指标
+  liquidity:
+    indicators:
+      - name: DXY
+        weight: 0.4
+        inverse: true        # DXY越弱越利好风险资产
+      - name: US10Y
+        weight: 0.3
+        inverse: true        # 利率越低越利好
+      - name: USD_CNH
+        weight: 0.3
+        inverse: true        # 人民币越强越利好
+    thresholds:
+      loose: 70
+      neutral: 40
+      tight: 0
+
+  # 中国资产相对强度
+  china_relative:
+    indicators:
+      - name: STAR50_vs_NDX
+        weight: 0.4
+        source: rps.STAR50_NDX
+      - name: HSTECH_vs_HSI
+        weight: 0.3
+        source: rps.HSTECH_HSI
+      - name: A50_futures
+        weight: 0.3
+        source: indicators.A50
+    thresholds:
+      strong: 70
+      neutral: 40
+      weak: 0
+
+# RPS 配置
+rps:
+  periods:
+    - name: short
+      days: 5
+      weight: 0.2
+    - name: medium
+      days: 20
+      weight: 0.5
+    - name: long
+      days: 60
+      weight: 0.3
+  top_n: 10                    # 排名前N为强势
+
+# 异常强度检测配置
+divergence:
+  thresholds:
+    warning: 10                # 超额收益>10%触发警告
+    extreme: 20                # 超额收益>20%为极端
+  lookback_days: 5             # 回看天数

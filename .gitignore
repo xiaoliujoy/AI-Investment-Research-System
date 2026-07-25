@@ -1,0 +1,66 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# Virtual env
+venv/
+env/
+.venv/
+
+# Database
+*.db
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Environment
+.env
+
+# Node
+node_modules/
+frontend/node_modules/
+
+# Agent / 个人记忆（勿入库）
+.workbuddy/
+SESSION_STATE.json
+
+# 每日运行生成物
+backend/output/
+
+# 第三方 vendored 技能文档（Apache-2.0，不随本仓库发布）
+a-stock-data/
+global-stock-data/
+
+# 运行日志 json
+*.log.json
+
+# 过程性内部笔记（不公开）
+差距排查_对照愿景_2026-07-11.md
+系统健康检查报告_2026-07-11.md
+研究评估_daily_stock_analysis.md
+PROJECT_HANDOFF.md
+研投系统-UI优化原型.html
+
+# GitHub profile README（个人主页，不随本代码仓库发布）
+XIAOLIU_PROFILE_README.md
+
+# 内部快速参考卡（含个人绝对路径，不公开）
+QUICK_REF.md
+
+# 生成的交易日报（运行产物，类 output/）
+backend/reports/
