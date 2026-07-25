@@ -154,16 +154,17 @@ A-share convention is respected throughout: **red = up, green = down** (涨红�
 
 ---
 
-## Screenshots / 截图（规划中）
+## Screenshots / 截图
 
-> Visual proof is the next pre-launch task — the React dashboard is this project's biggest asset. Four captures are planned before the first public push:
->
-> 1. **Dashboard** — market environment + sector heatmap
-> 2. **Daily CIO Memo** — the compressed 9-block decision report
-> 3. **Investment Committee** — the weighted-score voting panel
-> 4. **Learning Center** — prediction replay & self-calibration
->
-> *To be captured from a running local instance. Not yet included.*
+> Visual proof from a running local instance. This project is currently **A-share (A股) only**; US/HK coverage is on the roadmap.
+
+### Daily CIO Memo · 每日决策备忘录
+
+The compressed, end-to-end decision report — cockpit → verdict → watchlist → candidate sectors → capital-flow layer → why → invalidation → learning loop → cross-asset Alpha.
+
+![Daily CIO Memo](assets/screenshots/daily-cio-memo.png)
+
+*Planned next:* Dashboard (market environment + sector heatmap) · Investment Committee (weighted-score voting panel) · Learning Center (prediction replay & self-calibration).
 
 ---
 
