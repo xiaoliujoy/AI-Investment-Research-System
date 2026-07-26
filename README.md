@@ -26,6 +26,19 @@ Xiao Liu Investment Intelligence Platform   (future ecosystem)
 
 ---
 
+## Why I Built This / 为什么做这个
+
+I have spent years working in finance and investing. The question that has driven me is simple: **in the age of AI, how can an investor think better, research deeper, and decide more discipline — rather than just chase the next "prediction"?**
+
+Most AI-investing projects collapse into one line: `data → model → buy/sell`. They sell a black box that *claims* to know the future. I wanted the opposite — a **research co-pilot** that makes the *process* visible, auditable, and improvable, while the human stays in the loop.
+
+> 作为一名金融从业者和长期投资实践者，我一直在想：AI 时代，投资者如何提升自己的研究和决策能力？
+> 这个项目是我的探索：用 AI **增强**人的判断，而不是替代人的判断。
+
+This repository is that exploration — built in public, one trading day at a time.
+
+---
+
 ## What is this?
 
 This repository is a **personal investment research system** (the v0.1 framework stage) — a self-contained local stack that turns messy market data into a structured, auditable daily research workflow. The long-term vision is *Investment-Research-OS*; see [Roadmap](docs/roadmap.md).
@@ -294,7 +307,7 @@ The framework runs rule-based out of the box. To enable the AI narrative/reasoni
 | Stage | Theme | Status |
 |-------|-------|--------|
 | **v0.1** Research Framework | Investment philosophy · decision framework · research workflow | ✅ current (this repo) |
-| **v0.2** Data Infrastructure | Market data pipeline · database design · research database | 🔜 next |
+| **v0.2** Research Infrastructure | Data pipeline refinement · database optimization · multi-market expansion | 🔜 next (prototype exists) |
 | **v0.3** AI Research Agents | Macro / Sector / Company analyst agents | 🔜 planned |
 | **v1.0** Investment Research OS | Integrated AI-enhanced research operating system | 🎯 long-term |
 
