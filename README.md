@@ -8,6 +8,24 @@ An open-source AI-augmented investment research framework — currently a resear
 
 ---
 
+## Vision / 愿景
+
+A personal investment research system that combines **financial expertise, AI capabilities, data analysis, and system thinking** — built to improve *decision quality*, not to predict the market.
+
+> 一个金融人的 AI 时代探索：用人工智能增强投资研究、认知与决策能力，而非替代人的判断。
+
+The long-term trajectory (see [Roadmap](docs/roadmap.md)):
+
+```
+AI-Investment-Research-System        (v0.1 · research framework, today)
+            ↓
+Investment-Research-OS               (v1.0 · integrated research operating system)
+            ↓
+Xiao Liu Investment Intelligence Platform   (future ecosystem)
+```
+
+---
+
 ## What is this?
 
 This repository is a **personal investment research system** (the v0.1 framework stage) — a self-contained local stack that turns messy market data into a structured, auditable daily research workflow. The long-term vision is *Investment-Research-OS*; see [Roadmap](docs/roadmap.md).
@@ -259,14 +277,30 @@ The framework runs rule-based out of the box. To enable the AI narrative/reasoni
 
 | Doc | What it covers |
 |-----|----------------|
+| [`docs/research-framework.md`](docs/research-framework.md) | The framework "constitution": philosophy → discipline → 8 layers → committee → learning |
 | [`docs/investment-philosophy.md`](docs/investment-philosophy.md) | The moat: 判环境 / 选方向 / 定标的, Research > Prediction |
-| [`docs/architecture.md`](docs/architecture.md) | Full 8-layer + L0/L3.5 mapping, IC/CIO, learning loop |
+| [`docs/decision-process.md`](docs/decision-process.md) | The five-step discipline: environment → sector → stock → position → risk |
+| [`docs/architecture.md`](docs/architecture.md) | Full 8-layer + L0/L3.5 mapping, IC/CIO, learning loop (current implementation) |
+| [`docs/architecture/system-overview.md`](docs/architecture/system-overview.md) | Evolution blueprint: 5-layer architecture & v0.1→v1.0 trajectory |
 | [`docs/design-principles.md`](docs/design-principles.md) | Engineering & methodology guardrails |
 | [`docs/roadmap.md`](docs/roadmap.md) | What's done and what's next |
 
 ---
 
 ## Roadmap / 路线图
+
+**Stage-based trajectory:**
+
+| Stage | Theme | Status |
+|-------|-------|--------|
+| **v0.1** Research Framework | Investment philosophy · decision framework · research workflow | ✅ current (this repo) |
+| **v0.2** Data Infrastructure | Market data pipeline · database design · research database | 🔜 next |
+| **v0.3** AI Research Agents | Macro / Sector / Company analyst agents | 🔜 planned |
+| **v1.0** Investment Research OS | Integrated AI-enhanced research operating system | 🎯 long-term |
+
+Detailed plan in [`docs/roadmap.md`](docs/roadmap.md).
+
+**Within v0.1:**
 
 - [x] Eight-layer decision architecture + Investment Committee voting
 - [x] CIO memo synthesis + compressed 9-block daily report
