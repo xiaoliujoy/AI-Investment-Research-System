@@ -1,6 +1,6 @@
 # Roadmap / 路线图
 
-Status of the flagship repository `Investment-Research-OS`, and where it fits in the broader `Xiao Liu Research Lab` open-source plan.
+Status of the flagship repository `AI-Investment-Research-System` (currently the v0.1 research-system stage; the long-term vision is `Investment-Research-OS`), and where it fits in the broader `Xiao Liu Research Lab` open-source plan.
 
 ---
 
@@ -30,7 +30,7 @@ The flagship is intentionally narrow. Adjacent capabilities will live in their o
 
 | Repo | Purpose |
 |------|---------|
-| `Investment-Research-OS` | The core decision operating system (this repo) |
+| `AI-Investment-Research-System` | The core decision research system (this repo); evolves into `Investment-Research-OS` |
 | `Market-Intelligence-Agent` | Automated news / macro / flow / sentiment intelligence |
 | `Investment-Knowledge-Base` | Obsidian / RAG / LLM-connected knowledge base |
 | `AI-Research-Workflow` | Reusable AI research workflows and prompt systems |

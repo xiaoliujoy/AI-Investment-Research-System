@@ -1,8 +1,8 @@
 ﻿# Xiao Liu Research Lab
 
-## AI-Augmented Investment Research Operating System
+## AI-Augmented Investment Research System
 
-An open-source personal investment research system exploring how AI can enhance human decision-making.
+An open-source AI-augmented investment research framework — currently a research **system**, evolving toward a personal investment **research operating system**.
 
 > 一个金融人的 AI 时代探索：如何利用人工智能增强投资研究、认知与决策能力。
 
@@ -10,7 +10,7 @@ An open-source personal investment research system exploring how AI can enhance 
 
 ## What is this?
 
-This repository is a **personal investment research operating system** — a self-contained local stack that turns messy market data into a structured, auditable daily research workflow.
+This repository is a **personal investment research system** (the v0.1 framework stage) — a self-contained local stack that turns messy market data into a structured, auditable daily research workflow. The long-term vision is *Investment-Research-OS*; see [Roadmap](docs/roadmap.md).
 
 It is built around a repeatable daily discipline:
 
@@ -21,7 +21,7 @@ The system does **not** predict the market, and it is **not** an automated tradi
 ```
 ✅ This IS                                  ❌ This is NOT
 ─────────────────────────────────────────   ─────────────────────────────────────────
-A structured daily research operating system  A trading bot / auto-trader
+A structured daily research system        A trading bot / auto-trader
 An 8-layer decision architecture you can       A black-box "buy/sell" signal generator
   read, audit, and extend                      Financial advice or a money product
 A learning system that replays its own past    A hosted SaaS or paid service
@@ -182,7 +182,7 @@ The compressed, end-to-end decision report — cockpit → verdict → watchlist
 ## Project Structure / 目录结构
 
 ```
-Investment-Research-OS/
+AI-Investment-Research-System/
 ├── backend/                    # Python backend (FastAPI + SQLite)
 │   ├── app.py                  #   FastAPI entrypoint
 │   ├── run_daily.py            #   每日决策流水线入口 (--skip-step1 --memo-only)
