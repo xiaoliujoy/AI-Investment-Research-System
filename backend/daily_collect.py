@@ -26,6 +26,9 @@ daily_collect.py — 统一数据采集入口（Data OS 门面）
   python daily_collect.py --only tdx       # 只重导通达信个股日线（含东财兜底）
   python daily_collect.py --only quotes    # 只跑个股日线东财兜底
   python daily_collect.py --only align     # 只跑 global_history 对齐
+  python daily_collect.py --only commodity  # 只跑商品期货日线（Commodity Engine Phase 0）
+  python daily_collect.py --only health     # 只跑商品数据质量层（Commodity OS Phase 0.5）
+  python daily_collect.py --only factor     # 只跑商品评分引擎（Commodity OS Phase 1）
 
 说明：
   - 用独立子进程调用每个脚本（与 run_daily 一致），单步失败不阻断整体。
@@ -100,6 +103,15 @@ def collect(only=None):
     # 3) global_history 自动对齐（美股休市日补最新 A股交易日一行）
     if only in (None, "align", "sector", "cap", "flow", "tdx"):
         _append(ensure_global_history())
+    # 3.5) 商品期货日线（Commodity Engine Phase 0：内盘为交易核心，外盘为宏观锚）
+    if only in (None, "commodity", "align"):
+        _append(ensure_commodity_daily())
+    # 3.5b) 商品数据质量层（Commodity OS Phase 0.5：新鲜度/异常/连续性/完整性）
+    if only in (None, "commodity", "align", "health"):
+        _append(ensure_commodity_health())
+    # 3.5c) 商品评分引擎（Commodity OS Phase 1：AU/CU/SC → commodity_factor_daily）
+    if only in (None, "commodity", "align", "factor"):
+        _append(ensure_commodity_factor())
     logpath = os.path.join(OUT, "collect.log.json")
     with open(logpath, "w", encoding="utf-8") as f:
         json.dump(log, f, ensure_ascii=False, indent=2, default=str)
@@ -202,9 +214,67 @@ def ensure_global_history():
         return {"step": "global_align", "ok": False, "rc": -1, "note": str(e)[:200]}
 
 
+def ensure_commodity_health():
+    """商品数据质量层（Commodity OS Phase 0.5 入口）。
+
+    调用 commodity_health.ensure_commodity_health()：检查 commodity_daily 8 品种
+    新鲜度/价格异常/换月缝合/完整性（区分内盘异常缺失 vs 外盘正常缺失），
+    写 output/commodity_health.json。只读检查，不改商品数据表。
+    """
+    try:
+        from commodity_health import ensure_commodity_health as _run
+        return _run()
+    except Exception as e:
+        return {"step": "commodity_health", "ok": False, "rc": -1,
+                "note": f"{type(e).__name__}: {str(e)[:200]}"}
+
+
+def ensure_commodity_factor():
+    """商品评分引擎（Commodity OS Phase 1 入口）。
+
+    调用 commodity_engine.scoring.ensure_commodity_factor()：
+    对 AU0/CU0/SC0 计算 v1 权重（宏观40/资金25/技术25/风险10，供需留空），
+    复用 Gold Engine 宏观评分逻辑（DB 源），落 commodity_factor_daily。
+    """
+    try:
+        from commodity_engine import scoring as commodity_scoring
+        res = commodity_scoring.ensure_commodity_factor()
+        ok = all(v.get("ok") for v in res.values()) if res else False
+        scored = sum(v.get("scored", 0) for v in res.values())
+        latest = {k: v.get("total") for k, v in res.items() if v.get("ok")}
+        return {"step": "commodity_factor", "ok": ok,
+                "note": f"品种={len(res)} 本次评分={scored}行 最新总分={latest}",
+                "detail": res}
+    except Exception as e:
+        return {"step": "commodity_factor", "ok": False, "rc": -1,
+                "note": f"{type(e).__name__}: {str(e)[:200]}"}
+
+
+def ensure_commodity_daily():
+    """商品期货日线采集（Commodity Engine Phase 0 入口）。
+
+    直接调用 commodity_engine.collector.collect_and_save()，幂等增量：
+    - 首次/残缺 → 全量回填内盘(AU0/CU0/SC0/AG0/RB0)+外盘(GC/CL/HG)
+    - 之后每次只追加比已存最大日期更新的行（自愈，不依赖系统时钟）
+    - 外盘同步回写 global_history 的 XAU/CL/HG（补全跨资产看板缺口）
+    """
+    try:
+        from commodity_engine import collector as commodity_collector
+        summarizer = commodity_collector.collect_and_save()
+        ok = all(v.get("ok") for v in summarizer.values()) if summarizer else False
+        saved = sum(v.get("saved", 0) for v in summarizer.values())
+        gh = sum(v.get("global_history_written", 0) for v in summarizer.values())
+        return {"step": "commodity_daily", "ok": ok,
+                "note": f"品种数={len(summarizer)} 本次新增={saved} 行 global_history+{gh} 行",
+                "detail": summarizer}
+    except Exception as e:
+        return {"step": "commodity_daily", "ok": False, "rc": -1,
+                "note": f"{type(e).__name__}: {str(e)[:200]}"}
+
+
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="统一数据采集（Data OS 入口）")
-    ap.add_argument("--only", choices=["tdx", "sector", "cap", "flow", "quotes", "align"],
+    ap.add_argument("--only", choices=["tdx", "sector", "cap", "flow", "quotes", "align", "commodity", "health", "factor"],
                     help="只跑指定采集步骤")
     args = ap.parse_args()
     log = collect(only=args.only)

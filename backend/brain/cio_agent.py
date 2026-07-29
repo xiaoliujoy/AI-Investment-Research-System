@@ -369,6 +369,9 @@ class InvestmentDecisionMemo:
     action_cards: dict = field(default_factory=dict)    # action_cards.build() 今日行动清单卡(DecisionCard)
     journal_logged: int = 0                    # Phase 2：当日自动写入 trade_journal 的 signal 条数
 
+    # ── Phase 1.5：全球资产观察（商品信号 + A股环境 + 机会排序，不含配置比例）──
+    global_asset_obs: dict = field(default_factory=dict)  # commodity_engine.adapter + A股环境派生
+
 
 # ═══════════════════════════════════════════════════════
 #  产业链星级映射（板块→产业链→层级星级）
@@ -2259,6 +2262,9 @@ def produce() -> InvestmentDecisionMemo:
         pass
     memo.learning = _build_learning_block()
 
+    # ── Phase 1.5：全球资产观察（商品信号 + A股环境 + 机会排序）──
+    memo.global_asset_obs = _build_global_asset_obs(brain, tree)
+
     # ── 取精华：移植自 AI-Portfolio-Compass（MIT）──
     memo.position_layer = _build_position_layer_block()
     memo.trade_review = _build_trade_review_block()
@@ -2410,6 +2416,109 @@ def _build_action_cards_block(memo) -> dict:
                 "reasons": ["行动卡聚合失败"], "risks": [str(e)],
                 "key_prices": [], "action_required": ["维持观望"],
                 "holding_actions": [], "review_actions": []}
+
+
+def _derive_a_share_env(brain: dict, tree: dict) -> dict:
+    """从 brain/tree 派生 A股环境（IC 裁决 + 主线 + 市场宽度）。失败时返回中性占位。"""
+    try:
+        committee = (brain or {}).get("committee") or (brain or {}).get("decision") or {}
+        can_buy = committee.get("can_buy", "UNKNOWN")
+        direction = committee.get("direction", "")
+        layers = (tree or {}).get("layers", {}) or {}
+        sentiment = layers.get("sentiment", {}) or {}
+        up_ratio = sentiment.get("up_ratio", 0.5)
+        if isinstance(up_ratio, (int, float)) and up_ratio < 1:
+            up_pct = round(up_ratio * 100)
+        else:
+            up_pct = round(up_ratio or 0)
+        l4 = layers.get("L4_consensus", {}) or {}
+        mains = (l4.get("main_lines", []) or [])[:3]
+        main_names = [m.get("sector", "") for m in mains if m.get("sector")]
+        top = mains[0] if mains else {}
+        top_stage = top.get("stage", "") if isinstance(top, dict) else ""
+        top_sector = main_names[0] if main_names else "—"
+        status = {"YES": "偏多", "CAUTION": "中性", "NO": "偏空"}.get(can_buy, "未知")
+        breadth = "普涨" if up_pct >= 60 else ("普跌" if up_pct <= 40 else "分化")
+        return {
+            "status": status,
+            "direction": direction,
+            "can_buy": can_buy,
+            "breadth_pct": up_pct,
+            "breadth_label": breadth,
+            "top_sector": top_sector,
+            "top_stage": top_stage,
+            "main_lines": main_names,
+        }
+    except Exception:
+        return {"status": "未知", "direction": "", "can_buy": "UNKNOWN",
+                "breadth_pct": 0, "breadth_label": "", "top_sector": "—",
+                "top_stage": "", "main_lines": []}
+
+
+def _merge_opportunity_ranking(commodity_ranking: list, a_share_env: dict) -> list:
+    """合并机会排序：商品（已按评分降序）在前，A股作为「等待确认」项置后。
+
+    不含任何配置比例——仅排序与动作提示（Phase 1.5 边界）。
+    """
+    merged = []
+    for r in (commodity_ranking or []):
+        merged.append({
+            "asset": "commodity",
+            "rank": r.get("rank"),
+            "name": r.get("name"),
+            "symbol": r.get("symbol"),
+            "score": r.get("score"),
+            "stage": r.get("stage"),
+            "confidence": r.get("confidence"),
+            "note": r.get("note", ""),
+        })
+    merged.append({
+        "asset": "a_share",
+        "rank": len(merged) + 1,
+        "name": "A股",
+        "symbol": "A-SHARE",
+        "score": None,
+        "stage": a_share_env.get("status", "未知"),
+        "confidence": "—",
+        "note": (f"IC 裁决 {a_share_env.get('can_buy', 'UNKNOWN')}；"
+                 f"主线 {a_share_env.get('top_sector', '—')}；"
+                 f"等待资金确认（市场{a_share_env.get('breadth_label', '')} "
+                 f"{a_share_env.get('breadth_pct', 0)}%）"),
+    })
+    return merged
+
+
+def _build_global_asset_obs(brain: dict, tree: dict) -> dict:
+    """Phase 1.5：全球资产观察（商品信号 + A股环境 + 机会排序，不含配置比例）。
+
+    调用 commodity_engine.adapter（统一 AssetSignal 协议），
+    叠加 A股环境派生，组合成跨资产机会排序。失败降级为空块，绝不让日报崩溃。
+    """
+    try:
+        from commodity_engine.adapter import build_commodity_signals
+        comm = build_commodity_signals()
+        a_share = _derive_a_share_env(brain, tree)
+        ranking = _merge_opportunity_ranking(
+            comm.get("opportunity_ranking", []), a_share)
+        return {
+            "has_data": comm.get("has_data", False),
+            "generated_at": comm.get("generated_at", ""),
+            "health_overall": comm.get("health_overall", ""),
+            "confidence_overall": comm.get("confidence_overall", ""),
+            "signals": comm.get("signals", []),
+            "commodity_env": comm.get("commodity_env", ""),
+            "a_share_env": a_share,
+            "opportunity_ranking": ranking,
+            "note": ("本区块仅为全球资产观察与机会排序，不构成配置比例建议；"
+                     "资产配置模型待 Phase 3 回测验证后上线。"),
+        }
+    except Exception as e:  # noqa
+        return {
+            "has_data": False,
+            "signals": [], "commodity_env": "", "a_share_env": {},
+            "opportunity_ranking": [],
+            "error": f"（全球资产观察引擎暂不可用：{e}）",
+        }
 
 
 # ═══════════════════════════════════════════════════════

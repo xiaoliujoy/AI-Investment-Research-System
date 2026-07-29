@@ -586,6 +586,28 @@ details.fold .foldbody { padding:12px 18px 16px; font-size:13px; }
 .keynums { font-size:13px; color:#5a6b7b; line-height:1.7; }
 .chainbox { font-size:12px; color:#5a6b7b; line-height:1.8; background:#fff; border:1px solid #e4e9ef; border-radius:8px; padding:8px 12px; margin-bottom:10px; }
 .chainbox b { color:#14304d; }
+/* ── Phase 1.5 全球资产观察（Global Asset Watch）── */
+.sec.ga { border-left:4px solid #6b46c1; }
+.ga-head, .ga-row { display:flex; align-items:center; padding:7px 8px; font-size:13px; }
+.ga-head { font-weight:700; color:#14304d; background:#f4f1fb; border-radius:6px; margin-bottom:4px; }
+.ga-row { border-bottom:1px solid #eef1f5; }
+.ga-row.ga-a { background:#faf7ff; }
+.ga-c-name { flex:2; font-weight:700; color:#14304d; }
+.ga-c-score { flex:1; text-align:center; }
+.ga-c-stage { flex:1.4; text-align:center; color:#5a6b7b; }
+.ga-c-conf { flex:1; text-align:center; color:#7a8694; }
+.ga-env { font-size:13px; line-height:1.7; margin:8px 0; color:#374151; }
+.ga-env b { color:#14304d; }
+.ga-rank-title { font-size:13px; font-weight:700; color:#14304d; margin:12px 0 6px; }
+.ga-rank { display:flex; gap:10px; padding:7px 0; border-bottom:1px dashed #eef1f5; font-size:13px; }
+.ga-rank:last-child { border-bottom:none; }
+.ga-rk { font-size:16px; font-weight:800; color:#6b46c1; min-width:22px; text-align:center; }
+.ga-rk-body { flex:1; }
+.ga-rk-body b { color:#14304d; }
+.ga-rk-note { font-size:12px; color:#8a96a3; margin-top:2px; line-height:1.5; }
+.ga-tag { font-size:11px; font-weight:700; color:#1ba784; margin-left:4px; }
+.ga-tag.wait { color:#c79a16; }
+.ga-note { font-size:11px; color:#8a96a3; margin-top:10px; line-height:1.6; }
 """
 
 
@@ -796,6 +818,10 @@ def render_html(memo):
             if memo.risk and memo.risk.biggest_risk else "")
     risk_sec = _sec("失效条件", "Risk · 证伪", "P1", rrows + bigr)
 
+    # ── Phase 1.5 全球资产观察（商品信号 + A股环境 + 机会排序，不含配置比例）──
+    ga_sec = _sec("全球资产观察", "Global Asset Watch · 商品+CIO", "P1",
+                  _global_asset_inner(memo, wechat=False), cls="ga")
+
     # ── ⑦ 系统学习 ──
     lr = memo.learning or {}
     da = lr.get("dimension_accuracy") or {}
@@ -883,7 +909,7 @@ def render_html(memo):
             f'<meta name="viewport" content="width=device-width,initial-scale=1">'
             f'<title>A股 Trading OS · {_esc(memo.trade_date)}</title><style>{CSS}</style></head>'
             f'<body><div class="wrap">{top}{cockpit}{exec_sec}{health_sec}{pf_sec}{dec_sec}{watch_sec}{cand_sec}{leader_sec}'
-            f'{why_sec}{risk_sec}{learn_sec}{alpha_sec}{app_sec}'
+            f'{why_sec}{ga_sec}{risk_sec}{learn_sec}{alpha_sec}{app_sec}'
             f'<div class="foot">Trading OS · 唯一裁决 · 驾驶舱首屏 · 由个人AI研投系统生成 · 仅供参考，买卖决策以人工看图为准</div>'
             f'</div></body></html>')
 
@@ -910,6 +936,131 @@ def _wx_sec(title, sub, prio, inner):
             f'<span style="font-weight:400;color:#aaa;font-size:12px;">{_esc(sub)}</span>{chip}</div>')
     return (f'<section style="background:#ffffff;border:1px solid #e5e7eb;'
             f'border-radius:10px;padding:16px 18px;margin:16px 0;">{head}{inner}</section>')
+
+
+def _global_asset_inner(memo, wechat=False):
+    """全球资产观察块内容（本地 + 公众号双渲染共用）。
+
+    展示：资产表（商品三品种 + A股）｜ 商品环境 / A股环境 ｜ 机会排序（不含配置比例）。
+    数据来自 memo.global_asset_obs（Phase 1.5：commodity_engine.adapter + A股环境派生）。
+    """
+    obs = getattr(memo, "global_asset_obs", None) or {}
+    if not obs.get("has_data") and not obs.get("a_share_env"):
+        err = obs.get("error", "")
+        msg = "全球资产观察暂不可用" + (f"：{err}" if err else "。")
+        if wechat:
+            return f'<div style="font-size:13px;color:#8a93a6;">{_esc(msg)}</div>'
+        return f'<div class="muted">{_esc(msg)}</div>'
+
+    signals = obs.get("signals", []) or []
+    a_env = obs.get("a_share_env", {}) or {}
+    ranking = obs.get("opportunity_ranking", []) or []
+    comm_env = obs.get("commodity_env", "")
+    conf_overall = obs.get("confidence_overall", "")
+
+    # 1) 资产表（商品三品种 + A股）
+    if wechat:
+        head = ('<div style="display:flex;font-size:12px;font-weight:700;color:#14304d;'
+                'background:#f4f1fb;border-radius:6px;padding:6px 8px;margin-bottom:4px;">'
+                '<div style="flex:2;">资产</div><div style="flex:1;text-align:center;">评分</div>'
+                '<div style="flex:1.4;text-align:center;">阶段</div>'
+                '<div style="flex:1;text-align:center;">置信</div></div>')
+    else:
+        head = ('<div class="ga-head"><span class="ga-c-name">资产</span>'
+                '<span class="ga-c-score">评分</span><span class="ga-c-stage">阶段</span>'
+                '<span class="ga-c-conf">置信</span></div>')
+    rows = [head]
+    for s in signals:
+        score = s.get("score")
+        score_txt = f'{score:.1f}' if isinstance(score, (int, float)) else "—"
+        arrow = "↑" if s.get("stage") == "上涨趋势" else ("↓" if s.get("stage") == "下跌趋势" else "→")
+        nm = f'{s["name"]} {arrow}'
+        if wechat:
+            rows.append(
+                f'<div style="display:flex;font-size:13px;padding:5px 8px;border-bottom:1px solid #eef1f5;">'
+                f'<div style="flex:2;">{_esc(nm)}</div>'
+                f'<div style="flex:1;text-align:center;">{_esc(score_txt)}</div>'
+                f'<div style="flex:1.4;text-align:center;">{_esc(s.get("stage",""))}</div>'
+                f'<div style="flex:1;text-align:center;">{_esc(s.get("confidence",""))}</div></div>')
+        else:
+            rows.append(
+                f'<div class="ga-row"><span class="ga-c-name">{_esc(nm)}</span>'
+                f'<span class="ga-c-score">{_esc(score_txt)}</span>'
+                f'<span class="ga-c-stage">{_esc(s.get("stage",""))}</span>'
+                f'<span class="ga-c-conf">{_esc(s.get("confidence",""))}</span></div>')
+    if wechat:
+        rows.append(
+            '<div style="display:flex;font-size:13px;padding:5px 8px;border-bottom:1px solid #eef1f5;background:#faf7ff;">'
+            '<div style="flex:2;">A股</div><div style="flex:1;text-align:center;">—</div>'
+            '<div style="flex:1.4;text-align:center;">等待确认</div>'
+            '<div style="flex:1;text-align:center;">—</div></div>')
+    else:
+        rows.append(
+            '<div class="ga-row ga-a"><span class="ga-c-name">A股</span>'
+            '<span class="ga-c-score">—</span><span class="ga-c-stage">等待确认</span>'
+            '<span class="ga-c-conf">—</span></div>')
+    asset_table = "".join(rows)
+
+    # 2) 环境句子（商品 + A股）
+    a_status = a_env.get("status", "未知")
+    a_breadth = a_env.get("breadth_label", "")
+    a_pct = a_env.get("breadth_pct", 0)
+    a_top = a_env.get("top_sector", "—")
+    a_can = a_env.get("can_buy", "UNKNOWN")
+    env_parts = []
+    if comm_env:
+        env_parts.append(f'📦 商品环境：{_esc(comm_env)}（数据置信 {_esc(conf_overall)}）')
+    env_parts.append(
+        f'🀄 A股环境：IC 裁决 <b>{_esc(a_can)}</b>（{_esc(a_status)}），'
+        f'主线 <b>{_esc(a_top)}</b>，市场{a_breadth} {a_pct}%。')
+    if wechat:
+        env_line = "".join(
+            f'<div style="font-size:13px;line-height:1.7;margin:8px 0;color:#374151;">{p}</div>'
+            for p in env_parts)
+    else:
+        env_line = "".join(f'<div class="ga-env">{p}</div>' for p in env_parts)
+
+    # 3) 机会排序（不含配置比例）
+    rank_items = []
+    for r in ranking:
+        score = r.get("score")
+        score_txt = f'{score:.1f}' if isinstance(score, (int, float)) else "—"
+        if r.get("asset") == "a_share":
+            tag = ('<span class="ga-tag wait">等待确认</span>' if not wechat
+                   else '<span style="font-size:11px;font-weight:700;color:#c79a16;margin-left:4px;">等待确认</span>')
+        else:
+            tag = ('<span class="ga-tag">机会</span>' if not wechat
+                   else '<span style="font-size:11px;font-weight:700;color:#1ba784;margin-left:4px;">机会</span>')
+        if wechat:
+            rank_items.append(
+                f'<div style="font-size:13px;padding:7px 0;border-bottom:1px dashed #eef1f5;">'
+                f'{r.get("rank")}. {_esc(r.get("name",""))} '
+                f'<span style="color:#8a93a6;">评分 {_esc(score_txt)} · {_esc(r.get("stage",""))}</span> {tag}'
+                f'<br><span style="font-size:12px;color:#8a96a3;">{_esc(r.get("note",""))}</span></div>')
+        else:
+            rank_items.append(
+                f'<div class="ga-rank"><span class="ga-rk">{r.get("rank")}</span>'
+                f'<div class="ga-rk-body"><b>{_esc(r.get("name",""))}</b> '
+                f'<span class="muted">评分 {_esc(score_txt)} · {_esc(r.get("stage",""))}</span> {tag}'
+                f'<div class="ga-rk-note">{_esc(r.get("note",""))}</div></div></div>')
+    rank_html = "".join(rank_items)
+    if rank_html:
+        if wechat:
+            rank_sec = (f'<div style="font-size:13px;font-weight:700;color:#14304d;'
+                        f'margin:12px 0 6px;">机会排序（仅排序 · 不含配置比例）</div>{rank_html}')
+        else:
+            rank_sec = (f'<div class="ga-rank-title">机会排序（仅排序 · 不含配置比例）</div>{rank_html}')
+    else:
+        rank_sec = ""
+
+    # 4) 备注（明确边界：无配置比例）
+    note = _esc(obs.get("note", ""))
+    if wechat:
+        note_html = f'<div style="font-size:11px;color:#8a96a3;margin-top:10px;line-height:1.6;">{note}</div>'
+    else:
+        note_html = f'<div class="ga-note">{note}</div>'
+
+    return asset_table + env_line + rank_sec + note_html
 
 
 def render_wechat_html(memo):
@@ -1083,6 +1234,10 @@ def render_wechat_html(memo):
             if memo.risk and memo.risk.biggest_risk else "")
     risk_sec = _wx_sec("失效条件", "Risk · 证伪", "P1", rrows + bigr)
 
+    # ── Phase 1.5 全球资产观察（商品信号 + A股环境 + 机会排序，不含配置比例）──
+    ga_sec = _wx_sec("全球资产观察", "Global Asset Watch", "P1",
+                     _global_asset_inner(memo, wechat=True))
+
     # ── 系统学习 ──
     lr = memo.learning or {}
     da = lr.get("dimension_accuracy") or {}
@@ -1177,7 +1332,7 @@ def render_wechat_html(memo):
     return (f'<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">'
             f'<title>A股 Trading OS · {_esc(memo.trade_date)}</title></head><body>'
             f'{intro}{top}{cockpit}{exec_sec}{health_sec}{pf_sec}{dec_sec}{watch_sec}{cand_sec}{leader_sec}'
-            f'{why_sec}{risk_sec}{learn_sec}{alpha_sec}{app_sec}{footer}'
+            f'{why_sec}{ga_sec}{risk_sec}{learn_sec}{alpha_sec}{app_sec}{footer}'
             f'</body></html>')
 
 
