@@ -41,7 +41,7 @@ _REGIME_LABELS = ["Risk Off", "Neutral", "Risk On"]
 
 
 def _db_conn() -> sqlite3.Connection:
-    return sqlite3.connect(DB_PATH)
+    return sqlite3.connect(_DB_PATH)
 
 
 def _latest_value(symbol: str) -> Optional[dict]:

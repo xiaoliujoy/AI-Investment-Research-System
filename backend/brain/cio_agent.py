@@ -2496,10 +2496,13 @@ def _build_global_asset_obs(brain: dict, tree: dict) -> dict:
     """
     try:
         from commodity_engine.adapter import build_commodity_signals
+        from commodity_engine.snapshot import build_global_snapshot, format_snapshot_text
         comm = build_commodity_signals()
         a_share = _derive_a_share_env(brain, tree)
         ranking = _merge_opportunity_ranking(
             comm.get("opportunity_ranking", []), a_share)
+        # Phase 1.6：跨资产风险状态快照（DXY/US10Y/BTC + 商品均值 粗判）
+        snap = build_global_snapshot(a_share_env=a_share)
         return {
             "has_data": comm.get("has_data", False),
             "generated_at": comm.get("generated_at", ""),
@@ -2509,6 +2512,9 @@ def _build_global_asset_obs(brain: dict, tree: dict) -> dict:
             "commodity_env": comm.get("commodity_env", ""),
             "a_share_env": a_share,
             "opportunity_ranking": ranking,
+            "risk_state": snap.get("risk_state", {}),
+            "snapshot": snap,
+            "snapshot_text": format_snapshot_text(snap),
             "note": ("本区块仅为全球资产观察与机会排序，不构成配置比例建议；"
                      "资产配置模型待 Phase 3 回测验证后上线。"),
         }

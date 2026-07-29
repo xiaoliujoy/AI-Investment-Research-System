@@ -325,6 +325,7 @@ Layer 3 未来形态：
 |------|------|------|--------|
 | v2.0 | 2026-07-10 | A股 Trading OS 2.0（五中心八层） | 早期 commits |
 | v3.0-alpha | 2026-07-29 | Commodity OS Phase 0~1.5（跨资产观察层） | `c4e945d` |
+| v3.0-alpha+ | 2026-07-30 | Phase 1.6 Global Asset Snapshot（风险状态 + 宏观快照） | (待提交) |
 
 ### v3.0 路线图（调整后）
 
@@ -337,7 +338,7 @@ v3.0-alpha (当前 ✓)
   │
   ▼
 v3.0-beta (下一站)
-  │  Phase 1.6 Global Asset Snapshot（每日快照，小成本高价值）
+  │  Phase 1.6 Global Asset Snapshot（每日快照，小成本高价值）✅ 已完成
   │  Phase 1.8 统一 AssetSignal 覆盖 A股/ETF/债券
   │
   ▼

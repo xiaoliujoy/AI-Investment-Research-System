@@ -1001,6 +1001,30 @@ def _global_asset_inner(memo, wechat=False):
             '<span class="ga-c-conf">—</span></div>')
     asset_table = "".join(rows)
 
+    # 1.5) 风险状态（Phase 1.6 Global Asset Snapshot）
+    risk_state = obs.get("risk_state", {}) or {}
+    if risk_state:
+        rs_label = risk_state.get("label", "")
+        rs_score = risk_state.get("score")
+        color_map = {"Risk On": "#1ba784", "Neutral": "#c79a16", "Risk Off": "#e0533d"}
+        rs_color = color_map.get(rs_label, "#8a96a3")
+        rs_drivers = "；".join(risk_state.get("drivers", []))
+        if wechat:
+            risk_sec = (
+                f'<div style="font-size:13px;margin:8px 0;padding:6px 8px;'
+                f'background:#faf7ff;border-radius:6px;">'
+                f'🌐 <b style="color:{rs_color};">风险偏好：{_esc(rs_label)}</b>'
+                + (f' <span style="font-size:12px;color:#8a96a3;">（{rs_drivers}）</span>' if rs_drivers else '')
+                + f'</div>')
+        else:
+            risk_sec = (
+                f'<div class="ga-env" style="background:#faf7ff;border-radius:6px;padding:6px 8px;margin:8px 0;">'
+                f'🌐 <b style="color:{rs_color};">风险偏好：{_esc(rs_label)}</b>'
+                + (f' <span class="muted">（{_esc(rs_drivers)}）</span>' if rs_drivers else '')
+                + f'</div>')
+    else:
+        risk_sec = ""
+
     # 2) 环境句子（商品 + A股）
     a_status = a_env.get("status", "未知")
     a_breadth = a_env.get("breadth_label", "")
@@ -1060,7 +1084,7 @@ def _global_asset_inner(memo, wechat=False):
     else:
         note_html = f'<div class="ga-note">{note}</div>'
 
-    return asset_table + env_line + rank_sec + note_html
+    return asset_table + risk_sec + env_line + rank_sec + note_html
 
 
 def render_wechat_html(memo):

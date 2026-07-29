@@ -283,15 +283,21 @@ Phase 3 实现，但架构预留（扩展 `a_share_link` 到量化级）。这�
 - **日报渲染**（`os2_report.py`）：新增 `_global_asset_inner(memo, wechat)` 双渲染助手 + `.ga-*` CSS；在「为什么」与「失效条件」之间注入「全球资产观察」区块（P1，本地 + 公众号对称）。区块结构：资产表（商品三品种↑↓→ + A股等待确认）｜ 商品环境 / A股环境 ｜ 机会排序（仅排序·不含配置比例）｜ 边界备注。
 - **明确边界（用户决策）**：Phase 1.5 只做「看见商品 + 机会排序」，不给股票%/黄金%/现金% 配置比例——缺回测/最大回撤/波动率/相关性矩阵，配置模型留待 Phase 3。
 
+### 9.4 Phase 1.6 Global Asset Snapshot（`backend/commodity_engine/snapshot.py` + CIO 接线 + 渲染）
+- **目标（用户 2026-07-29 评估）**：在 Phase 1.5「看见商品」基础上，加一层「判环境」——每天回答「今天全球资金在哪里，风险偏好如何」。不是预测，只是观察。对应投资哲学「判环境 → 选方向 → 定标的」三闭环的前半（选方向=商品+股票；定标的=人工看图）。
+- **新模块 `commodity_engine/snapshot.py`**：`build_global_snapshot(a_share_env)` 读取 `global_history`（DXY/US10Y/TIPS/BTC）+ `commodity_factor_daily` 最新评分，输出 `{date, risk_state, assets{equity/commodity/macro}, narrative, has_data}`。
+- **风险状态粗判**（`_derive_risk_state`）：基于 DXY/US10Y/BTC 三因子各打分后取均值，≥65→Risk On / 40~65→Neutral / <40→Risk Off。明确标注「Phase 1.6 粗估，Phase 2 Asset Regime Engine 将用多因子状态机替代」。
+- **CIO 接线**（`cio_agent.py` `_build_global_asset_obs`）：调 `build_global_snapshot(a_share_env=a_share)` 把 `risk_state` + `snapshot` + `snapshot_text` 并入 `global_asset_obs`；失败降级不影响日报。
+- **日报渲染**（`os2_report.py` `_global_asset_inner`）：资产表之后新增「🌐 风险偏好：Risk On/Neutral/Risk Off」行（颜色编码：绿/黄/红），本地+公众号双渲染。
+- **实测（2026-07-29）**：风险偏好=Risk Off（DXY=100.7 偏强 / 美债10Y=4.57% / BTC=$63k）；商品偏强沪铜(63)/偏弱原油(54)；环境总结「风险偏好=Risk Off；DXY=100.7；美债10Y=4.57%；商品偏强:沪铜；商品偏弱:原油」。
+- **边界遵守**：Snapshot 不输出配置比例；宏观分仅做环境判读，不做点位预测。
+
 ---
 
-*Phase 0 / 0.5 / 1 / 1.5 ✅ 已实现（2026-07-29）：
+*Phase 0 / 0.5 / 1 / 1.5 / 1.6 ✅ 已实现（2026-07-29~30）：
 - Phase 0：4 张表 + `commodity_engine/collector.py` + `daily_collect` step3.5 + 历史回填 32324 行/8品种 + 外盘回写 `global_history` 的 XAU/CL/HG。数据源实测可行、幂等自愈、run_daily 自动带动。
 - Phase 0.5：`commodity_health.py` 四类检查，接入 step3.5b，输出 `commodity_health.json`（overall=HEALTHY）。
 - Phase 1：`commodity_engine/scoring.py`，AU/CU/SC v1 权重，复用 Gold Engine 宏观逻辑（DB 源，不依赖 thsdk 实时），落 `commodity_factor_daily` 750 行，接入 step3.5c，解释型输出。
 - Phase 1.5：`commodity_engine/adapter.py` 统一 AssetSignal 协议 + CIO `global_asset_obs` 字段与 `_build_global_asset_obs` 接线 + 日报「全球资产观察」区块（本地/公众号双渲染，介于为什么与失效条件之间），机会排序不含配置比例。
+- Phase 1.6：`commodity_engine/snapshot.py` Global Asset Snapshot（DXY/US10Y/TIPS/BTC + 商品评分 → 风险偏好 Risk On/Neutral/Risk Off 粗判）+ CIO 并入 `global_asset_obs.risk_state` + 日报「🌐 风险偏好」行渲染。
 下一步（用户确认开发顺序）：Phase 1.8 统一 AssetSignal 协议覆盖 A股/ETF/债券 → Phase 2 加 **Asset Regime Engine 中间层**（Commodity→Regime→IC→CIO）+ 真实资产配置（股票%/商品%/现金%）+ 供需库存接口（commodity_supply_daily）→ Phase 3 资产配置模型。Phase 2 暂缓（用户明确要求）。*
-- Phase 0：4 张表 + `commodity_engine/collector.py` + `daily_collect` step3.5 + 历史回填 32324 行/8品种 + 外盘回写 `global_history` 的 XAU/CL/HG。数据源实测可行、幂等自愈、run_daily 自动带动。
-- Phase 0.5：`commodity_health.py` 四类检查，接入 step3.5b，输出 `commodity_health.json`（overall=HEALTHY）。
-- Phase 1：`commodity_engine/scoring.py`，AU/CU/SC v1 权重，复用 Gold Engine 宏观逻辑（DB 源，不依赖 thsdk 实时），落 `commodity_factor_daily` 750 行，接入 step3.5c，解释型输出。
-下一步：Phase 1.5 接入 CIO（全球资产观察，暂不配置）；Phase 2 加 **Asset Regime Engine 中间层**（Commodity→Regime→IC→CIO）+ 真实资产配置（股票%/商品%/现金%）+ 供需库存接口（commodity_supply_daily）。*
