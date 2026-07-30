@@ -205,7 +205,7 @@ def confidence_label(c: float) -> str:
 |--------|-------------|
 | **CIO** (`_build_global_asset_obs`) | 合并所有 adapter 输出（commodity + equity + 未来 bond/etf）→ 跨资产机会排序；并调用 `build_universe_snapshot()` 产出统一宇宙快照（Phase 1.9 Dashboard 输入）。IC 裁决层（can_buy/direction）由 CIO 从 `brain.committee` 读取，不进 AIP `detail`。 |
 | **Regime Engine**（Phase 2） | 消费各资产 `state` + Global Snapshot `risk_state` → 推导**六状态全局 Regime**（Liquidity Expansion / Growth Recovery / Inflation Shock / Liquidity Tightening / Risk Aversion / Transition）。 |
-| **Backtest Dashboard**（Phase 1.9） | 消费 `regime_history` + 各 `state` 历史 → 环境有效性报告。 |
+| **Validation Dashboard**（Phase 1.9-B） | 消费 `regime_history` + `asset_intelligence_history` → 验证「观察体系是否具备统计意义上的决策价值」（不预测，只验证；见 §13）。 |
 
 **禁止：**
 - 任何 adapter 输出配置比例（股票 %/ 商品 %/ 现金 %）。
@@ -267,3 +267,44 @@ Phase 1.9-A 已对部分问题做工程层面的承接，标注于每条之下�
   - `score=None` 落库存 **NULL**（不伪造 0），进一步避免「缺失=0」语义污染。
   - 后续如需「unavailable」显式语义，可在 validator 层把 `detail.enabled=False`
     提升为顶层 `observation_status` 字段（保持向后兼容，旧 detail 仍可用）。
+
+---
+
+## 13. Phase 1.9-B 验证层（Investment Intelligence Validation Dashboard）
+
+目标：把系统从「信号生成」推向「研究系统」——验证**观察到的信息是否具备统计意义上的
+决策价值**，而非预测。这是 Phase 2 Regime Engine 的数据地基。
+
+### 13.1 三条验证问题（均不预测）
+
+1. **Regime 状态有效性**（来源 `regime_history`）：不同环境下市场后续表现如何？
+   Risk Off 是否真的对应更低收益 / 更高风险？若无区分 → 状态定义需调整。
+2. **Asset Intelligence 信号验证**（来源 `asset_intelligence_history`）：score 是否具备
+   **横截面排序能力**？高分档未来收益/胜率是否系统性优于低分档？（不是预测，是排序验证）
+3. **Confidence 校准**（来源同上）：高 confidence 是否真的更可靠？若 High≈Low →
+   confidence 只是标签，需重新设计（呼应 §7.5 score≠confidence 铁律）。
+
+### 13.2 模块结构（模块化，不进 CIO）
+
+```
+asset_intelligence/
+├── history.py            (Phase 1.9-A：落库)
+├── validation/           (Phase 1.9-B1：验证引擎，无 UI)
+│   ├── returns.py       前向收益引擎（商品 close / A股聚合净值；A股序列按需+区间受限，避免全表扫描）
+│   ├── regime_eval.py   Regime 状态有效性
+│   ├── signal_eval.py   Score 分层排序能力
+│   ├── confidence_eval.py Confidence 校准 + 区分度诊断
+│   └── report.py        汇总 → output/dashboard/validation_report.json（v0.1）
+└── dashboard/           (Phase 1.9-B2：可视化，待建)
+```
+
+### 13.3 边界与样本量警示（关键）
+
+- **不新增复杂表**：B1 只读 `regime_history` + `asset_intelligence_history`，产出 JSON。
+- **样本不足风险**：regime_history≈243 样本（三状态同质化：236 Neutral / 7 Risk On / 0 Risk Off），
+  对框架验证够，对形成稳定规则不够。signal/confidence 段依赖 `asset_intelligence_history`
+  累积（每日 memo 落库后才有），初期为 0 属正常。
+- **结论必带可信度**：每段标注样本量与可靠性（无样本/低/中/较高）；报告 `overall_caveat`
+  明示「任何结论仅用于方法验证，不构成投资规则；Phase 2 须待验证稳定后启动」。
+- **A股序列性能**：`stock_daily` 约 2335 万行，`returns.load_price_series` 对 A股聚合
+  **绝不**做全表 GROUP BY——仅当确有 CN_EQ_ALL 信号且给定日期区间时做区间受限查询。
