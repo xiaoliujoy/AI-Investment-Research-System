@@ -231,3 +231,39 @@ CIO / 渲染层读取时统一改为新字段名；旧 `AssetSignal` 类名在 P
 
 *本文档为 Phase 1.8 实现前的契约基线。代码实现须严格遵循 §1–§8 字段与校验规则，
 任何偏离需回到本文档修订并重新对齐架构文档 `docs/trading-os-architecture.md`。*
+
+---
+
+## 12. 已知问题 / Backlog（用户审计记录）
+
+以下为 Phase 1.8-C 评审中用户提出、并经确认「先不改代码、在协议层记录」的两条审计问题。
+Phase 1.9-A 已对部分问题做工程层面的承接，标注于每条之下。
+
+### 问题 #1：`generated_at` 使用本地时间（用户审计 #1）
+
+- **现象**：`universe.py:build_universe_snapshot` 与 `regime_history.build_regime_history`
+  的 `generated_at` 均用 `datetime.now()` / `datetime.now().strftime(...)`（本地时区）。
+  对跨资产 / 跨时区资产（外盘商品、宏观）而言，本地时间会引入歧义。
+- **建议**：未来统一改为 UTC——
+  `datetime.datetime.now(datetime.timezone.utc).isoformat()`（或 `utcnow()`）。
+- **Phase 1.9-A 处置**：**未改代码**（与用户「先不改动」一致）。
+  但 `asset_intelligence_history` 落库的 canonical `date` 一律取**交易日 `trade_date`**
+  （由调用方 `os2_report.write(memo, path)` 显式传入 `memo.trade_date`），而非 `generated_at`，
+  因此历史层的横轴（date）与时区无关、稳定可比对；时区问题只残留在 `generated_at`
+  这一审计元数据列。待 Phase 1.9-B Dashboard 上线前统一切 UTC。
+
+### 问题 #2：`score` 缺失默认 0 会隐藏「无评分」（用户审计 #2）
+
+- **现象**：`universe.py` 排序键 `(x.get("score") or 0)` 中，缺失 score 会回落到 0
+  （最低排序），从而**把「该资产没有评分」误表达为「评分最低 / 最不 favorable」**。
+- **建议**：协议层明确增加 `enabled: false` 或 `observation_status: "unavailable"`，
+  使「无真实评分」与「真实低分」可区分；Dashboard 据此过滤空壳，不参与强弱排序。
+- **Phase 1.9-A 处置（已落地）**：
+  - `protocol.make_skeleton` 早已在 `detail` 写 `enabled: False`（空壳资产）。
+  - `asset_intelligence.history._asset_enabled()` 读取该标志写入 `enabled` 列
+    （真实资产默认 `enabled=1`，空壳 `=0`）。
+  - `load_universe_history(only_enabled=True)` / `load_universe_panel(only_enabled=True)`
+    可直接过滤空壳，Dashboard 据此把 `score=50` 的占位值排除在真实排序之外。
+  - `score=None` 落库存 **NULL**（不伪造 0），进一步避免「缺失=0」语义污染。
+  - 后续如需「unavailable」显式语义，可在 validator 层把 `detail.enabled=False`
+    提升为顶层 `observation_status` 字段（保持向后兼容，旧 detail 仍可用）。

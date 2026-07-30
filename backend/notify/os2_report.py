@@ -39,6 +39,9 @@ import sys
 import html
 import datetime
 import argparse
+import logging
+
+logger = logging.getLogger(__name__)
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if ROOT not in sys.path:
@@ -1508,6 +1511,20 @@ def write(memo, path):
     os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
     with open(path, "w", encoding="utf-8") as f:
         f.write(html_text)
+    # Phase 1.9-A：日报产出同时把资产认知宇宙快照落库（绝不阻塞日报）
+    try:
+        from asset_intelligence.history import save_universe_snapshot
+        snap = getattr(memo, "global_asset_obs", None)
+        if isinstance(snap, dict) and snap.get("universe_snapshot"):
+            res = save_universe_snapshot(
+                snap["universe_snapshot"],
+                date=getattr(memo, "trade_date", None),
+            )
+            logger.info("资产认知历史落库：%s", res)
+        else:
+            logger.info("资产认知快照缺失，跳过历史落库（不影响日报）")
+    except Exception as e:  # 历史持久化失败绝不影响日报产出
+        logger.warning("资产认知历史落库失败（已跳过，不影响日报）：%s", e)
     return len(html_text)
 
 
