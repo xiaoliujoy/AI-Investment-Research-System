@@ -1,6 +1,6 @@
 # Asset Intelligence Protocol（AIP）— 统一投资语言契约
 
-> 状态：Phase 1.8 契约 v1.0（**core 已落地** — `backend/asset_intelligence/{protocol,validator}.py` + 单元测试 17/17 通过；商品 adapter 迁移已完成；A股 adapter + CIO 重构待下一步）
+> 状态：Phase 1.8 契约 v1.0（**core 已落地** — `backend/asset_intelligence/{protocol,validator}.py` + 单元测试 17/17 通过；**商品 adapter 迁移完成**；**A股 adapter + CIO 统一消费已完成**（Phase 1.8-B：equity_engine/{analysis,adapter}.py + CIO 改为消费 List[AssetIntelligence]，单测 9/9 通过））
 > 归属：Trading OS v3.0-beta 第一站
 > 上游：Layer 1 Asset Data → 本契约 → Layer 3 Investment Decision（IC / CIO / Regime Engine）
 > 设计哲学：系统只「观察 + 排序 + 判环境」，**不输出配置比例**（配置模型留 Phase 3，需回测/回撤/相关性验证）
@@ -14,7 +14,7 @@
 | 资产 | 现状（Phase 1.7 之前） | 问题 |
 |------|----------------------|------|
 | 商品 | `commodity_engine/adapter.py` → `AssetSignal{score, stage, confidence(字符串), drivers, risks}` | 最接近协议，但 `stage` 仅为商品用语、`confidence` 为字符串 |
-| A股 | `cio_agent._derive_a_share_env()` 内联派生 `{status, direction, can_buy, breadth, top_sector, main_lines}` | **不在协议内**，CIO 单独处理 |
+| A股 | `equity_engine/adapter.py` → `AssetIntelligence{asset_class=equity, symbol=CN_A_SHARE, ...}`（Phase 1.8-B 抽离自旧 `_derive_a_share_env`，判断逻辑归 `analysis.py`，I/O 归 `adapter.py`） | **已纳入协议**，与商品同台排序 |
 | 债券 / ETF / 现金 / BTC / FX | 无结构化输出 | 无法进入统一排序与 Regime 推导 |
 
 AIP 让**每个资产都回答同一组六个问题**，使 IC / CIO / Regime Engine 能用同一套语义消费。

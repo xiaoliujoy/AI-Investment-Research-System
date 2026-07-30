@@ -941,8 +941,10 @@ def _wx_sec(title, sub, prio, inner):
 def _global_asset_inner(memo, wechat=False):
     """全球资产观察块内容（本地 + 公众号双渲染共用）。
 
-    展示：资产表（商品三品种 + A股）｜ 商品环境 / A股环境 ｜ 机会排序（不含配置比例）。
-    数据来自 memo.global_asset_obs（Phase 1.5：commodity_engine.adapter + A股环境派生）。
+    展示：资产表（统一资产宇宙：A股 + 商品三品种，按 score 降序同台比较）｜
+    商品环境 / A股环境 ｜ 机会排序（不含配置比例）。
+    数据来自 memo.global_asset_obs（Phase 1.8-B：commodity_engine + equity_engine →
+    AssetIntelligence 统一消费）。
     """
     obs = getattr(memo, "global_asset_obs", None) or {}
     if not obs.get("has_data") and not obs.get("a_share_env"):
@@ -952,13 +954,13 @@ def _global_asset_inner(memo, wechat=False):
             return f'<div style="font-size:13px;color:#8a93a6;">{_esc(msg)}</div>'
         return f'<div class="muted">{_esc(msg)}</div>'
 
-    signals = obs.get("signals", []) or []
+    assets_universe = obs.get("assets", []) or []
     a_env = obs.get("a_share_env", {}) or {}
     ranking = obs.get("opportunity_ranking", []) or []
     comm_env = obs.get("commodity_env", "")
     conf_overall = obs.get("confidence_overall", "")
 
-    # 1) 资产表（商品三品种 + A股）
+    # 1) 资产表（统一资产宇宙：A股 + 商品，按 score 降序，跨资产同台比较）
     if wechat:
         head = ('<div style="display:flex;font-size:12px;font-weight:700;color:#14304d;'
                 'background:#f4f1fb;border-radius:6px;padding:6px 8px;margin-bottom:4px;">'
@@ -970,7 +972,7 @@ def _global_asset_inner(memo, wechat=False):
                 '<span class="ga-c-score">评分</span><span class="ga-c-stage">阶段</span>'
                 '<span class="ga-c-conf">置信</span></div>')
     rows = [head]
-    for s in signals:
+    for s in assets_universe:
         score = s.get("score")
         score_txt = f'{score:.1f}' if isinstance(score, (int, float)) else "—"
         arrow = "↑" if s.get("trend") == "up" else ("↓" if s.get("trend") == "down" else "→")
@@ -988,17 +990,6 @@ def _global_asset_inner(memo, wechat=False):
                 f'<span class="ga-c-score">{_esc(score_txt)}</span>'
                 f'<span class="ga-c-stage">{_esc(s.get("state",""))}</span>'
                 f'<span class="ga-c-conf">{_esc(s.get("confidence_label",""))}</span></div>')
-    if wechat:
-        rows.append(
-            '<div style="display:flex;font-size:13px;padding:5px 8px;border-bottom:1px solid #eef1f5;background:#faf7ff;">'
-            '<div style="flex:2;">A股</div><div style="flex:1;text-align:center;">—</div>'
-            '<div style="flex:1.4;text-align:center;">等待确认</div>'
-            '<div style="flex:1;text-align:center;">—</div></div>')
-    else:
-        rows.append(
-            '<div class="ga-row ga-a"><span class="ga-c-name">A股</span>'
-            '<span class="ga-c-score">—</span><span class="ga-c-stage">等待确认</span>'
-            '<span class="ga-c-conf">—</span></div>')
     asset_table = "".join(rows)
 
     # 1.5) 风险状态（Phase 1.6 Global Asset Snapshot）
@@ -1049,9 +1040,9 @@ def _global_asset_inner(memo, wechat=False):
     for r in ranking:
         score = r.get("score")
         score_txt = f'{score:.1f}' if isinstance(score, (int, float)) else "—"
-        if r.get("asset") == "a_share":
-            tag = ('<span class="ga-tag wait">等待确认</span>' if not wechat
-                   else '<span style="font-size:11px;font-weight:700;color:#c79a16;margin-left:4px;">等待确认</span>')
+        if r.get("asset") == "equity":
+            tag = ('<span class="ga-tag home">本场</span>' if not wechat
+                   else '<span style="font-size:11px;font-weight:700;color:#14304d;margin-left:4px;">本场</span>')
         else:
             tag = ('<span class="ga-tag">机会</span>' if not wechat
                    else '<span style="font-size:11px;font-weight:700;color:#1ba784;margin-left:4px;">机会</span>')
