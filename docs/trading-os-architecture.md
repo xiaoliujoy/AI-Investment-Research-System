@@ -28,6 +28,52 @@ CIO 输出                                IC 决策
 
 ---
 
+## v3.0-alpha 版本定义（架构冻结节点）
+
+> 本定义于 2026-07-30 由用户正式确认，作为 GitHub 项目第一阶段展示版本、后续研究体系基础。
+
+```
+v3.0-alpha
+│
+├── Equity OS（股票操作系统）
+│   ├── A股行情（stock_daily）
+│   ├── 资金（capital_flow / stock_flow_daily）
+│   ├── 情绪（market_daily / limit_up_daily）
+│   ├── 行业（sector_daily / industry_map）
+│   └── 龙头（leader selection · 八层树 L5）
+│
+├── Commodity OS（商品操作系统）
+│   ├── 商品数据（commodity_daily · 内盘8+外盘3）
+│   ├── 黄金引擎（gold_engine · 贵金属子引擎）
+│   ├── 商品评分（commodity_engine/scoring · v1）
+│   └── 商品观察（commodity_engine/adapter · AssetSignal）
+│
+├── Global Asset Layer（全球资产层）
+│   ├── Global Snapshot（commodity_engine/snapshot · Phase 1.6）
+│   ├── Risk State（Risk On/Neutral/Risk Off 粗判）
+│   └── Cross Asset Observation（cio_agent.global_asset_obs）
+│
+└── Decision Layer（决策层）
+    ├── IC（investment_committee · 唯一裁决）
+    ├── CIO（cio_agent.produce · 研究员输出）
+    └── Report（os2_report · Trading OS 2.0 日报）
+```
+
+**投资思想 ↔ 系统模块映射（架构一致性）：**
+
+| 投资思想 | 系统模块 | 状态 |
+|---------|---------|------|
+| 判环境 | Global Snapshot / Regime Engine（Phase 2） | ✅ Snapshot / ⏳ Regime |
+| 选方向 | Sector / Commodity Ranking | ✅ 已实现 |
+| 定标的 | Leader Selection（人工看图最终确认） | ✅ 人工 |
+
+**边界纪律（用户 2026-07-30 重申）：**
+- Risk State 是「市场环境温度计」，**不是买卖信号**。
+- 例：`Risk Off` 系统应回答「成长股降低攻击性 / 高估值科技风险增加 / 黄金关注避险属性 / 美债等待确认 / 商品分品种判断」，**绝不输出「Risk Off = 买黄金」**。
+- 任何 Regime 状态只描述「环境」，不做点位预测、不给配置比例。
+
+---
+
 ## 三层架构总览
 
 ```
@@ -259,16 +305,22 @@ Layer 3 未来形态：
   Execution                   ← 人工看图下单（不变）
 ```
 
-**Regime 状态定义（目标）：**
+**Regime 状态定义（Phase 2 目标 — 六状态模型）：**
 
-| Regime | 特征 | 受益资产 | 受损资产 |
-|--------|------|---------|---------|
-| Risk On | 流动性宽裕 + 增长预期 | 成长股 / 商品 / 新兴市场 | 美元 / 国债 |
-| Risk Off | 避险情绪 + 流动性收紧 | 美元 / 国债 / 黄金 | 成长股 / 新兴市场 |
-| Inflation Shock | 通胀超预期 + 供给冲击 | 商品 / 价值股 / TIPS | 成长债 / 高估值 |
-| Growth Recovery | 增长确认 + 通胀回落 | 周期股 / 工业商品 / B股 | 防御股 / 黄金 |
-| Liquidity Expansion | 央行放水 | 所有风险资产 | 现金 |
-| Liquidity Tightening | 加息/缩表 | 现金 / 短债 | 所有风险资产 |
+> 注意区分：Phase 1.6 的 `Risk On / Neutral / Risk Off` 是**粗判温度计**（基于 DXY/US10Y/BTC 三因子的启发式阈值），仅用于日报观察。Phase 2 的 Asset Regime Engine 将升级为以下**六状态模型**——两状态（Risk On/Off）太粗，无法刻画 2020 流动性扩张 / 2022 通胀冲击 / 2023 AI成长 / 2025 政策驱动 的本质差异。
+
+| # | Regime | 定义 | 典型宏观特征 | 受益资产 | 受损资产 |
+|---|--------|------|------------|---------|---------|
+| 1 | Liquidity Expansion | 流动性扩张 | 央行放水 / 降息 / 扩表 | 所有风险资产 / 成长股 / 商品 | 现金 / 美元 |
+| 2 | Growth Recovery | 增长恢复 | 增长确认 + 通胀回落 | 周期股 / 工业商品 / 新兴 | 防御股 / 黄金 |
+| 3 | Inflation Shock | 通胀冲击 | 通胀超预期 + 供给冲击 | 商品 / 价值股 / TIPS | 成长债 / 高估值科技 |
+| 4 | Liquidity Tightening | 流动性收紧 | 加息 / 缩表 / 信用收缩 | 现金 / 短债 | 所有风险资产 / 长债 |
+| 5 | Risk Aversion | 风险规避 | 避险情绪 + 不确定性上升 | 美元 / 国债 / 黄金 | 成长股 / 新兴市场 / 高贝塔 |
+| 6 | Transition | 环境切换 | 状态边界模糊 / 因子矛盾 | 降低攻击性 / 观望 | 追涨杀跌 |
+
+**状态识别输入（Phase 2 设计）：** DXY 趋势 + 美债曲线(2s10s) + 实际利率(TIPS) + 通胀预期(BEI) + 信用利差 + BTC 风险偏好 + VIX 类波动率 + 商品内部分化。多因子状态机，非单因子阈值。
+
+**训练基础：** Phase 1.7 `regime_history` 历史验证层提供的「每日 Regime 状态 + 未来收益分布」是六状态模型校准与回测的依据。
 
 ---
 
@@ -325,25 +377,27 @@ Layer 3 未来形态：
 |------|------|------|--------|
 | v2.0 | 2026-07-10 | A股 Trading OS 2.0（五中心八层） | 早期 commits |
 | v3.0-alpha | 2026-07-29 | Commodity OS Phase 0~1.5（跨资产观察层） | `c4e945d` |
-| v3.0-alpha+ | 2026-07-30 | Phase 1.6 Global Asset Snapshot（风险状态 + 宏观快照） | (待提交) |
+| v3.0-alpha+ | 2026-07-30 | Phase 1.6 Global Asset Snapshot（风险状态 + 宏观快照） | `57e78e5` |
+| v3.0-alpha++ | 2026-07-30 | v3.0-alpha 正式版本定义 + 六状态 Regime 设计 + 路线图调整 + Phase 1.7 Regime 历史验证层 | (本回合) |
 
 ### v3.0 路线图（调整后）
 
 ```
-v3.0-alpha (当前 ✓)
+v3.0-alpha (当前 ✓ 架构冻结节点)
   │  Phase 0   商品数据链路 + 历史回填
   │  Phase 0.5 商品健康层
   │  Phase 1   商品评分引擎 v1
   │  Phase 1.5 CIO 全球资产观察接入
+  │  Phase 1.6 Global Asset Snapshot（风险温度计）
+  │  Phase 1.7 Regime 历史验证层（regime_history + 回溯 + 收益分布）✅ 已完成
   │
   ▼
-v3.0-beta (下一站)
-  │  Phase 1.6 Global Asset Snapshot（每日快照，小成本高价值）✅ 已完成
+v3.0-beta (下一站，2026-07-30 用户调整顺序)
   │  Phase 1.8 统一 AssetSignal 覆盖 A股/ETF/债券
   │
   ▼
 v3.0-stable
-  │  Phase 2   Asset Regime Engine（Risk On/Off 状态机）
+  │  Phase 2   Asset Regime Engine（六状态模型，非两状态）
   │  Phase 2.5 Portfolio Allocation（需回测验证后再开放比例）
   │
   ▼

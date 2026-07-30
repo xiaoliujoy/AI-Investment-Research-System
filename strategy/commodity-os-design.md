@@ -292,12 +292,34 @@ Phase 3 实现，但架构预留（扩展 `a_share_link` 到量化级）。这�
 - **实测（2026-07-29）**：风险偏好=Risk Off（DXY=100.7 偏强 / 美债10Y=4.57% / BTC=$63k）；商品偏强沪铜(63)/偏弱原油(54)；环境总结「风险偏好=Risk Off；DXY=100.7；美债10Y=4.57%；商品偏强:沪铜；商品偏弱:原油」。
 - **边界遵守**：Snapshot 不输出配置比例；宏观分仅做环境判读，不做点位预测。
 
+### 9.5 Phase 1.7 Regime 历史验证层（`backend/regime_history.py` + `daily_collect` step3.5d）
+- **目标（用户 2026-07-30 评估）**：系统最薄弱的不是功能，而是「判断有没有长期有效性」。Phase 1.7 建立 `regime_history` 表，逐日记录 risk_state + 资产状态 + 未来 1/5/20 日收益，验证「判环境」能力是否长期有效。这是 Phase 2 六状态 Asset Regime Engine 的训练基础。
+- **新模块 `regime_history.py`**：`build_regime_history()` 复用 `snapshot._score_macro_item` + `_REGIME_THRESHOLDS`（单一事实源，保证与线上口径一致），逐日回溯：
+  - 宏观：global_history 的 DXY/US10Y/BTC → risk_state（同线上 `_derive_risk_state` 三因子）
+  - 商品状态：commodity_factor_daily 的 AU0/CU0/SC0 stage
+  - A股代理：stock_daily 全市场每日均值涨跌%（替代指数序列，因库内无指数价）
+  - 资产状态：market_daily 的 emotion_score/stage
+  - 远期收益：黄金(AU0 收盘价) 1/5/20 日 + 最大回撤；A股(均值涨跌累乘) 1/5/20 日
+  - 幂等 upsert；`validate_regime(state)` 按 risk_state 分组出收益分布；`format_regime_report()` 人类可读。
+- **流水线接入**（`daily_collect.py` step3.5d）：`only in (None,"regime","commodity","align","factor")` → `ensure_regime_history()`，每日自动追加最新交易日一行。
+- **实测回溯（2026-07-30，243 样本 = ~250 交易日）**：
+
+  | risk_state | n | A股 1D | A股 5D | A股 20D | 黄金 1D | 黄金 5D | 黄金 20D |
+  |---|---|---|---|---|---|---|---|
+  | Neutral | 236 | +0.68% | +3.07% | +13.56% | +0.13% | +0.41% | +1.36% |
+  | Risk On | 7 | -0.07% | +2.85% | +13.20% | -2.02% | -2.85% | +1.67% |
+  | Risk Off | 0 | — | — | — | — | — | — |
+
+- **关键发现（纠偏）**：回溯修复后，原 Phase 1.6 实测「Risk Off 27.3」被证实是 `_score_macro_item` bug 的**假象**（旧逻辑把 DXY=100.74/BTC=63366 错当美债收益率打分→22，均值 27.3 错落 Risk Off）。修复后线上 2026-07-30 真实状态 = **Neutral 45.0**（DXY→45 / US10Y→38 / BTC→52）。历史 243 样本中 236 为 Neutral、仅 7 为 Risk On、0 为 Risk Off——**三状态粗模型在当前宏观下严重同质化**，恰好佐证用户「两状态太粗、必须六状态」的判断，也说明 Phase 2 六状态模型 + 更多样本是必经之路。
+- **边界遵守**：只记录与回溯，不预测、不给配置比例；明确标注「样本远未达 5 年回测要求，当前仅建立闭环」。
+
 ---
 
-*Phase 0 / 0.5 / 1 / 1.5 / 1.6 ✅ 已实现（2026-07-29~30）：
+*Phase 0 / 0.5 / 1 / 1.5 / 1.6 / 1.7 ✅ 已实现（2026-07-29~30）：
 - Phase 0：4 张表 + `commodity_engine/collector.py` + `daily_collect` step3.5 + 历史回填 32324 行/8品种 + 外盘回写 `global_history` 的 XAU/CL/HG。数据源实测可行、幂等自愈、run_daily 自动带动。
 - Phase 0.5：`commodity_health.py` 四类检查，接入 step3.5b，输出 `commodity_health.json`（overall=HEALTHY）。
 - Phase 1：`commodity_engine/scoring.py`，AU/CU/SC v1 权重，复用 Gold Engine 宏观逻辑（DB 源，不依赖 thsdk 实时），落 `commodity_factor_daily` 750 行，接入 step3.5c，解释型输出。
 - Phase 1.5：`commodity_engine/adapter.py` 统一 AssetSignal 协议 + CIO `global_asset_obs` 字段与 `_build_global_asset_obs` 接线 + 日报「全球资产观察」区块（本地/公众号双渲染，介于为什么与失效条件之间），机会排序不含配置比例。
 - Phase 1.6：`commodity_engine/snapshot.py` Global Asset Snapshot（DXY/US10Y/TIPS/BTC + 商品评分 → 风险偏好 Risk On/Neutral/Risk Off 粗判）+ CIO 并入 `global_asset_obs.risk_state` + 日报「🌐 风险偏好」行渲染。
-下一步（用户确认开发顺序）：Phase 1.8 统一 AssetSignal 协议覆盖 A股/ETF/债券 → Phase 2 加 **Asset Regime Engine 中间层**（Commodity→Regime→IC→CIO）+ 真实资产配置（股票%/商品%/现金%）+ 供需库存接口（commodity_supply_daily）→ Phase 3 资产配置模型。Phase 2 暂缓（用户明确要求）。*
+- Phase 1.7：`backend/regime_history.py` Regime 历史验证层（逐日回溯 risk_state + 资产状态 + 远期收益落 `regime_history` 表）+ `daily_collect` step3.5d 接入；243 样本验证三状态模型同质化严重（236 Neutral/7 Risk On/0 Risk Off），佐证 Phase 2 六状态必要性。
+下一步（用户确认开发顺序，2026-07-30 调整为 1.7 先于 1.8）：Phase 1.8 统一 AssetSignal 协议覆盖 A股/ETF/债券 → Phase 2 加 **Asset Regime Engine 中间层（六状态模型：Liquidity Expansion / Growth Recovery / Inflation Shock / Liquidity Tightening / Risk Aversion / Transition）**（Commodity→Regime→IC→CIO）+ 真实资产配置（股票%/商品%/现金%）+ 供需库存接口（commodity_supply_daily）→ Phase 3 资产配置模型。Phase 2 暂缓（用户明确要求，需先积累样本+回测）。*

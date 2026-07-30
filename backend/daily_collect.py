@@ -112,6 +112,9 @@ def collect(only=None):
     # 3.5c) 商品评分引擎（Commodity OS Phase 1：AU/CU/SC → commodity_factor_daily）
     if only in (None, "commodity", "align", "factor"):
         _append(ensure_commodity_factor())
+    # 3.5d) Regime 历史验证层（Phase 1.7：逐日回溯 risk_state + 远期收益，训练 Phase 2 基础）
+    if only in (None, "regime", "commodity", "align", "factor"):
+        _append(ensure_regime_history())
     logpath = os.path.join(OUT, "collect.log.json")
     with open(logpath, "w", encoding="utf-8") as f:
         json.dump(log, f, ensure_ascii=False, indent=2, default=str)
@@ -247,6 +250,23 @@ def ensure_commodity_factor():
                 "detail": res}
     except Exception as e:
         return {"step": "commodity_factor", "ok": False, "rc": -1,
+                "note": f"{type(e).__name__}: {str(e)[:200]}"}
+
+
+def ensure_regime_history():
+    """Regime 历史验证层（Phase 1.7 入口）。
+
+    调用 regime_history.build_regime_history()：逐日回溯 risk_state（复用 snapshot 粗判）
+    + 资产状态 + 未来 1/5/20 日收益，落 regime_history 表。幂等 upsert。
+    仅记录与回溯，不预测、不给配置比例；是 Phase 2 Asset Regime Engine 的训练基础。
+    """
+    try:
+        from regime_history import build_regime_history
+        res = build_regime_history()
+        return {"step": "regime_history", "ok": True,
+                "note": f"回溯 {res.get('built', 0)} 日（样本 {res.get('samples', 0)}）"}
+    except Exception as e:
+        return {"step": "regime_history", "ok": False, "rc": -1,
                 "note": f"{type(e).__name__}: {str(e)[:200]}"}
 
 

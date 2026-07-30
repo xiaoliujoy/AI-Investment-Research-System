@@ -22,12 +22,11 @@ Global Asset Snapshot — Phase 1.6
 from __future__ import annotations
 
 import json
-import os
 import sqlite3
 from datetime import datetime
 from typing import Any, Optional
 
-_DB_PATH = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "database", "vibe_research.db"))
+from db import get_conn  # 统一 DB 连接源（防止 _DB_PATH 类路径 bug）
 
 # ── 风险状态阈值 ──────────────────────────────────────────────
 # 基于 DXY + US10Y + BTC + 商品均值 的综合得分粗判
@@ -41,7 +40,7 @@ _REGIME_LABELS = ["Risk Off", "Neutral", "Risk On"]
 
 
 def _db_conn() -> sqlite3.Connection:
-    return sqlite3.connect(_DB_PATH)
+    return get_conn()
 
 
 def _latest_value(symbol: str) -> Optional[dict]:
@@ -98,14 +97,19 @@ def _latest_commodity_factor() -> list[dict]:
     return rows
 
 
-def _score_macro_item(d: Optional[dict]) -> float:
-    """给单个宏观数据打分(0~100)，用于 regime 粗估。"""
-    if not d or d.get("value") is None:
+def _score_macro_item(symbol: str, value: Optional[float]) -> float:
+    """给单个宏观数据打分(0~100)，用于 regime 粗估。
+
+    symbol 必须显式传入（"DXY"/"US10Y"/"BTC"），不再靠 dict 内容猜——
+    旧实现靠 str(dict) 里是否含 "dxy" 判断，而调用方传 {"value":..} 永远不含，
+    导致 DXY/BTC 被错误当成美债收益率打分（Phase 1.7 回溯时发现）。
+    """
+    if value is None:
         return 50.0  # 无数据给中性分
 
-    v = d["value"]
-    # DXY: <98 强 Risk On / ~100 Neutral / >103 Risk Off
-    if "dxy" in str(d).lower():
+    v = value
+    if symbol == "DXY":
+        # <97 强 Risk On / ~100 Neutral / >102 Risk Off
         if v < 97:
             return 75
         elif v < 100:
@@ -114,24 +118,25 @@ def _score_macro_item(d: Optional[dict]) -> float:
             return 45
         else:
             return 25
-
-    # US10Y: <4.0 Risk On / ~4.5 Neutral / >5.0 Risk Off
-    if v < 3.8:
-        return 72
-    elif v < 4.5:
-        return 55
-    elif v < 5.0:
-        return 38
-    else:
-        return 22
-
-    # BTC: >70k Risk On / ~60k Neutral / <45k Risk Off
-    if v > 70000:
-        return 75
-    elif v > 55000:
-        return 52
-    else:
-        return 28
+    if symbol == "US10Y":
+        # <3.8 Risk On / ~4.5 Neutral / >5.0 Risk Off
+        if v < 3.8:
+            return 72
+        elif v < 4.5:
+            return 55
+        elif v < 5.0:
+            return 38
+        else:
+            return 22
+    if symbol == "BTC":
+        # >70k Risk On / ~55k Neutral / <45k Risk Off
+        if v > 70000:
+            return 75
+        elif v > 55000:
+            return 52
+        else:
+            return 28
+    return 50.0  # 未知 symbol 给中性分
 
 
 def _derive_risk_state(macro_items: dict) -> dict:
@@ -147,7 +152,7 @@ def _derive_risk_state(macro_items: dict) -> dict:
     btc = macro_items.get("btc")
 
     for key, item in [("DXY", dxy), ("US10Y", us10y), ("BTC", btc)]:
-        s = _score_macro_item(item)
+        s = _score_macro_item(key, item.get("value") if item else None)
         scores.append(s)
         if item and item.get("value") is not None:
             drivers.append(f"{key}={item['value']}")
