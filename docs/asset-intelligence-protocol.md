@@ -14,7 +14,7 @@
 | 资产 | 现状（Phase 1.7 之前） | 问题 |
 |------|----------------------|------|
 | 商品 | `commodity_engine/adapter.py` → `AssetSignal{score, stage, confidence(字符串), drivers, risks}` | 最接近协议，但 `stage` 仅为商品用语、`confidence` 为字符串 |
-| A股 | `equity_engine/adapter.py` → `AssetIntelligence{asset_class=equity, symbol=CN_A_SHARE, ...}`（Phase 1.8-B 抽离自旧 `_derive_a_share_env`，判断逻辑归 `analysis.py`，I/O 归 `adapter.py`） | **已纳入协议**，与商品同台排序 |
+| A股 | `equity_engine/adapter.py` → `AssetIntelligence{asset_class=equity, symbol=CN_EQ_ALL, ...}`（Phase 1.8-B 抽离自旧 `_derive_a_share_env`，判断逻辑归 `analysis.py`，I/O 归 `adapter.py`） | **已纳入协议**，与商品同台排序 |
 | 债券 / ETF / 现金 / BTC / FX | 无结构化输出 | 无法进入统一排序与 Regime 推导 |
 
 AIP 让**每个资产都回答同一组六个问题**，使 IC / CIO / Regime Engine 能用同一套语义消费。
@@ -29,7 +29,8 @@ AIP 让**每个资产都回答同一组六个问题**，使 IC / CIO / Regime En
 @dataclass
 class AssetIntelligence:
     asset_class: str        # 资产类别枚举（见 §2）
-    symbol: str             # 标的代码（"AU0" | "CU0" | "SC0" | "A_SHARE" | "US10Y" | "DXY" | ...）
+    symbol: str             # 标的代码（"AU0" | "CU0" | "SC0" | "CN_EQ_ALL" | "US10Y" | "DXY" | ...）
+                            # 注：A股用 CN_EQ_ALL（资产集合），非单只个股/单只 ETF（如 CN_EQ_TECH）
     name: str               # 人类可读名（"沪铜" | "A股" | "美债10Y" | "美元指数"）
     state: str              # 资产自身状态（语义化，见 §3）
     score: float            # 0-100 强弱（越高 = 越 favorable / 越占优）
@@ -146,6 +147,24 @@ def confidence_label(c: float) -> str:
 > 旧 `AssetSignal.confidence` 为字符串「高/中/低」，AIP 升级为 **0-1 浮点 + 标签**，
 > 既保留展示可读性，又支持排序加权与 Regime 投票。
 
+### ⚠️ §7.5 `score` 与 `confidence` 必须语义分离（Phase 1.8-C 用户审计 #2）
+
+两者极易被实现者「同源过强」而退化成同一个数字，必须明确区分：
+
+| 维度 | `score` | `confidence` |
+|------|---------|--------------|
+| 回答的问题 | **「这个资产现在有多强 / 多 favorable？」**（方向 + 强弱） | **「我对这个判断有多确定？」**（信号质量） |
+| 取值范围 | 0–100（越高越占优） | 0–1（越高越可靠） |
+| 来源 | 方向类因子合成（IC 裁决 / 广度 / 主线 / 斜率） | 信号质量类因子（数据新鲜度 / 健康度 / 多子因子一致性 / 样本充分性） |
+| 能否独立变化 | 能：高 score 也可低 confidence（如强方向但数据陈旧） | 能：低 score 也可高 confidence（如明确偏弱但数据极干净） |
+| 跨资产消费 | 机会排序（降序比较） | 排序加权 + 展示标签 + Regime 投票权重 |
+
+**铁律**：
+- `score` 与 `confidence` **不得由同一组输入线性推导**（例：不能 `confidence = score/100`）。
+- 降级占位（中性 / 缺数据）应给**低 score + 低 confidence**（如 score=22.5、confidence=0.30），
+  而不是高 confidence 掩盖低确定性。
+- 各 adapter 须在 `analyze_*` / `_to_signal` 内分别构造二者，并在注释中标明各自来源。
+
 ---
 
 ## 8. 校验规则（根因防御，呼应 `_DB_PATH` 可靠性教训）
@@ -168,7 +187,7 @@ def confidence_label(c: float) -> str:
 | asset_class | Adapter 模块 | 数据源 | Phase 1.8 状态 |
 |-------------|-------------|--------|---------------|
 | commodity | `commodity_engine/adapter.py`（**重构**） | `commodity_factor_daily` + `commodity_health.json` | ✅ 实现（补 `trend`/`state`/`confidence` 浮点） |
-| equity (A股) | `a_share_adapter.py`（**新增，从 `cio_agent._derive_a_share_env` 抽出**） | IC `can_buy` + `sentiment.breadth` + `market_daily` + L4 `main_lines` | ✅ 实现 |
+| equity (A股) | `equity_engine/adapter.py`（**Phase 1.8-B 新增，从 `cio_agent._derive_a_share_env` 抽出**；判断逻辑归 `equity_engine/analysis.py`，I/O 归 `adapter.py`） | IC `can_buy` + `sentiment.breadth` + L4 `main_lines` | ✅ 实现 |
 | bond | `bond_adapter.py`（骨架） | `global_history` 利率（US10Y / CN10Y）+ 收益率曲线 | 🚧 骨架，不编造评分 |
 | etf | `etf_adapter.py`（骨架） | 底层资产评分聚合（待定） | 🚧 骨架 |
 | cash | 常量 | — | ✅ 常量 `持有` |
@@ -184,7 +203,7 @@ def confidence_label(c: float) -> str:
 
 | 消费方 | 如何消费 AIP |
 |--------|-------------|
-| **CIO** (`_build_global_asset_obs`) | 合并所有 adapter 输出 → 跨资产机会排序（已有逻辑保留）；A股以 `state=等待确认` 占位（IC 裁决前）。 |
+| **CIO** (`_build_global_asset_obs`) | 合并所有 adapter 输出（commodity + equity + 未来 bond/etf）→ 跨资产机会排序；并调用 `build_universe_snapshot()` 产出统一宇宙快照（Phase 1.9 Dashboard 输入）。IC 裁决层（can_buy/direction）由 CIO 从 `brain.committee` 读取，不进 AIP `detail`。 |
 | **Regime Engine**（Phase 2） | 消费各资产 `state` + Global Snapshot `risk_state` → 推导**六状态全局 Regime**（Liquidity Expansion / Growth Recovery / Inflation Shock / Liquidity Tightening / Risk Aversion / Transition）。 |
 | **Backtest Dashboard**（Phase 1.9） | 消费 `regime_history` + 各 `state` 历史 → 环境有效性报告。 |
 

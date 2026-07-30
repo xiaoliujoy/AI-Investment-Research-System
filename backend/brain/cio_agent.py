@@ -2418,27 +2418,37 @@ def _build_action_cards_block(memo) -> dict:
                 "holding_actions": [], "review_actions": []}
 
 
-def _equity_to_legacy_env(equity: dict) -> dict:
-    """把 A股 AIP 信号（detail 含 legacy 上下文）转回旧 a_share_env 形状，
-    供 build_global_snapshot 与 os2_report 的 A股环境句兼容使用。
+def _equity_to_legacy_env(equity: dict, brain: dict) -> dict:
+    """把 A股 AIP 信号转回旧 a_share_env 形状，供 build_global_snapshot 与
+    os2_report 的 A股环境句兼容使用。
 
+    架构对齐（Phase 1.8-C #4）：
+      - 市场事实（广度 / 主线）来自 equity.detail.market_context（AIP 私有，不污染跨资产比较）
+      - IC 裁决（can_buy / direction）属 IC Decision Layer，从 brain.committee 读取，
+        不再藏在 AIP 的 detail 里，避免污染统一资产语言。
     CIO 主链路已统一消费 AssetIntelligence；此函数仅为向后兼容，不承载判断逻辑。
     """
-    d = (equity or {}).get("detail", {}) or {}
-    can_buy = d.get("can_buy", "UNKNOWN")
-    up_pct = d.get("breadth_pct", 0) or 0
-    breadth_label = d.get("breadth_label") or (
+    equity = equity or {}
+    d = equity.get("detail", {}) or {}
+    ctx = d.get("market_context", {}) or {}
+    # IC 裁决层：从 brain.committee 直接取，不依赖 equity.detail
+    committee = (brain or {}).get("committee") or (brain or {}).get("decision") or {}
+    can_buy = committee.get("can_buy", "UNKNOWN")
+    direction = committee.get("direction", "")
+    # 市场事实层：从 AIP market_context 取
+    up_pct = ctx.get("breadth_pct", 0) or 0
+    breadth_label = ctx.get("breadth_label") or (
         "普涨" if up_pct >= 60 else ("普跌" if up_pct <= 40 else "分化"))
     status = {"YES": "偏多", "CAUTION": "中性", "NO": "偏空"}.get(can_buy, "未知")
     return {
         "status": status,
-        "direction": d.get("direction", ""),
+        "direction": direction,
         "can_buy": can_buy,
         "breadth_pct": up_pct,
         "breadth_label": breadth_label,
-        "top_sector": d.get("top_sector", "—"),
+        "top_sector": ctx.get("top_sector", "—"),
         "top_stage": "",
-        "main_lines": d.get("main_lines_names", []),
+        "main_lines": ctx.get("main_lines_names", []),
     }
 
 
@@ -2473,9 +2483,10 @@ def _rank_note(a: dict) -> str:
         return ("关注突破跟进" if t == "up" else
                 ("等待企稳信号" if t == "down" else "区间观望，放量再跟进"))
     if a.get("asset_class") == "equity":
-        d = a.get("detail", {}) or {}
-        return (f"IC 裁决 {d.get('can_buy', '?')}；主线 {d.get('top_sector', '—')}；"
-                f"图形买点人工定（上涨家数占比 {d.get('breadth_pct', 0)}%）")
+        # can_buy 不进 AIP detail，这里只消费市场事实（market_context），避免污染统一语言
+        ctx = (a.get("detail", {}) or {}).get("market_context", {}) or {}
+        return (f"主线 {ctx.get('top_sector', '—')}；"
+                f"图形买点人工定（上涨家数占比 {ctx.get('breadth_pct', 0)}%）")
     return ""
 
 
@@ -2491,6 +2502,7 @@ def _build_global_asset_obs(brain: dict, tree: dict) -> dict:
         from commodity_engine.snapshot import build_global_snapshot, format_snapshot_text
         from equity_engine.adapter import build_equity_signal
         from asset_intelligence.validator import run_protocol_health
+        from asset_intelligence.universe import build_universe_snapshot
 
         comm = build_commodity_signals()
         equity = build_equity_signal(brain, tree)
@@ -2502,11 +2514,13 @@ def _build_global_asset_obs(brain: dict, tree: dict) -> dict:
         assets.sort(key=lambda x: (x.get("score") or 0), reverse=True)
 
         ranking = _merge_opportunity_ranking(assets)
-        a_share_env = _equity_to_legacy_env(equity)
+        a_share_env = _equity_to_legacy_env(equity, brain)
         # Phase 1.6：跨资产风险状态快照（DXY/US10Y/BTC 粗判）
         snap = build_global_snapshot(a_share_env=a_share_env)
         # 组合协议健康检查（商品 + 股票统一审计，不落库）
         protocol_health = run_protocol_health(assets)
+        # Phase 1.8-C：统一资产宇宙快照（Phase 1.9 Regime Backtest Dashboard 标准输入）
+        universe_snapshot = build_universe_snapshot(assets)
 
         return {
             "has_data": comm.get("has_data", False) or bool(equity),
@@ -2522,6 +2536,7 @@ def _build_global_asset_obs(brain: dict, tree: dict) -> dict:
             "snapshot": snap,
             "snapshot_text": format_snapshot_text(snap),
             "protocol_health": protocol_health,
+            "universe_snapshot": universe_snapshot,
             "note": ("本区块仅为全球资产观察与机会排序，不构成配置比例建议；"
                      "资产配置模型待 Phase 3 回测验证后上线。"),
         }

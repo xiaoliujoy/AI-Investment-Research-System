@@ -90,7 +90,7 @@ class TestBuildEquitySignal(unittest.TestCase):
         brain, tree = _fake_brain_tree(_BULLISH)
         sig = build_equity_signal(brain, tree)
         self.assertEqual(sig["asset_class"], "equity")
-        self.assertEqual(sig["symbol"], "CN_A_SHARE")
+        self.assertEqual(sig["symbol"], "CN_EQ_ALL")
         self.assertEqual(sig["name"], "A股")
         self.assertEqual(set(sig.keys()), _AIP_KEYS)
 

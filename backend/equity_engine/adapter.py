@@ -13,16 +13,19 @@ equity_engine/adapter.py —— A股 → Asset Intelligence Protocol 适配器�
 
 输出 build_equity_signal(brain, tree) -> dict（AssetIntelligence，AIP 标准字段）：
   {
-    "asset_class": "equity", "symbol": "CN_A_SHARE", "name": "A股",
+    "asset_class": "equity", "symbol": "CN_EQ_ALL", "name": "A股",
     "state": "...", "score": 0-100, "trend": up/down/sideways,
     "drivers": [...], "risks": [...], "confidence": 0-1, "confidence_label": "...",
-    "detail": { can_buy, direction, breadth_pct, breadth_label,
-                top_sector, main_lines_names }   # legacy 上下文
+    "detail": { "market_context": { breadth_pct, breadth_label,
+                top_sector, main_lines_names }, "note": "..." }
+                # market_context = 纯市场事实；IC 裁决(can_buy/direction) 不在此，
+                # 属 IC Decision Layer，由 CIO 从 brain.committee 读取（详见 Phase 1.8-C）
   }
 
 边界（与商品 adapter 一致）：
   - 不产出买卖指令 / 仓位建议（那是 IC/CIO 的权责）。
-  - 失败降级：返回中性占位（can_buy=UNKNOWN），绝不抛异常、绝不崩日报。
+  - 失败降级：返回中性占位（can_buy=UNKNOWN），绝不抛异常、绝不崩日报；
+    降级路径带 logger.warning(exc_info) 便于研发侧追踪根因。
 ═══════════════════════════════════════════════════════════════
 
 用法：
@@ -34,6 +37,9 @@ from __future__ import annotations
 import os
 import sys
 import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 _BACKEND = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _BACKEND not in sys.path:
@@ -46,8 +52,9 @@ from asset_intelligence.protocol import (
 from asset_intelligence.validator import validate_and_clean
 from equity_engine.analysis import analyze_equity
 
-# A股统一符号（单市场，不拆分个股；个股由用户人工看盘定）
-EQUITY_SYMBOL = "CN_A_SHARE"
+# A股统一符号：A股是「资产集合」而非单一品种，故用 CN_EQ_ALL
+# （区别于单只 ETF 如 CN_EQ_TECH，避免未来符号冲突）。
+EQUITY_SYMBOL = "CN_EQ_ALL"
 EQUITY_NAME = "A股"
 
 
@@ -102,14 +109,17 @@ def _wrap(params: dict) -> dict:
         drivers=r["drivers"],
         risks=r["risks"],
         confidence=r["confidence"],
+        # detail 只承载「市场事实」(market_context)，不承载 IC 裁决(can_buy/direction)。
+        # can_buy/direction 属 IC Decision Layer，由 CIO 从 brain.committee 读取，
+        # 不污染 AIP 的 detail（详见 Phase 1.8-C 用户架构审计 #4）。
         detail={
-            "can_buy": r["can_buy"],
-            "direction": r["direction"],
-            "breadth_pct": r["breadth_pct"],
-            "breadth_label": r["breadth_label"],
-            "top_sector": r["top_sector"],
-            "main_lines_names": r["main_lines_names"],
-            "note": "A股本场环境判断（IC 裁决 + 广度 + 主线），不构成买卖指令",
+            "market_context": {
+                "breadth_pct": r["breadth_pct"],
+                "breadth_label": r["breadth_label"],
+                "top_sector": r["top_sector"],
+                "main_lines_names": r["main_lines_names"],
+            },
+            "note": "A股环境判断（IC裁决+广度+主线），不构成交易指令",
         },
     )
     cleaned, _ = validate_and_clean(ai)
@@ -140,7 +150,11 @@ def build_equity_signal(brain: dict, tree: dict) -> dict:
     try:
         params = _extract_params(brain, tree)
         return _wrap(params)
-    except Exception:
+    except Exception as e:
+        # 降级路径可追踪：研发侧能从日志定位根因，生产侧不崩日报（中性占位）。
+        logger.warning(
+            "equity_engine.adapter.build_equity_signal 降级为中性占位: %s", e, exc_info=e
+        )
         return _neutral_fallback()
 
 
