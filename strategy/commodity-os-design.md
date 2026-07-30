@@ -313,6 +313,17 @@ Phase 3 实现，但架构预留（扩展 `a_share_link` 到量化级）。这�
 - **关键发现（纠偏）**：回溯修复后，原 Phase 1.6 实测「Risk Off 27.3」被证实是 `_score_macro_item` bug 的**假象**（旧逻辑把 DXY=100.74/BTC=63366 错当美债收益率打分→22，均值 27.3 错落 Risk Off）。修复后线上 2026-07-30 真实状态 = **Neutral 45.0**（DXY→45 / US10Y→38 / BTC→52）。历史 243 样本中 236 为 Neutral、仅 7 为 Risk On、0 为 Risk Off——**三状态粗模型在当前宏观下严重同质化**，恰好佐证用户「两状态太粗、必须六状态」的判断，也说明 Phase 2 六状态模型 + 更多样本是必经之路。
 - **边界遵守**：只记录与回溯，不预测、不给配置比例；明确标注「样本远未达 5 年回测要求，当前仅建立闭环」。
 
+### 9.6 Phase 1.8 重新定义：Asset Intelligence Protocol（AIP，契约阶段）
+
+- **用户 2026-07-30 重新定义**：Phase 1.8 目标**不是**「接口统一」，而是建立**统一投资语言**——让股票/商品/债券/ETF/现金/BTC/FX 都回答同一组六个问题（state / score / trend / driver / risk / confidence）。完整契约见 **[`docs/asset-intelligence-protocol.md`](../docs/asset-intelligence-protocol.md)**，并已在 [`docs/trading-os-architecture.md`](./trading-os-architecture.md) Layer 2 升级为 AIP。
+- **与旧统一 AssetSignal 的差异**：新增 `trend`（动量方向）、`state` 语义化（旧 `stage` 仅商品用语）、`confidence` 升级为 0-1 浮点；`asset`→`asset_class`（枚举约束）。
+- **Phase 1.8 实现范围（契约确定，代码待实现）**：
+  - 商品 adapter 重构到 AIP（补 `trend` / `state` / `confidence` 浮点）
+  - 新增 `a_share_adapter.py`，把 `cio_agent._derive_a_share_env` 内联派生**抽出独立化**
+  - 债券/ETF/现金/BTC/FX 留**骨架**，严守「不编造评分」边界
+- **新增 Phase 1.9（用户提议）**：Regime Backtest Dashboard——把 Phase 1.7 的 `regime_history` 验证数据做成可视化有效性报告，作 YouTube/GitHub 展示素材。
+- 当前状态：**契约已冻结，代码未实现**（本回合按用户选择「先出协议规范文档」）。
+
 ---
 
 *Phase 0 / 0.5 / 1 / 1.5 / 1.6 / 1.7 ✅ 已实现（2026-07-29~30）：

@@ -219,29 +219,39 @@ backend/
 |------|---------|-------------|------|
 | 债券 | Phase 2.x | 利率敏感度 + 信用利差 + 久期 | 国债收益率曲线为核心输入 |
 | FX（美元） | Phase 2.x | DXY趋势 + 利差 + 避险情绪 | 已有 DXY 数据在 global_history |
-| ETF | Phase 1.8 | 底层资产评分聚合 | 统一 AssetSignal 协议覆盖 |
+| ETF | Phase 1.8 | 底层资产评分聚合 | Asset Intelligence Protocol 覆盖 |
 | BTC | Phase 3.x | 风险偏好代理 + 与传统资产相关性 | 已有 BTC 价格数据 |
 
-### 统一 AssetSignal 协议（Phase 1.5 落地 / Phase 1.8 扩展）
+### Asset Intelligence Protocol（AIP，Phase 1.8 契约 · 升级自统一 AssetSignal）
+
+> 完整契约（字段规范 / 各资产 adapter 映射 / 校验规则 / 消费方约定）见独立文档：
+> **[`docs/asset-intelligence-protocol.md`](./asset-intelligence-protocol.md)**
+
+Phase 1.8 的核心不是「接口统一」，而是让**所有资产进入同一套投资语言**——每个资产都回答六个同样的问题：状态 / 强弱 / 趋势 / 为什么 / 什么会错 / 可信度。
 
 ```python
 @dataclass
-class AssetSignal:
-    asset: str           # "commodity" | "equity" | "bond" | "fx" | "crypto"
-    symbol: str          # "AU0" | "CU0" | "SC0" | "A_SHARE" | ...
-    name: str            # "沪铜" | "A股" | ...
-    category: str        # "贵金属" | "有色金属" | "能源" | "大盘" | ...
-    score: float         # 0-100
-    stage: str           # "上涨趋势" | "下跌趋势" | "震荡整理" | ...
-    confidence: str      # "高" | "中" | "低"
-    drivers: list[str]   # ["宏观: DXY走弱支撑", "资金: OI增仓"]
-    risks: list[str]     # ["波动率偏高", "换月风险"]
-    detail: dict         # 引擎特定扩展字段
+class AssetIntelligence:           # 旧 AssetSignal 的升级版
+    asset_class: str     # equity | commodity | bond | etf | cash | crypto | fx
+    symbol: str          # "AU0" | "CU0" | "SC0" | "A_SHARE" | "US10Y" | ...
+    name: str            # "沪铜" | "A股" | "美债10Y" | ...
+    state: str           # 资产自身状态（六状态语义化，见契约文档）
+                         #   equity/etf: 上行/震荡/下行
+                         #   commodity:  上行/震荡/下行(+避险/周期/供给修饰)
+                         #   bond:       牛/震荡/熊(收益率下行=牛)
+                         #   fx:         美元强/中性/美元弱
+    score: float         # 0-100 强弱（越高越 favorable）
+    trend: str           # up | down | sideways  （价格/评分动量派生）
+    drivers: list[str]   # ["宏观: DXY走弱支撑", "资金: OI增仓"]  ≥1
+    risks: list[str]     # ["波动率偏高", "换月风险"]            ≥1
+    confidence: float    # 0-1 浮点 + 标签（≥0.7 高 / 0.4-0.7 中 / <0.4 低）
+    detail: dict = {}    # 引擎特定扩展字段（可选）
 ```
 
-**关键设计决策：**
-- 所有资产引擎输出同一结构，CIO 只消费标准化结果。
-- A股暂无独立评分引擎（留 Phase 1.8），当前以「等待确认」占位 + IC 裁决派生环境描述。
+**关键设计决策（与旧 AssetSignal 的差异）：**
+- 新增 `trend`（动量方向）、`state` 语义化（旧 `stage` 仅商品用语）、`confidence` 升级为 0-1 浮点。
+- 所有资产引擎输出同一结构，CIO / Regime Engine 只消费标准化结果。
+- A股 adapter 在 Phase 1.8 从 `cio_agent._derive_a_share_env` 内联派生**抽出独立化**（`a_share_adapter.py`），进入同一套语言。
 - **不含配置比例**——配置模型留 Phase 3，需回测/回撤/相关性验证。
 
 ---
@@ -393,11 +403,16 @@ v3.0-alpha (当前 ✓ 架构冻结节点)
   │
   ▼
 v3.0-beta (下一站，2026-07-30 用户调整顺序)
-  │  Phase 1.8 统一 AssetSignal 覆盖 A股/ETF/债券
+  │  Phase 1.8 Asset Intelligence Protocol（AIP，六元组统一投资语言）
+  │             ├─ 契约文档 docs/asset-intelligence-protocol.md
+  │             ├─ 商品 adapter 重构到 AIP（state/trend/confidence浮点）
+  │             ├─ A股 adapter 从 cio_agent 抽出独立化（a_share_adapter.py）
+  │             └─ 债券/ETF/现金/BTC/FX 留骨架（不编造评分）
+  │  Phase 1.9 Regime Backtest Dashboard（Phase1.7 验证数据可视化，YouTube/GitHub 素材）
   │
   ▼
 v3.0-stable
-  │  Phase 2   Asset Regime Engine（六状态模型，非两状态）
+  │  Phase 2   Asset Regime Engine（六状态模型，非两状态，吃 AIP.state + snapshot.risk_state）
   │  Phase 2.5 Portfolio Allocation（需回测验证后再开放比例）
   │
   ▼
