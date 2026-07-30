@@ -1,7 +1,7 @@
 # Asset Intelligence Protocol（AIP）— 统一投资语言契约
 
-> 状态：Phase 1.8 契约 v1.0（**core 已落地** — `backend/asset_intelligence/{protocol,validator}.py` + 单元测试 17/17 通过；**商品 adapter 迁移完成**；**A股 adapter + CIO 统一消费已完成**（Phase 1.8-B：equity_engine/{analysis,adapter}.py + CIO 改为消费 List[AssetIntelligence]，单测 9/9 通过））
-> 归属：Trading OS v3.0-beta 第一站
+> 状态：Phase 1.9 收尾（AIP core✅ + 商品/A股 adapter✅ + History✅ + Validation Engine✅ + 1.9-C 真实样本积累✅；1.9-D 观察窗口稳定化进行中）（**core 已落地** — `backend/asset_intelligence/{protocol,validator}.py` + 单元测试 17/17 通过；**商品 adapter 迁移完成**；**A股 adapter + CIO 统一消费已完成**（Phase 1.8-B：equity_engine/{analysis,adapter}.py + CIO 改为消费 List[AssetIntelligence]，单测 9/9 通过））
+> 归属：Trading OS v3.0-alpha 第一站（Phase 1.9-A / 1.9-B1 / 1.9-C ✅；1.9-D 观察窗口稳定化进行中）
 > 上游：Layer 1 Asset Data → 本契约 → Layer 3 Investment Decision（IC / CIO / Regime Engine）
 > 设计哲学：系统只「观察 + 排序 + 判环境」，**不输出配置比例**（配置模型留 Phase 3，需回测/回撤/相关性验证）
 
@@ -323,3 +323,96 @@ asset_intelligence/
   （`history_summary()`：已落库天数/总行数/最新日真实信号数）并区分
   `recorded_signals`（已落库，含待验证）与 `total_signals`（可验证），避免「暂无样本」误导。
 - **下一步**：观察累积质量；待 30/90/180 天样本到位再做 1.9-B2 Dashboard 与 Phase 2 六状态。
+- **Phase 1.9-D 已启动**（见 §14）：进入「观察窗口稳定化」期（≥2–4 周），期间不新增复杂功能、
+  保持每日 15:30 自动化累积；设 2026-08-15 观察节点复检。
+
+---
+
+## 14. 冻结原则（Phase 1.9-C 后，2026-07-30 用户确认）
+
+Phase 1.9-C 使系统从「能生成观点」进入「能积累证据」。以下两条原则作为长期规则冻结，
+任何后续代码（含 Phase 1.9-B2 / Phase 2 / Dashboard）均须遵守。
+
+### 原则 1：观察层与验证层必须分离（Observation ≠ Validation）
+
+```
+Asset Intelligence (Observation)
+        │
+        ▼
+   History (存储)
+        │
+        ▼
+  Validation (验证)
+```
+
+- **Observation Layer** 只负责「生成观点 / 排序 / 判环境」，永不在生成当日引用未来数据。
+- **Validation Layer** 只负责「等待未来窗口 → 计算远期收益 → 评估区分度」，
+  不得反哺或污染 Observation 的当日判断。
+- **禁止未来函数**：在 Observation 阶段用「信号产生后的收益」声称成功率
+  （如 score=80 当日即称成功率80%）属错误——未来尚未发生。
+
+### 原则 2：所有验证结果必须带时间状态（Time Discipline）
+
+每个已记录信号必须可回答「有没有经过未来结果检验」，状态机：
+
+| status          | 含义               | 进入条件                          |
+|-----------------|--------------------|-----------------------------------|
+| `pending`       | 已记录，等待未来数据  | T+N 窗口未到（未来交易日不存在）    |
+| `validated`     | 已有结果，可参与验证  | 未来收益窗口已闭合且有价            |
+| `insufficient`  | 数据不足             | 窗口内缺失价格/因子                 |
+| `invalid`       | 异常               | 缺价/缺因子/落库异常                |
+
+- **计划落库字段（未来实现，非当前）**：`asset_intelligence_history` 增加 `validation_status` 列；
+  报告按状态分组统计。当前 `history_accumulation` 已用 `recorded_signals`（含 pending）
+  与 `total_signals`（= validated）二元近似表达。
+- **`available_after`**：`pending` 信号标注最早可验证日期 = `signal_date + 20 交易日`，
+  使「等待」可被显式表达，避免误读为「系统无样本」。
+- 价值：把「最新信号尚无未来数据 → 不可验证」与「数据库无数据」彻底区分
+  （Phase 1.9-B1 的「假 bug」即此——报告语言混淆了两个概念，1.9-C 已修正）。
+
+### 成熟度快照（2026-07-30，用户评估）
+
+| 能力        | 评价    |
+|-------------|---------|
+| 资产语言(AIP) | ★★★★☆ |
+| 数据工程     | ★★★★☆ |
+| 历史积累     | ★★★★☆ |
+| 验证体系     | ★★★★☆ |
+| 模型有效性   | ★★☆☆☆ |
+
+> 模型有效性偏低属**正常状态**：系统刚进入「等待市场给答案」阶段，需 30 / 90 / 180 天样本逐步解锁。
+
+### Phase 1.9 状态（用户重排，2026-07-30）
+
+| 阶段     | 目标            | 状态              |
+|----------|-----------------|-------------------|
+| 1.9-A    | 历史层           | ✅ 完成            |
+| 1.9-B1   | 验证引擎         | ✅ 完成            |
+| 1.9-C    | 真实样本积累      | ✅ 完成            |
+| 1.9-B2   | Dashboard 可视化  | ⏸ 待样本≥30天     |
+| 1.9-B3   | 对外展示版        | ⏸ 待              |
+| 1.9-D    | 观察窗口稳定化    | 🔜 2026-07-30 启动（≥2–4 周） |
+| Phase 2  | 六状态 Regime     | ⏸ 暂缓（须先验证稳定） |
+
+> 注：编号上 B2 在 C 前，但实际 **C 比 B2 更重要**——Dashboard 是展示，数据积累才是资产。
+
+### Phase 1.9-D：观察窗口稳定化（2026-07-30 启动）
+
+目标：验证三件事；期间**保持每日 15:30 自动化累积、不新增复杂功能**。
+
+1. **每日落库稳定性**：连续交易日 `memo生成 → history写入 → 无重复 → 无缺失`；
+   指标 `daily_write_success_rate`，目标 >99%。
+2. **信号分布质量**：观察 score 分层（90-100 / 70-90 / 50-70 / <50）是否出现差异；
+   若长期全聚 50-70，说明评分无区分度。
+3. **confidence 信息量**：当前商品 confidence=1、A股=0.75（默认值/共振值）；
+   若所有商品恒=1 则只是默认值，未来须加入 数据完整性 / 因子一致性 / 历史稳定性 重算。
+
+**观察节点 2026-08-15**：检查 ① ≥15 交易日样本 ② signal 是否出现可验证数据
+③ score 分层差异 ④ confidence 区分度 → 再决定 1.9-B2 Dashboard 还是调整 Validation Engine。
+
+### Phase 2 六状态 Regime（用户最终决策：暂缓）
+
+不先定义 Regime 再「希望它有效」；正确顺序：
+`观察历史 → 发现有效分界 → 定义 Regime → 验证 → 应用`。
+当前三状态（regime_history 243 样本：236 Neutral / 7 Risk On / 0 Risk Off）区分度不足，
+正是需六状态的证据；但六状态须基于**真实验证结果反推**，而非预设。
