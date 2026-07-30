@@ -973,21 +973,21 @@ def _global_asset_inner(memo, wechat=False):
     for s in signals:
         score = s.get("score")
         score_txt = f'{score:.1f}' if isinstance(score, (int, float)) else "—"
-        arrow = "↑" if s.get("stage") == "上涨趋势" else ("↓" if s.get("stage") == "下跌趋势" else "→")
+        arrow = "↑" if s.get("trend") == "up" else ("↓" if s.get("trend") == "down" else "→")
         nm = f'{s["name"]} {arrow}'
         if wechat:
             rows.append(
                 f'<div style="display:flex;font-size:13px;padding:5px 8px;border-bottom:1px solid #eef1f5;">'
                 f'<div style="flex:2;">{_esc(nm)}</div>'
                 f'<div style="flex:1;text-align:center;">{_esc(score_txt)}</div>'
-                f'<div style="flex:1.4;text-align:center;">{_esc(s.get("stage",""))}</div>'
-                f'<div style="flex:1;text-align:center;">{_esc(s.get("confidence",""))}</div></div>')
+                f'<div style="flex:1.4;text-align:center;">{_esc(s.get("state",""))}</div>'
+                f'<div style="flex:1;text-align:center;">{_esc(s.get("confidence_label",""))}</div></div>')
         else:
             rows.append(
                 f'<div class="ga-row"><span class="ga-c-name">{_esc(nm)}</span>'
                 f'<span class="ga-c-score">{_esc(score_txt)}</span>'
-                f'<span class="ga-c-stage">{_esc(s.get("stage",""))}</span>'
-                f'<span class="ga-c-conf">{_esc(s.get("confidence",""))}</span></div>')
+                f'<span class="ga-c-stage">{_esc(s.get("state",""))}</span>'
+                f'<span class="ga-c-conf">{_esc(s.get("confidence_label",""))}</span></div>')
     if wechat:
         rows.append(
             '<div style="display:flex;font-size:13px;padding:5px 8px;border-bottom:1px solid #eef1f5;background:#faf7ff;">'
@@ -1059,13 +1059,13 @@ def _global_asset_inner(memo, wechat=False):
             rank_items.append(
                 f'<div style="font-size:13px;padding:7px 0;border-bottom:1px dashed #eef1f5;">'
                 f'{r.get("rank")}. {_esc(r.get("name",""))} '
-                f'<span style="color:#8a93a6;">评分 {_esc(score_txt)} · {_esc(r.get("stage",""))}</span> {tag}'
+                f'<span style="color:#8a93a6;">评分 {_esc(score_txt)} · {_esc(r.get("state",""))}</span> {tag}'
                 f'<br><span style="font-size:12px;color:#8a96a3;">{_esc(r.get("note",""))}</span></div>')
         else:
             rank_items.append(
                 f'<div class="ga-rank"><span class="ga-rk">{r.get("rank")}</span>'
                 f'<div class="ga-rk-body"><b>{_esc(r.get("name",""))}</b> '
-                f'<span class="muted">评分 {_esc(score_txt)} · {_esc(r.get("stage",""))}</span> {tag}'
+                f'<span class="muted">评分 {_esc(score_txt)} · {_esc(r.get("state",""))}</span> {tag}'
                 f'<div class="ga-rk-note">{_esc(r.get("note",""))}</div></div></div>')
     rank_html = "".join(rank_items)
     if rank_html:

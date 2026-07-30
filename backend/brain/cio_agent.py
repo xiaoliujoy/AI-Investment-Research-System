@@ -2456,9 +2456,10 @@ def _derive_a_share_env(brain: dict, tree: dict) -> dict:
 
 
 def _merge_opportunity_ranking(commodity_ranking: list, a_share_env: dict) -> list:
-    """合并机会排序：商品（已按评分降序）在前，A股作为「等待确认」项置后。
+    """合并机会排序：商品（已按评分降序，AIP 字段）在前，A股作为「等待确认」项置后。
 
     不含任何配置比例——仅排序与动作提示（Phase 1.5 边界）。
+    商品项读取 AIP 的 state/trend/confidence_label；A股尚未迁移，置 sideways / —。
     """
     merged = []
     for r in (commodity_ranking or []):
@@ -2468,8 +2469,9 @@ def _merge_opportunity_ranking(commodity_ranking: list, a_share_env: dict) -> li
             "name": r.get("name"),
             "symbol": r.get("symbol"),
             "score": r.get("score"),
-            "stage": r.get("stage"),
-            "confidence": r.get("confidence"),
+            "state": r.get("state"),
+            "trend": r.get("trend"),
+            "confidence_label": r.get("confidence_label", "—"),
             "note": r.get("note", ""),
         })
     merged.append({
@@ -2478,8 +2480,9 @@ def _merge_opportunity_ranking(commodity_ranking: list, a_share_env: dict) -> li
         "name": "A股",
         "symbol": "A-SHARE",
         "score": None,
-        "stage": a_share_env.get("status", "未知"),
-        "confidence": "—",
+        "state": a_share_env.get("status", "未知"),
+        "trend": "sideways",        # A股 adapter 接入前不判断动量
+        "confidence_label": "—",
         "note": (f"IC 裁决 {a_share_env.get('can_buy', 'UNKNOWN')}；"
                  f"主线 {a_share_env.get('top_sector', '—')}；"
                  f"等待资金确认（市场{a_share_env.get('breadth_label', '')} "
