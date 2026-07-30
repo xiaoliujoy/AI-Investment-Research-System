@@ -76,6 +76,7 @@ def confidence_calibration() -> dict:
         rows = cur.fetchall()
     except Exception:
         rows = []
+    recorded = len(rows)          # 已落库信号（含尚无未来收益者）
     conn.close()
 
     buckets = {l: {"n": 0, "r20": [], "win": 0} for l in _LABELS}
@@ -107,8 +108,9 @@ def confidence_calibration() -> dict:
     # 校准诊断：High 与 Low 正确率是否有梯度
     by_lab = {x["confidence"]: x for x in out}
     diag = _calibration_diagnosis(by_lab)
+    # total_signals = 可验证样本（已有未来收益）；recorded_signals = 已落库信号（含待验证）
     return {"levels": out, "total_signals": sum(b["n"] for b in buckets.values()),
-            "diagnosis": diag}
+            "recorded_signals": recorded, "diagnosis": diag}
 
 
 def _calibration_diagnosis(by_lab: dict) -> dict:

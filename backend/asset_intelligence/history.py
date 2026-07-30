@@ -211,6 +211,38 @@ def load_universe_panel(symbols: Optional[list[str]] = None,
     return panel
 
 
+def history_summary() -> dict:
+    """累积概览（Phase 1.9-C 观察历史是否在稳定落库）。
+
+    不依赖未来收益，只统计已落库事实：总行数、覆盖交易日数、最新日。
+    """
+    conn = get_conn()
+    cur = conn.cursor()
+    try:
+        total = cur.execute(
+            "SELECT COUNT(*) FROM asset_intelligence_history").fetchone()[0]
+        dates = [r[0] for r in cur.execute(
+            "SELECT DISTINCT date FROM asset_intelligence_history "
+            "ORDER BY date").fetchall()]
+        # 当日（最新日）已落库的真实资产数
+        today = dates[-1] if dates else None
+        if today:
+            n_today = cur.execute(
+                "SELECT COUNT(*) FROM asset_intelligence_history "
+                "WHERE date=? AND enabled=1 AND symbol<>'CASH'",
+                (today,)).fetchone()[0]
+        else:
+            n_today = 0
+    except Exception:
+        total, dates, today, n_today = 0, [], None, 0
+    conn.close()
+    return {"total_rows": total,
+            "distinct_dates": dates,
+            "n_days": len(dates),
+            "latest_date": today,
+            "latest_day_enabled_signals": n_today}
+
+
 if __name__ == "__main__":
     ensure_schema()
     print("asset_intelligence/history.py 模块加载 OK；asset_intelligence_history 表已确保存在")

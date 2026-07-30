@@ -308,3 +308,18 @@ asset_intelligence/
   明示「任何结论仅用于方法验证，不构成投资规则；Phase 2 须待验证稳定后启动」。
 - **A股序列性能**：`stock_daily` 约 2335 万行，`returns.load_price_series` 对 A股聚合
   **绝不**做全表 GROUP BY——仅当确有 CN_EQ_ALL 信号且给定日期区间时做区间受限查询。
+
+### 13.4 Phase 1.9-C：真实样本积累与验证准备（2026-07-30 启动）
+
+- **目标**：让 `asset_intelligence_history` 每日稳定累积真实样本，观察 7~14 天数据质量，
+  再决定 1.9-B2 可视化怎么做。原则：**不急于加模型，先验证已有观察体系能否落库且稳定**。
+- **生产落库已打通**：跑 `notify/push_daily.py --dry-run`（或 run_daily step3）→ `os2_report.write()`
+  钩子 → `save_universe_snapshot()` 落库。首个真实样本：2026-07-30，4 行
+  （CN_EQ_ALL 80.45 / CU0 63.1 / AU0 55.2 / SC0 54.3，均 enabled=1 真实资产）。
+- **自动化**：交易日 15:30 自动化（`automation-1785399819081`）已升级为
+  「采集数据 → 生成研报 → 落库历史」一体化，保证每日累积。
+- **报告诚实性修正**：验证段只统计「有未来收益的可验证样本」，故最新交易日信号
+  尚无未来数据时 `total_signals=0` 是**正确**而非「无样本」。报告新增 `[0] 历史累积` 段
+  （`history_summary()`：已落库天数/总行数/最新日真实信号数）并区分
+  `recorded_signals`（已落库，含待验证）与 `total_signals`（可验证），避免「暂无样本」误导。
+- **下一步**：观察累积质量；待 30/90/180 天样本到位再做 1.9-B2 Dashboard 与 Phase 2 六状态。

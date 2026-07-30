@@ -183,6 +183,43 @@ class TestValidationEngine(unittest.TestCase):
             self.assertIn("暂无样本", rep["overall_caveat"])
         os.remove(p)
 
+    def test_recorded_vs_validatable(self):
+        """已落库但尚无未来收益的信号：recorded>0 但可验证=0。
+        对应 Phase 1.9-C：最新交易日信号尚无未来数据，验证段应为 0 而非『暂无样本』。
+        模拟：清空 seeded 行，只插一个落在价格序列范围之外的最新日信号。"""
+        p = self._tmp()
+        with patch("db._DB_PATH", p):
+            _seed(p)
+            # 清空 seeded 的 10 行，仅保留一个『未来日』信号（无未来收益可验证）
+            conn = sqlite3.connect(p)
+            conn.execute("DELETE FROM asset_intelligence_history")
+            conn.execute(
+                "INSERT INTO asset_intelligence_history "
+                "(date, asset_class, symbol, name, score, state, trend, confidence, enabled) "
+                "VALUES (?,?,?,?,?,?,?,?,?)",
+                ("2026-02-15", "commodity", "AU0", "沪金", 80.0,
+                 "上行", "up", 0.9, 1))
+            conn.commit()
+            conn.close()
+            from asset_intelligence.validation.signal_eval import signal_ranking_ability
+            from asset_intelligence.validation.confidence_eval import confidence_calibration
+            sg = signal_ranking_ability()
+            cf = confidence_calibration()
+            # 仅 1 个未来日信号：已记录=1，因无未来收益 → 可验证=0
+            self.assertEqual(sg["recorded_signals"], 1)
+            self.assertEqual(sg["total_signals"], 0)
+            self.assertEqual(cf["recorded_signals"], 1)
+            self.assertEqual(cf["total_signals"], 0)
+            # 报告累积段应反映已落库天数与最新日信号
+            rep = build_report()
+            h = rep["history_accumulation"]
+            self.assertEqual(h["n_days"], 1)
+            self.assertEqual(h["total_rows"], 1)
+            # caveat 不应再写『暂无样本』（已落库），而应说明可验证=0 待解锁
+            self.assertNotIn("暂无样本", rep["overall_caveat"])
+            self.assertIn("可验证样本=0", rep["overall_caveat"])
+        os.remove(p)
+
 
 if __name__ == "__main__":
     unittest.main()

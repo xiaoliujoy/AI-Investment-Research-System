@@ -80,6 +80,7 @@ def signal_ranking_ability() -> dict:
         rows = cur.fetchall()
     except Exception:
         rows = []
+    recorded = len(rows)          # 已落库信号（含尚无未来收益者）
     conn.close()
 
     buckets = {t: {"n": 0, "r5": [], "r20": [], "dd20": [], "win": 0}
@@ -115,4 +116,7 @@ def signal_ranking_ability() -> dict:
             "win_rate_20d": round(b["win"] / n * 100.0, 1) if n else None,
             "reliability": _reliability(n),
         })
-    return {"tiers": out, "total_signals": sum(b["n"] for b in buckets.values())}
+    # total_signals = 可验证样本（已有未来收益）；recorded_signals = 已落库信号（含待验证）
+    return {"tiers": out,
+            "total_signals": sum(b["n"] for b in buckets.values()),
+            "recorded_signals": recorded}
