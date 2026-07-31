@@ -45,6 +45,7 @@
   （含 §0 事件定义 SURGE/UP/RANGE/DOWN/CRASH、市场对象字段、Observed/Hypothesis 拆分、反例 Failed Transmission、
   Regime Context）；冻结期后 `market_linkage` 模块自动统计。
 - **当前结论**：未确定（仅 2026-07-30/31 观察到「韩股涨→次日A股涨」单一样本，须持续积累；本质是同受资金/风险偏好/产业链预期驱动，非简单因果）。
+- **v2.0 冻结**：日志模板 2026-07-31 起冻结至 2026-09-30，禁止再加字段/评分/引擎；三条进一步优化（传导强度 T0-T4 / 替代解释 / 样本质量评分）已降为 v2.1 候选 backlog，须待 ≥20 有效事件 + ≥10 失败案例 + ≥40 交易日 解锁。
 - **来源**：2026-07-31 用户提出 Cross-Market Observation 框架；冻结期作 Research Note 模块，不建引擎。
 
 ---

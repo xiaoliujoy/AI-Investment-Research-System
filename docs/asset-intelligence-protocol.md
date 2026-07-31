@@ -488,6 +488,14 @@ Observed-Hypothesis 拆分 / 反例 Failed Transmission / Regime Context），�
 > 配合 **RQ-004**（跨市场传导假设）一并「钉死」，防止研究问题漂移。
 > v2 升级（2026-07-31，用户评级 9/10）：把模板从「观察笔记」升为「Cross-Market Observation Dataset」，
 > 四优化（事件定义 / 对象字段 / 事实-假设分离 / 反例 / Regime 上下文）专为 9/30、12/31 Checkpoint 可统计性服务。
+>
+> **v2.0 冻结（2026-07-31 起）**：模板已近成熟形态，宣布冻结至 2026-09-30；期间禁止加字段 / 评分体系 / `market_linkage` 模块，
+> 仅允许填样本 + 周报 + 复盘；解锁条件 ≥20 有效事件 + ≥10 失败案例 + ≥40 交易日（详见日志文件）。
+> 三条进一步优化（传导强度 T0-T4 / 替代解释 / 样本质量评分）降为 **v2.1 候选 backlog**，冻结期内不实现。
+>
+> **分层定位（用户 2026-07-31 架构复盘）**：Cross-Market Observation 属于 **Research Memory（研究记忆）层**——
+> 未来真正的护城河不是「今天 AI 判断上涨」，而是「过去 N 次类似环境，之后发生了什么」。
+> 整体分层：`市场数据 → Asset Intelligence(观察) → Research Memory(历史样本/跨市场观察) → Validation(验证) → Decision(CIO)`。
 
 ### Phase 2 六状态 Regime（用户最终决策：暂缓）
 
