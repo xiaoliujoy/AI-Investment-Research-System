@@ -62,6 +62,12 @@ XIAOLIU_PROFILE_README.md
 # 发布内容包（GitHub Release / X / YouTube 文案，不随代码仓库发布）
 LAUNCH_KIT.md
 
+# 个人 IP 内容创作产物（公众号 / 小红书 / YouTube 稿子与资料，不随代码仓库发布）
+# 仅本地保留，切勿同步到公开仓库；daily sync 自动化 git add -A 已因本段跳过
+公众号文章_*.html
+小红书文案_*.md
+视频选题_*
+
 # 内部快速参考卡（含个人绝对路径，不公开）
 QUICK_REF.md
 
