@@ -46,8 +46,12 @@ def push_all(memo, dry_run=False):
                                    "article_title": f"每日研投看板 {memo.trade_date}"}
                     continue
                 from notify.mp import push_memo
+                # 个人订阅号默认不自动发布（微信 2025-07 已收回 freepublish 权限）；
+                # 已认证服务号可设 MP_AUTO_PUBLISH=true 启用全自动。
+                auto_publish = str(config.get("MP_AUTO_PUBLISH", "")).lower() in ("1", "true", "yes")
                 ok, info = push_memo(memo, config.get("MP_APPID"), config.get("MP_APPSECRET"),
-                                     author=config.get("MP_AUTHOR_NAME", ""))
+                                     author=config.get("MP_AUTHOR_NAME", ""),
+                                     auto_publish=auto_publish)
                 results[ch] = {"ok": ok, "info": info}
             else:
                 results[ch] = {"ok": False, "error": f"未启用渠道: {ch}"}

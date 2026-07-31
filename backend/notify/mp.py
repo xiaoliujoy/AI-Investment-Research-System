@@ -330,11 +330,17 @@ def _cover_view_from_memo(memo):
     }
 
 
-def push_memo(memo, appid, secret, author="", tmp_dir=None):
+def push_memo(memo, appid, secret, author="", tmp_dir=None, auto_publish=False):
     """微信公众号发布 Trading OS 2.0 压缩版（与本地 HTML 同一份决策逻辑，内联样式）。
 
     取代旧 build_article_html(tree) 长格式；现在直接吃 cio_agent.produce() 的 memo，
     用 os2_report.render_wechat_html 生成红涨绿跌内联版，公众号发的就是和本地看的一样的压缩版。
+
+    个人订阅号（未认证）说明：
+      - 微信自 2025-07 起已收回个人号 freepublish（发布）接口权限；
+      - 因此 auto_publish 默认 False：建完草稿即止，最后一步由用户在
+        「公众号助手」App 或 mp.weixin.qq.com 草稿箱手动点发布。
+      - 若以后换成已认证服务号，将 MP_AUTO_PUBLISH=true 即可自动发布。
     """
     from notify.os2_report import render_wechat_html
     client = MPClient(appid, secret)
@@ -372,8 +378,13 @@ def push_memo(memo, appid, secret, author="", tmp_dir=None):
     d = client.add_draft([article])
     if "media_id" not in d:
         return False, {"step": "add_draft", "resp": d}
-    pub = client.publish(d["media_id"])
-    return True, {"draft_media_id": d["media_id"], "publish": pub}
+    draft_media_id = d["media_id"]
+    if not auto_publish:
+        return True, {"draft_media_id": draft_media_id,
+                      "auto_publish": False,
+                      "note": "草稿已建好，请在公众号助手/草稿箱手动发布（个人号无 API 发布权限）"}
+    pub = client.publish(draft_media_id)
+    return True, {"draft_media_id": draft_media_id, "publish": pub}
 
 
 def rk_digest(view):

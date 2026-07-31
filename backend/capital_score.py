@@ -14,7 +14,7 @@ capital_score.py — Stock Capital Score（个股资金强度评分）
 
 所有子分均来自真实数据，不依赖任何死列：
   - 个股主力净流入：stock_flow_daily.main_net_buy（东财 push2 真实回填）
-  - 板块资金排名：把个股资金流按「行业→板块」聚合后跨截面百分位（sector_daily.net_amount 经核实为死列，弃用）
+  - 板块资金排名：把个股资金流按「行业→板块」聚合后跨截面百分位（sector_daily.net_amount 已于 2026-07-31 改为由 stock_flow_daily 聚合回填，真实区间≥07-20；此处仍独立计算、不依赖该列，避免历史 NULL 干扰）
   - 龙头位置：个股在其板块内主力净流入的排名
   - 持续性：近 window(默认5) 个交易日主力净流入累计的跨截面百分位
   - 活跃度：stock_daily.turnover_rate 百分位（缺失则退回 amount 百分位）
