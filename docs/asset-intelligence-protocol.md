@@ -391,6 +391,9 @@ Asset Intelligence (Observation)
 **仅允许**：① Bug 修复（数据异常 / 日期错误 / 落库失败 / 验证错误）
 ② 研究报告（每周 **Trading OS Research Note**）
 ③ **Research Question Log（RQ 登记册，非代码）**——仅记录研究问题与状态，不实现。
+④ **Cross-Market Observation（跨市场传导观察，2026-07-31 新增）**：属**观察层而非决策层**，
+   仅作 Research Note 的分析页 + 手工样本积累日志（`docs/cross_market_observation_log.md`），
+   **不建引擎、不产生交易信号**——与冻结禁止「新决策模型」不冲突。规划见下方。
 理由：当前真正稀缺的是样本数量 N（A股/商品各仅 1 天），任何结论统计意义≈0，加功能无益。
 
 **60 天唯一目标（一句话）**：让 Trading OS 经历真实市场，而不是继续设计 Trading OS。
@@ -428,6 +431,7 @@ RQ-00X | 问题 | 状态(观察中/已部分验证/已证伪/未确定) | 所需
 | 1.9-B2     | Dashboard 可视化              | ⏸ 待                    |
 | 1.9-B3     | 对外展示版（YouTube/GitHub）  | ⏸ 待                    |
 | 1.9-E      | Daily Research Snapshot（规划）| 📝 规划（非现在，受冻结约束）|
+| 跨市场传导 | Cross-Market Observation（market_linkage，规划） | 📝 规划（冻结期作 Research Note 模块） |
 | Phase 2    | 六状态 Regime Engine          | ⏸ 暂缓（须先验证稳定）    |
 | Phase 2.5  | Portfolio Allocation         | ⏸ 待                    |
 | Phase 3    | Decision OS                   | ⏸ 待                    |
@@ -458,6 +462,29 @@ RQ-00X | 问题 | 状态(观察中/已部分验证/已证伪/未确定) | 所需
 `{date, market_regime, assets:[{symbol,score,state,confidence}], top_risk, top_opportunity, model_version}`。
 价值：2027 年回看「2026-07-30 系统到底知道什么」→ 复盘 / GitHub 展示 / YouTube 案例。
 按 60 天冻结规则，放 Phase 1.9-E 延后实现。
+
+### 跨市场传导观察层（Cross-Market Observation，规划 + 冻结兼容）
+
+> **冻结兼容性**：跨市场传导属**观察层（Observation）而非决策层（Decision）**，不产生交易信号，
+> 仅作为 Research Note 的分析模块 + 手工样本积累 —— **不违反 60 天冻结**（归②研究报告 / ③RQ 登记册）。
+> 严禁将其升级为「跨市场预测引擎」或「新增决策信号」——那是冻结禁止的新模型。
+
+框架（用户 2026-07-31 提出，7 层**全部是观察、不是买卖**）：
+1. **谁先动**：记录各市场启动时点（美元/韩股/人民币/A股/港股/美股），统计领先-跟随关系。
+2. **相关性变化**：滚动相关 20/60/250 日（如 KOSPI↔创业板），捕捉联动增强/减弱，而非永远假设高相关。
+3. **领先关系（Lead/Lag）**：统计「X 涨 a% → 次日 Y 涨」的历史概率（如韩国涨1%→创业板涨 概率？）。
+4. **板块联动**：韩股涨什么（HBM/AI/半导体）vs A股涨什么（算力/光模块），算产业一致性 ★★★★★。
+5. **资金流向**：韩 ETF / 外资 / 北向 / 南向 / 人民币 / 美元指数 → 环境判断（Asia Risk-On）。
+6. **事件链（Transmission Chain）**：NVDA→HBM→SK Hynix→KOSPI→中芯→创业板，自动生成传导链。
+7. **第二天验证**：昨日观察 → 次日结果 PASS/FAIL，喂回 Validation Layer（Observation→Prediction→Validation→Calibration）。
+
+**立即执行（无需新引擎）**：每周 Research Note 新增《Cross-Market Observation》页；
+`docs/cross_market_observation_log.md` 为手工积累日志（每日填各市场表现+板块对应），周报汇总。
+**冻结期后（高优先级）**：开发 `market_linkage` 模块自动算滚动相关/领先滞后/产业一致性/事件链，
+仅作 Observation 输入供 Regime/CIO 参考，**绝不直出交易信号**。
+**长期**：基于样本验证哪些跨市场关系稳定，再决定是否少量纳入决策层。
+
+> 配合 **RQ-004**（跨市场传导假设）一并「钉死」，防止研究问题漂移。
 
 ### Phase 2 六状态 Regime（用户最终决策：暂缓）
 
