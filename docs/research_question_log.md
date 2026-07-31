@@ -41,7 +41,9 @@
 - **状态**：观察中
 - **问题**：① 谁先动、谁跟随（韩股是否经常领先 A股，平均领先多久）？② 滚动相关 20/60/250 日是否近期增强？
   ③ 领先关系概率（如韩国涨1%→次日创业板涨 概率？）是否稳定>随机？④ 板块联动（韩 HBM/AI ↔ A股算力/光模块）产业一致性是否高？
-- **所需证据**：`docs/cross_market_observation_log.md` 手工积累 ≥1–2 个月；冻结期后 `market_linkage` 模块自动统计。
+- **所需证据**：`docs/cross_market_observation_log.md`（v2）手工积累 ≥1–2 个月，须按 v2 八字段记录
+  （含 §0 事件定义 SURGE/UP/RANGE/DOWN/CRASH、市场对象字段、Observed/Hypothesis 拆分、反例 Failed Transmission、
+  Regime Context）；冻结期后 `market_linkage` 模块自动统计。
 - **当前结论**：未确定（仅 2026-07-30/31 观察到「韩股涨→次日A股涨」单一样本，须持续积累；本质是同受资金/风险偏好/产业链预期驱动，非简单因果）。
 - **来源**：2026-07-31 用户提出 Cross-Market Observation 框架；冻结期作 Research Note 模块，不建引擎。
 

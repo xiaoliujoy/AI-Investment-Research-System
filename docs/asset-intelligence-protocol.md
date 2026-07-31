@@ -478,13 +478,16 @@ RQ-00X | 问题 | 状态(观察中/已部分验证/已证伪/未确定) | 所需
 6. **事件链（Transmission Chain）**：NVDA→HBM→SK Hynix→KOSPI→中芯→创业板，自动生成传导链。
 7. **第二天验证**：昨日观察 → 次日结果 PASS/FAIL，喂回 Validation Layer（Observation→Prediction→Validation→Calibration）。
 
-**立即执行（无需新引擎）**：每周 Research Note 新增《Cross-Market Observation》页；
-`docs/cross_market_observation_log.md` 为手工积累日志（每日填各市场表现+板块对应），周报汇总。
+**立即执行（无需新引擎）**：每周 Research Note 新增《Cross-Market Observation》页（v2 八字段）；
+`docs/cross_market_observation_log.md` 为手工积累日志（v2：含事件定义标准 / 市场对象字段 /
+Observed-Hypothesis 拆分 / 反例 Failed Transmission / Regime Context），周报汇总。
 **冻结期后（高优先级）**：开发 `market_linkage` 模块自动算滚动相关/领先滞后/产业一致性/事件链，
 仅作 Observation 输入供 Regime/CIO 参考，**绝不直出交易信号**。
 **长期**：基于样本验证哪些跨市场关系稳定，再决定是否少量纳入决策层。
 
 > 配合 **RQ-004**（跨市场传导假设）一并「钉死」，防止研究问题漂移。
+> v2 升级（2026-07-31，用户评级 9/10）：把模板从「观察笔记」升为「Cross-Market Observation Dataset」，
+> 四优化（事件定义 / 对象字段 / 事实-假设分离 / 反例 / Regime 上下文）专为 9/30、12/31 Checkpoint 可统计性服务。
 
 ### Phase 2 六状态 Regime（用户最终决策：暂缓）
 
