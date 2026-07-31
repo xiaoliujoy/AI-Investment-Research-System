@@ -296,6 +296,27 @@ def _extract_new_high(line, code2name, name2code):
 _PLATFORMS = {"同花顺", "东方财富", "通达信", "大智慧", "新浪财经", "雪球"}
 
 
+def _extract_hot_names(s):
+    """从热榜行抽取全部列出的股票名（含不在 stock_info 的）。
+
+    热榜是权威的「市场注意力」数据，源文明确列出几只就该保留几只，
+    不能因主数据缺名而静默丢弃（否则 长鑫科技 这类未入库标的会被漏掉）。
+    """
+    body = re.split(r"[:：]", s, maxsplit=1)[1] if re.search(r"[:：]", s) else s
+    # 去掉可能残留在 body 里的另一平台前缀（WebFetch 偶发压行）
+    body = re.sub(r"^(同花顺热榜|东方财富热榜|东财热榜|新浪热榜)\s*", "", body)
+    out, seen = [], set()
+    for t in re.split(r"[、，,\s]+", body):
+        t = _norm_name(t).strip("（）()（）")
+        if not t or t in _PLATFORMS:
+            continue
+        if re.fullmatch(r"[一-鿿A-Za-z·]{2,7}", t) and not re.search(r"\d", t):
+            if t not in seen:
+                seen.add(t)
+                out.append(t)
+    return out
+
+
 def _extract_hot_list(line, code2name, name2code):
     s = line.strip()
     rank = None
@@ -315,9 +336,10 @@ def _extract_hot_list(line, code2name, name2code):
     if not src and any(k in s for k in ("人气", "热榜")):
         src = "热榜"
     stocks = _tag_stocks(line, code2name, name2code)
+    names = _extract_hot_names(s)
     # 剔除平台自身（同花顺/东方财富等被 source 文案误标为个股）
     stocks = [c for c in stocks if code2name.get(c) not in _PLATFORMS]
-    return {"rank": rank, "stocks": stocks, "reason": reason, "source": src}
+    return {"rank": rank, "stocks": stocks, "names": names, "reason": reason, "source": src}
 
 
 # ── 地雷阵专项解析（治「停复牌/异动公告」被压行导致真地雷漏检、摘帽被误判）──

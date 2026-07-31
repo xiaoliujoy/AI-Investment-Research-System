@@ -109,7 +109,8 @@ def derive_feed(parsed: dict) -> str:
     hot_top = []
     for it in sections.get("hot_list", {}).get("items", []):
         if it.get("rank") and it["rank"] <= 5:
-            names = [_name_of(c, code2name) for c in it.get("stocks", [])]
+            # 优先用原文列出的名字（含未入库标的，如长鑫科技），保证热榜完整性
+            names = it.get("names") or [_name_of(c, code2name) for c in it.get("stocks", [])]
             hot_top.append({
                 "rank": it["rank"],
                 "stock": names,
