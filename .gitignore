@@ -11,9 +11,14 @@ venv/
 env/
 .venv/
 
-# Database
+# Database（含 SQLite WAL 模式的边车文件，绝不入库）
 *.db
 *.sqlite3
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite3-wal
+*.sqlite3-shm
 
 # IDE
 .vscode/
@@ -41,6 +46,7 @@ SESSION_STATE.json
 
 # 每日运行生成物
 backend/output/
+output/
 
 # 第三方 vendored 技能文档（Apache-2.0，不随本仓库发布）
 a-stock-data/
@@ -67,9 +73,30 @@ LAUNCH_KIT.md
 公众号文章_*.html
 小红书文案_*.md
 视频选题_*
+公众号长文_*
+公众号长文稿_*
+短视频_脚本_*
+系列课_*
+YouTube_*
+
+# 第三方课程/直播转写与衍生笔记（他人版权内容，仅内部研究，绝不公开）
+看盘直播*
+看盘公开课_*
+线索C*
+冰山九层_*
+查漏补缺_*
 
 # 内部快速参考卡（含个人绝对路径，不公开）
 QUICK_REF.md
+
+# 一次性调试/探查脚本（含个人绝对路径，不公开；正式模块勿用 _ 前缀命名）
+backend/_*.py
+
+# MT5 个人交易记录导出（真实成交与盈亏，属个人隐私，绝不入库）
+mt5_history*
+*_deals.csv
+*_orders.csv
+*_trades.csv
 
 # 生成的交易日报（运行产物，类 output/）
 backend/reports/

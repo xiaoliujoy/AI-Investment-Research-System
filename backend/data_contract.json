@@ -1,0 +1,59 @@
+{
+  "rule": "每个核心字段必须声明 name/type/unit/frequency/source；跨表聚合字段单位须与上游一致；不确定单位标 TBD。",
+  "tables": {
+    "stock_daily": {
+      "amount":      {"type": "float", "unit": "亿元", "frequency": "daily", "source": "通达信", "note": "7-15~7-20 早期单位混乱"},
+      "change_pct":  {"type": "float", "unit": "百分比%", "frequency": "daily", "source": "通达信", "note": "9.99=+9.99%，非小数比率"},
+      "name":        {"type": "text", "unit": "-", "frequency": "daily", "source": "通达信", "note": "早期可能为空"}
+    },
+    "stock_flow_daily": {
+      "main_net_buy":        {"type": "float", "unit": "亿元(带符号)", "frequency": "daily", "source": "东财push2delay", "note": "真实覆盖2026-07-20起；此前复制快照已NULL"},
+      "super_large_net_buy": {"type": "float", "unit": "亿元(带符号)", "frequency": "daily", "source": "东财push2delay"},
+      "large_net_buy":       {"type": "float", "unit": "亿元(带符号)", "frequency": "daily", "source": "东财push2delay"},
+      "medium_net_buy":      {"type": "float", "unit": "亿元(带符号)", "frequency": "daily", "source": "东财push2delay"},
+      "small_net_buy":       {"type": "float", "unit": "亿元(带符号)", "frequency": "daily", "source": "东财push2delay"}
+    },
+    "sector_daily": {
+      "net_amount":  {"type": "float", "unit": "亿元", "frequency": "daily", "source": "SUM(stock_flow_daily.main_net_buy)", "note": "曾误当万元÷10000→0.0亿 bug"},
+      "change_pct":  {"type": "float", "unit": "百分比%", "frequency": "daily", "source": "聚合"},
+      "amount":      {"type": "float", "unit": "亿元", "frequency": "daily", "source": "聚合"},
+      "sector_score":{"type": "float", "unit": "分数0~100", "frequency": "-", "source": "评分层", "note": "当前NULL，属评分非数据"}
+    },
+    "market_daily": {
+      "total_amount":        {"type": "float", "unit": "亿元", "frequency": "daily", "source": "build_market_daily聚合"},
+      "sh_amount":           {"type": "float", "unit": "亿元", "frequency": "daily", "source": "聚合", "note": "sh+sz=total"},
+      "sz_amount":           {"type": "float", "unit": "亿元", "frequency": "daily", "source": "聚合"},
+      "up_count":            {"type": "int", "unit": "家数", "frequency": "daily", "source": "聚合"},
+      "down_count":          {"type": "int", "unit": "家数", "frequency": "daily", "source": "聚合"},
+      "limit_up_count":      {"type": "int", "unit": "家数", "frequency": "daily", "source": "聚合"},
+      "amount_change_rate":  {"type": "float", "unit": "小数比率", "frequency": "daily", "source": "滚动", "note": "与change_pct单位不同，勿混"},
+      "avg_5d_amount":       {"type": "float", "unit": "亿元", "frequency": "daily", "source": "滚动"}
+    },
+    "limit_up_daily": {
+      "amount":         {"type": "float", "unit": "亿元", "frequency": "daily", "source": "聚合"},
+      "float_cap":      {"type": "float", "unit": "亿元(流通市值)", "frequency": "daily", "source": "聚合"},
+      "turnover_rate":  {"type": "float", "unit": "百分比%", "frequency": "daily", "source": "聚合", "note": "非小数比率"},
+      "change_pct":     {"type": "float", "unit": "百分比%", "frequency": "daily", "source": "聚合"},
+      "board_height":   {"type": "int", "unit": "连板天数", "frequency": "daily", "source": "跨缺口回溯"},
+      "next_day_return":{"type": "float", "unit": "小数比率", "frequency": "事件T+1", "source": "聚合", "note": "验证用"}
+    },
+    "regime_history": {
+      "risk_state":        {"type": "categorical", "unit": "类别", "frequency": "daily", "source": "计算"},
+      "a_share_emotion":   {"type": "float", "unit": "分数", "frequency": "daily", "source": "计算", "note": "部分日期NULL"},
+      "fwd_1d_a_share":    {"type": "float", "unit": "小数比率(收益率)", "frequency": "daily", "source": "计算", "note": "含未来窗口"}
+    },
+    "research_decision_log": {
+      "market_score": {"type": "float", "unit": "分数(=a_share_emotion)", "frequency": "daily", "source": "regime_history", "note": "可NULL"},
+      "action":       {"type": "categorical", "unit": "{BUY/SELL/WAIT/NO TRADE}", "frequency": "事件", "source": "human/auto"},
+      "outcome":      {"type": "categorical", "unit": "{待验证/validated/invalid/insufficient}", "frequency": "事件", "source": "human"},
+      "error_type":   {"type": "categorical", "unit": "{待归因/…}", "frequency": "事件", "source": "human"}
+    }
+  },
+  "traps": [
+    "net_amount 实为亿元，曾被当万元÷10000→0.0亿",
+    "change_pct/turnover_rate=百分比(9.99)；amount_change_rate/fwd_*/next_day_return=小数比率(0.0x)，差100倍",
+    "stock_daily.amount 7-15~7-20 单位混乱，聚合须金额区间兜底",
+    "stock_flow_daily 07-01~07-17 为复制快照，非真实历史，已NULL",
+    "缺失/污染字段一律NULL，不填充不估算（诚实NULL，拒绝伪精确）"
+  ]
+}
