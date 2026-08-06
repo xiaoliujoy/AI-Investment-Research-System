@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>交易纪律层 · 计划交易，交易计划</title>
+<style>
+  :root{
+    --bg:#0d1410; --panel:#16241c; --panel2:#1d2e24; --line:#2a3d31;
+    --green:#2E7D52; --green-l:#3fa36b; --text:#e6efe9; --muted:#8aa395;
+    --red:#c0392b; --amber:#d4a017;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;background:linear-gradient(160deg,#0d1410,#16241c);color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    font-size:15px;line-height:1.5;padding-bottom:90px}
+  header{padding:18px 16px 10px;text-align:center}
+  header h1{margin:0;font-size:19px;letter-spacing:1px}
+  header p{margin:4px 0 0;color:var(--muted);font-size:12px}
+  .tabs{display:flex;position:sticky;top:0;z-index:5;background:var(--bg);
+    border-bottom:1px solid var(--line);overflow-x:auto}
+  .tab{flex:1;min-width:72px;padding:13px 4px;text-align:center;color:var(--muted);
+    font-size:13px;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent}
+  .tab.active{color:var(--green-l);border-bottom-color:var(--green-l);font-weight:600}
+  .page{display:none;padding:16px;max-width:560px;margin:0 auto}
+  .page.active{display:block}
+  label{display:block;font-size:12px;color:var(--muted);margin:14px 0 6px}
+  input,textarea,select{width:100%;background:var(--panel);border:1px solid var(--line);
+    color:var(--text);border-radius:10px;padding:11px;font-size:15px;font-family:inherit}
+  textarea{resize:vertical;min-height:64px}
+  input:focus,textarea:focus,select:focus{outline:none;border-color:var(--green-l)}
+  .row{display:flex;gap:10px}
+  .row>*{flex:1}
+  .toggle{display:flex;gap:8px}
+  .toggle button{flex:1;background:var(--panel);border:1px solid var(--line);color:var(--muted);
+    border-radius:10px;padding:11px;font-size:15px;cursor:pointer}
+  .toggle button.on{background:var(--green);color:#fff;border-color:var(--green)}
+  .seg{display:flex;gap:8px;flex-wrap:wrap}
+  .seg button{flex:1;min-width:90px;background:var(--panel);border:1px solid var(--line);
+    color:var(--muted);border-radius:10px;padding:11px 6px;font-size:13px;cursor:pointer}
+  .seg button.on{background:var(--green);color:#fff;border-color:var(--green)}
+  .btn{width:100%;background:var(--green);color:#fff;border:none;border-radius:12px;
+    padding:14px;font-size:16px;font-weight:600;margin-top:18px;cursor:pointer}
+  .btn:active{transform:scale(.99)}
+  .btn.ghost{background:var(--panel);color:var(--green-l);border:1px solid var(--line)}
+  .hint{font-size:11px;color:var(--muted);margin-top:6px}
+  .toast{position:fixed;left:50%;bottom:100px;transform:translateX(-50%);
+    background:var(--green);color:#fff;padding:12px 20px;border-radius:30px;font-size:14px;
+    opacity:0;transition:opacity .25s;pointer-events:none;z-index:20;max-width:90%}
+  .toast.show{opacity:1}
+  .toast.err{background:var(--red)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:12px}
+  .card h3{margin:0 0 8px;font-size:14px;color:var(--green-l)}
+  .kv{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px dashed var(--line)}
+  .kv:last-child{border-bottom:none}
+  .kv span:first-child{color:var(--muted)}
+  .stars{font-size:24px;letter-spacing:4px;cursor:pointer;user-select:none}
+  .stars .s{color:var(--line)}
+  .stars .s.on{color:var(--amber)}
+  .big{font-size:34px;font-weight:700;color:var(--green-l);text-align:center;margin:6px 0}
+  .muted{color:var(--muted);font-size:12px}
+  .pill{display:inline-block;background:var(--panel2);border:1px solid var(--line);
+    border-radius:20px;padding:3px 10px;font-size:11px;color:var(--muted);margin:3px 3px 0 0}
+  .empty{color:var(--muted);text-align:center;padding:24px;font-size:13px}
+  a{color:var(--green-l)}
+</style>
+</head>
+<body>
+<header>
+  <h1>交易纪律层</h1>
+  <p>计划交易，交易计划 · Decision Execution Layer</p>
+</header>
+
+<div class="tabs">
+  <div class="tab active" data-t="plan">盘前计划</div>
+  <div class="tab" data-t="trade">盘中执行</div>
+  <div class="tab" data-t="review">盘后复盘</div>
+  <div class="tab" data-t="data">我的数据</div>
+</div>
+
+<!-- ============ 盘前计划 ============ -->
+<div class="page active" id="p-plan">
+  <div class="card" style="border-color:var(--green-l)">
+    <h3>一句话录入</h3>
+    <label>方向 品种 入场 止损</label>
+    <div style="display:flex;gap:8px">
+      <input id="pl-quick" placeholder="例：多 AU2508 760 745" style="flex:1">
+      <button class="btn" id="pl-quick-btn" style="width:auto;white-space:nowrap">录入</button>
+    </div>
+    <p class="hint">开仓前发这句话即可。品种自动识别市场，止损自动转失效条件。</p>
+  </div>
+  <label>品种 / 标的</label>
+  <input id="pl-symbol" placeholder="XAUUSD / 黄金 / BTCUSD">
+  <div class="row">
+    <div>
+      <label>周期</label>
+      <input id="pl-cycle" placeholder="日线 / M5">
+    </div>
+    <div>
+      <label>方向</label>
+      <div class="toggle" id="pl-dir">
+        <button data-v="BUY" class="on">多</button>
+        <button data-v="SELL">空</button>
+      </div>
+    </div>
+  </div>
+  <label>逻辑 / 假设（为什么做）</label>
+  <textarea id="pl-hypo" placeholder="例：日线下降趋势线突破，高低点结构改变，宏观支持"></textarea>
+  <label>失效条件（证明我错）</label>
+  <input id="pl-invalid" placeholder="例：跌破3990 说明趋势判断错误">
+  <div class="row">
+    <div>
+      <label>最大亏损(元)</label>
+      <input id="pl-risk" placeholder="例：200" inputmode="numeric">
+    </div>
+    <div>
+      <label>愿意持有≥4h?</label>
+      <div class="toggle" id="pl-hold">
+        <button data-v="y">是</button>
+        <button data-v="n" class="on">否</button>
+      </div>
+    </div>
+  </div>
+  <label>退出计划（止损 / 目标）</label>
+  <input id="pl-exit" placeholder="例：3990 止损，4236 为目标">
+  <button class="btn" id="pl-submit">记录计划</button>
+  <p class="hint">≤60 秒录完。这里只记你的计划，不替你判断买卖。</p>
+</div>
+
+<!-- ============ 盘中执行 ============ -->
+<div class="page" id="p-trade">
+  <div id="trade-plan"></div>
+  <div id="trade-form" style="display:none">
+    <label>Q1 当前价格变化是否破坏原始逻辑？</label>
+    <div class="toggle" id="tr-q1">
+      <button data-v="n" class="on">否 → 继续</button>
+      <button data-v="y">是 → 记录</button>
+    </div>
+    <textarea id="tr-q1note" placeholder="若选「是」，写清楚什么破坏了逻辑" style="display:none;margin-top:8px"></textarea>
+
+    <label>Q2 我现在想平仓，是因为？</label>
+    <div class="seg" id="tr-q2">
+      <button data-v="A">A 逻辑改变</button>
+      <button data-v="B">B 浮亏难受</button>
+      <button data-v="C">C 怕失去利润</button>
+    </div>
+    <p class="hint">选 B / C → 记录下来，但先别执行。那是恐惧，不是信号。</p>
+
+    <label>Q3 我是否正在重复过去模式？（自由写）</label>
+    <textarea id="tr-q3" placeholder="例：连续三次小止损，可能正用短期波动否定长期判断"></textarea>
+
+    <label>其他备注</label>
+    <textarea id="tr-note" placeholder="盘中任何想对 AI 说的"></textarea>
+
+    <button class="btn" id="tr-submit">记一笔</button>
+  </div>
+</div>
+
+<!-- ============ 盘后复盘 ============ -->
+<div class="page" id="p-review">
+  <label>关联计划 ID（留空=纯复盘）</label>
+  <input id="rv-tid" placeholder="自动带出今日计划 ID，可改">
+  <label>决策质量 ★</label>
+  <div class="stars" data-k="dq"></div>
+  <label>执行质量 ★</label>
+  <div class="stars" data-k="eq"></div>
+  <label>情绪管理 ★</label>
+  <div class="stars" data-k="em"></div>
+  <div class="row">
+    <div>
+      <label>判断正确?</label>
+      <div class="toggle" id="rv-judge">
+        <button data-v="y" class="on">是</button>
+        <button data-v="n">否</button>
+      </div>
+    </div>
+    <div>
+      <label>执行正确?</label>
+      <div class="toggle" id="rv-exec">
+        <button data-v="y" class="on">是</button>
+        <button data-v="n">否</button>
+      </div>
+    </div>
+  </div>
+  <label>恐惧何时产生？</label>
+  <textarea id="rv-fear" placeholder="例：4050 浮亏时害怕，想提前平仓"></textarea>
+  <label>下次怎么改进？</label>
+  <textarea id="rv-improve" placeholder="例：浮亏达痛阈前，机械按失效位持仓"></textarea>
+  <label>偏差原因</label>
+  <div class="seg" id="rv-dev">
+    <button data-v="execution">执行偏离</button>
+    <button data-v="information">信息变化</button>
+    <button data-v="none" class="on">无</button>
+  </div>
+  <label>平仓归因（四类，只能选一）<span class="muted">· 训练红线：D&gt;10% 即失败</span></label>
+  <div class="seg" id="rv-close">
+    <button data-v="A">A 逻辑错误</button>
+    <button data-v="B">B 目标达成</button>
+    <button data-v="C">C 风险调整</button>
+    <button data-v="D">D 情绪退出</button>
+  </div>
+  <button class="btn" id="rv-submit">保存复盘</button>
+
+  <div class="card" style="margin-top:22px">
+    <h3>心理档案 / 反思（原样保存，零诊断）</h3>
+    <label>标题</label>
+    <input id="rf-title" placeholder="例：比特币爆仓事件：我的错误认知来源">
+    <label>分类</label>
+    <div class="seg" id="rf-cat">
+      <button data-v="psych_profile" class="on">心理档案</button>
+      <button data-v="trade_review">交易复盘</button>
+      <button data-v="insight">洞察</button>
+    </div>
+    <label>内容（口述即可）</label>
+    <textarea id="rf-body" placeholder="事实 / 新信念 / 任何想留下来的话"></textarea>
+    <button class="btn ghost" id="rf-submit">存心理档案</button>
+  </div>
+</div>
+
+<!-- ============ 我的数据 ============ -->
+<div class="page" id="p-data">
+  <div id="ei-wrap"><div class="card"><h3>跨账户执行智能</h3><div class="empty">加载中…</div></div></div>
+  <div class="card" id="today-card"><h3>今日计划</h3><div class="empty">加载中…</div></div>
+  <div class="card" id="hist-card"><h3>最近记录</h3><div class="empty">加载中…</div></div>
+  <p class="muted" style="text-align:center;margin-top:14px">
+    数据存于本地数据库，仅你可见。<br>停服：在启动窗口按 Ctrl+C。
+  </p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+let state={pl_dir:'BUY',pl_hold:'n',tr_q1:'n',tr_q2:'',rv_judge:'y',rv_exec:'y',
+  rv_dev:'none',rf_cat:'psych_profile',stars:{dq:0,eq:0,em:0}};
+
+// tabs
+$$('.tab').forEach(t=>t.onclick=()=>{
+  $$('.tab').forEach(x=>x.classList.remove('active'));
+  $$('.page').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  $('#p-'+t.dataset.t).classList.add('active');
+  if(t.dataset.t==='trade') loadToday();
+  if(t.dataset.t==='data') loadData();
+});
+
+// toggles
+function bindToggle(sel,key,after){
+  $$(sel+' button').forEach(b=>b.onclick=()=>{
+    $$(sel+' button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on'); state[key]=b.dataset.v; after&&after(b.dataset.v);
+  });
+}
+bindToggle('#pl-dir','pl_dir');
+bindToggle('#pl-hold','pl_hold');
+bindToggle('#tr-q1','tr_q1',v=>$('#tr-q1note').style.display=v==='y'?'block':'none');
+bindToggle('#rv-judge','rv_judge');
+bindToggle('#rv-exec','rv_exec');
+bindToggle('#rf-cat','rf_cat');
+bindToggle('#rv-dev','rv_dev');
+$$('#tr-q2 button').forEach(b=>b.onclick=()=>{
+  $$('#tr-q2 button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); state.tr_q2=b.dataset.v;
+});
+
+// stars
+$$('.stars').forEach(box=>{
+  const k=box.dataset.k;
+  for(let i=1;i<=5;i++){
+    const s=document.createElement('span'); s.className='s'; s.textContent='★';
+    s.onclick=()=>{state.stars[k]=i; renderStars(box,k);};
+    box.appendChild(s);
+  }
+});
+function renderStars(box,k){
+  [...box.children].forEach((s,i)=>s.classList.toggle('on',i<state.stars[k]));
+}
+
+function toast(msg,err){
+  const t=$('#toast'); t.textContent=msg; t.className='toast show'+(err?' err':'');
+  setTimeout(()=>t.className='toast',1800);
+}
+async function post(url,data){
+  const r=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify(data)});
+  return r.json();
+}
+
+// ---- 一句话录入解析 ----
+function parseQuick(t){
+  const DIR={多:'LONG',买:'LONG',long:'LONG',buy:'LONG',做多:'LONG',
+             空:'SHORT',卖:'SHORT',short:'SHORT',sell:'SHORT',做空:'SHORT'};
+  let dir=null;
+  for(const k in DIR){ if(t.includes(k)){dir=DIR[k];break;} }
+  let s=t; for(const k in DIR) s=s.replace(new RegExp(k,'g'),' ');
+  const tokens=s.split(/[\s,，、]+/).filter(Boolean);
+  let symbol=tokens.find(tok=>/[A-Za-z]/.test(tok)||/^\d{6}$/.test(tok))||tokens[0]||'';
+  const up=(symbol||'').toUpperCase();
+  let market='OTHER';
+  if(/^(XAU|XAG|XPT|XPD|BTCUSD|EURUSD|GBPUSD|USDJPY|AUDUSD|USDCAD)/.test(up)) market='MT5';
+  else if(/^(AU|AG|CU|SI|FG|PK|JM|RB|HC|I|J|TA|MA|ZN|PB|NI|SN|AL|RU|PP|L|V|C|M|Y|A|CF|SR|OI|RM|P|JD|CS|WH|RI|RR|AP|CJ|LU|SC|FU|BU|PG|EB|EG|SA|UR|SP|PS)/.test(up)) market='FUTURES';
+  else if(/^\d{6}$/.test(up)) market='ASTOCK';
+  const tp=symbol?t.replace(symbol,' '):t;
+  const m=tp.match(/(?:亏|损|risk|金额|元)\s*(\d+(?:\.\d+)?)/i);
+  const amount=m?parseFloat(m[1]):null;
+  const nums=tp.match(/-?\d+(?:\.\d+)?/g)||[];
+  const priceNums=nums.filter(n=>!(m&&n===m[1]));
+  const entry=priceNums[0]!=null?parseFloat(priceNums[0]):null;
+  const stop=priceNums[1]!=null?parseFloat(priceNums[1]):null;
+  let invalid='',planned='',risk='';
+  const parts=[];
+  if(entry!=null) parts.push('入场 '+entry);
+  if(stop!=null) parts.push('止损 '+stop);
+  planned=parts.join(' ');
+  if(stop!=null) invalid=(dir==='LONG'?'跌破 '+stop+' 即失效':dir==='SHORT'?'突破 '+stop+' 即失效':'');
+  if(amount!=null) risk='最大亏损 '+amount;
+  return {dir,symbol,market,entry,stop,amount,invalid,planned,risk};
+}
+$('#pl-quick-btn').onclick=async()=>{
+  const t=$('#pl-quick').value.trim();
+  if(!t){toast('先输入一句话',true);return;}
+  const p=parseQuick(t);
+  if(!p.dir||!p.symbol){toast('无法识别方向或品种',true);return;}
+  const d={market:p.market,symbol:p.symbol,direction:p.dir,
+    hypothesis:'',invalid:p.invalid,risk:p.risk,hold4h:'',exit:p.planned};
+  const r=await post('/api/plan',d);
+  if(r.ok){toast(`✅ #${r.id} ${p.dir==='LONG'?'多':'空'} ${p.symbol} 已记录`);
+    $('#pl-quick').value='';}
+  else toast('失败：'+(r.error||''),true);
+};
+
+// ---- Plan ----
+$('#pl-submit').onclick=async()=>{
+  const sym=$('#pl-symbol').value.trim();
+  if(!sym){toast('先填品种',true);return;}
+  const d={market:'MT5',symbol:sym,direction:state.pl_dir,
+    hypothesis:$('#pl-hypo').value.trim(),invalid:$('#pl-invalid').value.trim(),
+    risk:$('#pl-risk').value.trim(),cycle:$('#pl-cycle').value.trim(),
+    hold4h:state.pl_hold,exit:$('#pl-exit').value.trim()};
+  const r=await post('/api/plan',d);
+  if(r.ok){toast('✅ 计划 #'+r.id+' 已记录');
+    $('#pl-symbol').value='';$('#pl-hypo').value='';$('#pl-invalid').value='';
+    $('#pl-risk').value='';$('#pl-exit').value='';$('#pl-cycle').value='';}
+  else toast('失败：'+(r.error||''),true);
+};
+
+// ---- Trade ----
+async function loadToday(){
+  const r=await fetch('/api/today').then(x=>x.json());
+  const box=$('#trade-plan'), form=$('#trade-form');
+  if(!r || !r.id){box.innerHTML='<div class="empty">今天还没有未执行的计划。<br>去「盘前计划」先写一条。</div>';form.style.display='none';return;}
+  box.innerHTML=`<div class="card"><h3>今日计划 #${r.id} · ${r.market_type} ${r.direction} ${r.symbol||''}</h3>
+    <div class="kv"><span>逻辑</span><span>${r.reason||'—'}</span></div>
+    <div class="kv"><span>失效</span><span>${r.invalid_condition||'—'}</span></div>
+    <div class="kv"><span>风险</span><span>${r.risk_plan||'—'}</span></div>
+    <div class="kv"><span>退出</span><span>${r.planned_exit||'—'}</span></div></div>`;
+  form.style.display='block'; state.tr_tid=r.id;
+}
+$('#tr-submit').onclick=async()=>{
+  const d={tid:state.tr_tid,q1:state.tr_q1,q1_note:$('#tr-q1note').value.trim(),
+    q2:state.tr_q2,q3:$('#tr-q3').value.trim(),note:$('#tr-note').value.trim()};
+  const r=await post('/api/trade',d);
+  if(r.ok){toast('✅ 盘中三问已记录');
+    $('#tr-q3').value='';$('#tr-note').value='';$('#tr-q1note').value='';
+    $$('#tr-q2 button').forEach(x=>x.classList.remove('on'));state.tr_q2='';}
+  else toast('失败：'+(r.error||''),true);
+};
+
+// ---- Review ----
+$('#rv-submit').onclick=async()=>{
+  const cr=document.querySelector('#rv-close .on');
+  const d={tid:$('#rv-tid').value.trim()||null,dq:state.stars.dq,eq:state.stars.eq,
+    em:state.stars.em,judgment:state.rv_judge,execution:state.rv_exec,
+    fear:$('#rv-fear').value.trim(),improve:$('#rv-improve').value.trim(),
+    deviation:state.rv_dev,close_reason:cr?cr.dataset.v:''};
+  if(!d.dq||!d.eq||!d.em){toast('三星评分都要点',true);return;}
+  const r=await post('/api/review',d);
+  if(r.ok){toast('✅ 复盘已保存');
+    $('#rv-fear').value='';$('#rv-improve').value='';$('#rv-tid').value='';
+    state.stars={dq:0,eq:0,em:0};$$('.stars').forEach(renderStars0);}
+  else toast('失败：'+(r.error||''),true);
+};
+function renderStars0(box){const k=box.dataset.k;[...box.children].forEach((s,i)=>s.classList.toggle('on',i<state.stars[k]));}
+
+$('#rf-submit').onclick=async()=>{
+  const title=$('#rf-title').value.trim(), body=$('#rf-body').value.trim();
+  if(!title||!body){toast('标题和内容都要填',true);return;}
+  const d={date:new Date().toISOString().slice(0,10),title,category:state.rf_cat,body};
+  const r=await post('/api/reflect',d);
+  if(r.ok){toast('✅ 已存入心理档案');
+    $('#rf-title').value='';$('#rf-body').value='';}
+  else toast('失败：'+(r.error||''),true);
+};
+
+// ---- Data ----
+const EI_COLORS={A:'#5b6b63',B:'var(--green)',C:'var(--amber)',D:'var(--red)'};
+const fmoney=x=>(x>=0?'+':'')+Math.round(x).toLocaleString('en-US');
+
+// 渲染单个账户卡片：A/B/C/D 堆叠条 + 三指标 + 经济画像
+function eiAccountCard(label, a, badge, note){
+  const ab=a.abcd||{}, ec=a.econ||{};
+  const total=ab.total||0;
+  const pc=n=>total?(n/total*100).toFixed(1)+'%':'—';
+  let bar='<div style="display:flex;height:14px;border-radius:6px;overflow:hidden;margin:8px 0;background:#0a0f0c">';
+  if(total) ['A','B','C','D'].forEach(k=>{
+    const w=ab[k]/total*100;
+    bar+=`<div style="width:${w}%;background:${EI_COLORS[k]}" title="${k} ${pc(ab[k])}"></div>`;
+  });
+  bar+='</div>';
+  const abcdRows=total?`
+    <div class="kv"><span>A 方向错·正常止损</span><span>${ab.A} (${pc(ab.A)})</span></div>
+    <div class="kv"><span>B 方向对·正常盈利</span><span>${ab.B} (${pc(ab.B)})</span></div>
+    <div class="kv"><span>C 方向对·提前退出</span><span>${ab.C} (${pc(ab.C)})</span></div>
+    <div class="kv"><span>D 方向对·盈利后倒亏</span><span>${ab.D} (${pc(ab.D)})</span></div>`:
+    '<div class="empty">A/B/C/D 不可用（数据受限）</div>';
+  const metrics=(total&&ab.belief_fulfillment_rate!=null)?`
+    <div class="kv" style="color:var(--green-l)"><span>★ 信念兑现率</span><span>${(ab.belief_fulfillment_rate*100).toFixed(1)}%</span></div>
+    <div class="kv"><span>方向正确率</span><span>${ab.thesis_survival_rate!=null?(ab.thesis_survival_rate*100).toFixed(1)+'%':'—'}</span></div>
+    <div class="kv"><span>C+D 合计</span><span>${ab.cd_rate!=null?(ab.cd_rate*100).toFixed(1)+'%':'—'}</span></div>`:'';
+  const econRows=(ec&&ec.net_pnl!=null)?`
+    <div class="kv"><span>净盈亏</span><span style="color:${ec.net_pnl>=0?'var(--green-l)':'var(--red)'}">${fmoney(ec.net_pnl)}</span></div>
+    <div class="kv"><span>胜率</span><span>${ec.win_rate!=null?(ec.win_rate*100).toFixed(1)+'%':'—'}</span></div>
+    <div class="kv"><span>盈亏比 PF</span><span>${ec.profit_factor!=null?ec.profit_factor.toFixed(2):'NA'}</span></div>
+    <div class="kv"><span>均持仓</span><span>${ec.avg_hold_days!=null?ec.avg_hold_days.toFixed(1)+' 天':'—'}</span></div>
+    <div class="kv"><span>同日平仓率</span><span>${ec.same_day_rate!=null?(ec.same_day_rate*100).toFixed(1)+'%':'—'}</span></div>`:'';
+  const econNote=ec&&ec.note?`<div class="muted" style="margin-top:4px">${ec.note}</div>`:'';
+  return `<div class="card">
+    <h3>${label} ${badge}</h3>
+    ${bar}${abcdRows}${metrics}
+    <div style="margin-top:8px" class="muted">经济画像</div>
+    ${econRows}${econNote}
+    ${note?`<p class="muted" style="margin-top:8px">${note}</p>`:''}
+  </div>`;
+}
+
+async function loadData(){
+  const r=await fetch('/api/status').then(x=>x.json());
+  const wrap=$('#ei-wrap');
+  if(r.ei){
+    const ei=r.ei, s=ei.stock, fz=ei.futures, m=ei.mt5;
+    let html=`<div class="card"><h3>跨账户 Belief Execution Engine · A/B/C/D + 信念兑现率</h3>
+      <div class="muted" style="margin-bottom:4px">🟢 可靠 = 真实 OHLC/已验证分析；🟡 保守近似 = 期货 A/B/C/D 仅 au/ag/cu 日线收盘近似（日内 scalp 占 98.9%，方向正确率被低估），经济画像可靠。</div></div>`;
+    html+=eiAccountCard('股票 A股', s, '<span class="pill">可靠</span>', '');
+    const fnote=`A/B/C/D 仅 au/ag/cu 可分类（${fz.n_abcd_available} 笔 / 共 ${fz.n_roundtrip} 笔，其余无路径数据→N/A）；期权经济净 ${fmoney(fz.opt_econ.net_pnl)} 不计入 MFE。`;
+    html+=eiAccountCard('期货', fz, '<span class="pill">经济可靠·ABCD近似</span>', fnote);
+    html+=eiAccountCard('MT5 黄金 XAUUSD', m, '<span class="pill">可靠</span>', '');
+    html+=`<div class="card"><h3>跨账户结论</h3>
+      <div class="muted">股票+MT5 两个可靠口径：方向正确率都高（98.5% / 93.3%）、信念兑现率都低（20.1% / 11.7%）→ 漏损在<b>执行/持有层</b>，不在判断层。期货是 PF=0.69 的亏损高频 scalp 系统，与 MT5 同构。三账户一致指向瓶颈 = <b>持仓/兑现</b>。</div></div>`;
+    // TAR 卡片
+    if(r.tar){
+      const tar=r.tar; let trows='';
+      for(const [mk,mm] of Object.entries(tar.by_market||{})){
+        const isFut=/FUT/i.test(mk);
+        const tarV=mm.tar!=null?(mm.tar*100).toFixed(1)+'%':'—';
+        const dshare=mm.d_share!=null?(mm.d_share*100).toFixed(1)+'%':'—';
+        const flag=(mm.tar!=null&&mm.tar>0.1)?'<span class="pill" style="background:var(--red);color:#fff">D超10%·失败</span>':(mm.tar!=null?'<span class="pill">达标</span>':'');
+        trows+=`<div class="kv"><span>${mk} · 方向正确 ${mm.dir_correct} 笔 / D ${mm.d} 笔</span><span>TAR ${tarV}${isFut?` (D占比 ${dshare}*)`:''} ${flag}</span></div>`;
+      }
+      const tot=tar.total;
+      const totFlag=(tot&&tot.tar>0.1)?'<span class="pill" style="background:var(--red);color:#fff">D超10%·失败</span>':'<span class="pill">达标</span>';
+      html+=`<div class="card"><h3>交易逻辑放弃率 Thesis Abandonment Rate</h3>
+        ${trows}
+        ${tot?`<div class="kv" style="color:var(--green-l)"><span>★ 全账户 TAR（D / 方向正确）</span><span>${(tot.tar*100).toFixed(1)}% ${totFlag}</span></div>`:'<div class="empty">暂无复盘归因数据，去「盘后复盘」选平仓归因</div>'}
+        <div class="muted" style="margin-top:6px">TAR = 情绪类退出(D) / 方向正确交易。期货因 MFE 近似分母不可靠，标 * 用 D占比 近似参考。训练红线：TAR(D) &gt; 10% 即失败。</div></div>`;
+    }
+    wrap.innerHTML=html;
+  } else if(r.abcd||r.belief){
+    // 兜底：仅 MT5（老 trade_path.csv）
+    let h='';
+    if(r.abcd){const a=r.abcd;const pct=n=>(n/a.total*100).toFixed(1)+'%';
+      h+=`<div class="card"><h3>执行智能四分类（MT5）</h3>
+        <div class="kv"><span>A 方向错</span><span>${a.A} (${pct(a.A)})</span></div>
+        <div class="kv"><span>B 方向对·盈利</span><span>${a.B} (${pct(a.B)})</span></div>
+        <div class="kv"><span>C 方向对·提前退</span><span>${a.C} (${pct(a.C)})</span></div>
+        <div class="kv"><span>D 方向对·倒亏</span><span>${a.D} (${pct(a.D)})</span></div>
+        <div class="kv" style="color:var(--green-l)"><span>★ C+D 合计</span><span>${(a.cd_rate*100).toFixed(1)}%</span></div>
+        <div class="kv"><span>逻辑存活率</span><span>${(a.thesis_survival_rate*100).toFixed(1)}%</span></div>
+        <div class="kv"><span>利润捕获率中位</span><span>${a.capture_median.toFixed(2)}</span></div></div>`;}
+    if(r.belief){const b=r.belief;
+      h+=`<div class="card"><h3>信念兑现率（MT5 ${b.total} 笔）</h3>
+        <div class="big">${(b.belief_fulfillment_rate*100).toFixed(1)}%</div>
+        <div class="kv"><span>方向正确率</span><span>${(b.direction_accuracy*100).toFixed(1)}%</span></div>
+        <div class="kv"><span>看对没拿到</span><span>${b.direction_correct-b.belief_fulfilled} 笔</span></div>
+        <div class="kv"><span>留在桌上</span><span>${b.left_on_table_usd.toFixed(0)} USD</span></div></div>`;}
+    wrap.innerHTML=h||'<div class="card"><div class="empty">暂无数据</div></div>';
+  } else {
+    wrap.innerHTML='<div class="card"><div class="empty">未找到执行智能数据（execution_intelligence.json）</div></div>';
+  }
+  // today
+  const tc=$('#today-card');
+  const t=await fetch('/api/today').then(x=>x.json());
+  tc.innerHTML = t&&t.id
+    ? `<h3>今日计划 #${t.id}</h3><div class="kv"><span>标的</span><span>${t.market_type} ${t.direction} ${t.symbol}</span></div>
+       <div class="kv"><span>逻辑</span><span>${t.reason||'—'}</span></div>
+       <div class="kv"><span>失效</span><span>${t.invalid_condition||'—'}</span></div>`
+    : '<h3>今日计划</h3><div class="empty">今天还没有计划</div>';
+  // history
+  const hc=$('#hist-card'); const h=r.history||{};
+  let html='<h3>最近记录</h3>';
+  (h.plans||[]).slice(0,6).forEach(p=>{
+    html+=`<div class="kv"><span>#${p[0]} ${p[2]} ${p[3]} ${p[4]}</span><span>${p[5]}</span></div>`;
+  });
+  (h.reviews||[]).slice(0,4).forEach(p=>{
+    html+=`<div class="kv"><span>复盘 #${p[0]} 决策★${p[3]} 执行★${p[4]} 情绪★${p[5]}</span><span>${p[6]}</span></div>`;
+  });
+  (h.reflections||[]).slice(0,4).forEach(p=>{
+    html+=`<div class="kv"><span>${p[1]} [${p[3]}]</span><span>${p[2]}</span></div>`;
+  });
+  hc.innerHTML = html || '<h3>最近记录</h3><div class="empty">暂无</div>';
+}
+
+// auto-fill review tid from today's plan
+(async()=>{const t=await fetch('/api/today').then(x=>x.json());if(t&&t.id)$('#rv-tid').value=t.id;})();
+</script>
+</body>
+</html>

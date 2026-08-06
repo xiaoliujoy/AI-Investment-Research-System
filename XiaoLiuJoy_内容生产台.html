@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Xiao Liu Joy Research · 内容生产台</title>
+<style>
+  :root{
+    --green:#2E7D52; --green-d:#1f5c3b; --green-l:#e8f3ec;
+    --bg:#f4f7f5; --card:#fff; --line:#e3e9e6; --txt:#1b2a22; --mut:#6b7d73;
+    --red:#d9483b; --red-l:#fdeceb; --amber:#c8861a; --blue:#2f6fb0;
+    --r:14px; --sh:0 1px 3px rgba(20,40,30,.06),0 4px 16px rgba(20,40,30,.05);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:var(--bg); color:var(--txt); font-size:16px; line-height:1.5;
+    padding-bottom:env(safe-area-inset-bottom);
+  }
+  .ic{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .ic-f{fill:currentColor;stroke:none}
+  button{font-family:inherit;cursor:pointer}
+  .btn{
+    display:inline-flex;align-items:center;gap:6px;justify-content:center;
+    min-height:44px;padding:0 14px;border:none;border-radius:10px;font-size:15px;
+    background:var(--green);color:#fff;font-weight:600;transition:.15s;
+  }
+  .btn:active{transform:scale(.97)}
+  .btn.ghost{background:var(--green-l);color:var(--green-d)}
+  .btn.line{background:#fff;color:var(--txt);border:1px solid var(--line)}
+  .btn.danger{background:var(--red);color:#fff}
+  .btn.sm{min-height:36px;padding:0 10px;font-size:14px;border-radius:8px}
+  input,textarea,select{
+    width:100%;font-family:inherit;font-size:16px;padding:11px 12px;
+    border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--txt);
+  }
+  textarea{resize:vertical;min-height:64px}
+  label{display:block;font-size:13px;color:var(--mut);margin:12px 0 5px;font-weight:600}
+  .row{display:flex;gap:10px;flex-wrap:wrap}
+
+  /* layout */
+  .topbar{
+    position:sticky;top:0;z-index:20;background:rgba(255,255,255,.92);
+    backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:10px;padding:10px 16px;
+    padding-top:max(10px,env(safe-area-inset-top));
+  }
+  .brand{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--green),var(--green-d));
+    display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;flex:none}
+  .brand h1{font-size:16px;margin:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .brand p{font-size:11px;margin:0;color:var(--mut)}
+  .topacts{display:flex;gap:6px}
+  .topacts .btn{padding:0 10px}
+  .iconbtn{min-width:44px;min-height:44px;width:44px;padding:0}
+
+  .wrap{display:flex;max-width:1180px;margin:0 auto}
+  .side{
+    width:190px;flex:none;padding:18px 12px;position:sticky;top:57px;align-self:flex-start;
+    display:flex;flex-direction:column;gap:6px;height:calc(100vh - 57px);
+  }
+  .side a{
+    display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:10px;
+    color:var(--txt);text-decoration:none;font-weight:600;font-size:15px;
+  }
+  .side a.active{background:var(--green-l);color:var(--green-d)}
+  .side a .tag{margin-left:auto;background:var(--green);color:#fff;font-size:11px;border-radius:20px;padding:1px 7px}
+  .main{flex:1;min-width:0;padding:18px 16px 40px}
+
+  /* today */
+  .today{background:linear-gradient(135deg,#fff,#f3faf6);border:1px solid var(--line);
+    border-radius:var(--r);padding:14px 16px;margin-bottom:18px;box-shadow:var(--sh)}
+  .today h2{margin:0 0 4px;font-size:15px;display:flex;align-items:center;gap:8px}
+  .today .sub{font-size:12px;color:var(--mut);margin:0 0 10px}
+  .titem{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:10px;background:#fff;border:1px solid var(--line);margin-bottom:8px}
+  .titem.over{background:var(--red-l);border-color:#f3c1bc}
+  .titem .tt{flex:1;min-width:0}
+  .titem .tt b{font-size:14px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .titem .tt span{font-size:12px;color:var(--mut)}
+  .pill{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--green-l);color:var(--green-d)}
+  .pill.over{background:var(--red);color:#fff}
+  .empty{color:var(--mut);font-size:13px;padding:8px 2px}
+
+  /* cards */
+  .sec-head{display:flex;align-items:center;gap:10px;margin:4px 0 14px}
+  .sec-head h2{margin:0;font-size:19px}
+  .sec-head .grow{flex:1}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px 15px;margin-bottom:12px;box-shadow:var(--sh)}
+  .card .ch{display:flex;align-items:center;gap:10px;cursor:pointer}
+  .card .ch .ttl{flex:1;min-width:0}
+  .card .ttl b{font-size:16px;display:block}
+  .card .ttl .meta{font-size:12px;color:var(--mut);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
+  .stage-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:var(--green-l);color:var(--green-d);white-space:nowrap}
+  .series-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;background:#eaf0f6;color:#3a587a;white-space:nowrap}
+  .filterbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .chip{background:#fff;border:1px solid var(--line);border-radius:20px;padding:7px 14px;font-size:13px;font-weight:600;color:var(--mut);min-height:40px}
+  .chip.active{background:var(--green);color:#fff;border-color:var(--green)}
+  .bar{height:7px;background:#eef2f0;border-radius:20px;overflow:hidden;margin-top:10px}
+  .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),#3fa06b);border-radius:20px}
+  .body{display:none;margin-top:12px;border-top:1px dashed var(--line);padding-top:12px}
+  .body.open{display:block}
+  .kv{font-size:14px;margin:7px 0}
+  .kv b{color:var(--mut);font-weight:600;margin-right:6px}
+  .acts{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+  .chk{display:inline-flex;align-items:center;gap:7px;background:#f6f9f7;border:1px solid var(--line);
+    border-radius:9px;padding:7px 10px;font-size:13px;min-height:40px}
+  .chk input{width:18px;height:18px;flex:none}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .datarow{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+  .datarow input{flex:1;min-width:90px}
+
+  /* modal */
+  .mask{position:fixed;inset:0;background:rgba(15,28,22,.45);z-index:50;display:none;
+    align-items:flex-end;justify-content:center;padding:0}
+  .mask.open{display:flex}
+  .modal{background:#fff;width:100%;max-width:560px;border-radius:18px 18px 0 0;max-height:92vh;overflow:auto;padding:18px 18px calc(18px + env(safe-area-inset-bottom));animation:up .2s ease}
+  @media(min-width:680px){.mask{align-items:center;padding:20px}.modal{border-radius:18px;animation:none}}
+  @keyframes up{from{transform:translateY(40px);opacity:.6}to{transform:none;opacity:1}}
+  .modal h3{margin:0 0 6px;font-size:18px;display:flex;align-items:center;gap:8px}
+  .modal .x{margin-left:auto;background:#f0f3f1;border:none;border-radius:9px;width:40px;height:40px;font-size:20px;color:var(--mut)}
+  .modal .foot{display:flex;gap:10px;margin-top:18px;position:sticky;bottom:0;background:#fff;padding-top:10px}
+
+  .sop-grid{display:grid;gap:12px}
+  .sop-box{background:#f8faf9;border:1px solid var(--line);border-radius:12px;padding:12px 13px}
+  .sop-box h4{margin:0 0 6px;font-size:14px;display:flex;align-items:center;gap:7px;color:var(--green-d)}
+  .sop-box pre{margin:0;white-space:pre-wrap;word-break:break-word;font-size:13px;color:#34433b;
+    background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px;font-family:inherit}
+  .banner{background:#fff7e8;border:1px solid #f0d9a8;color:#8a6310;border-radius:10px;
+    padding:10px 13px;font-size:13px;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+  .toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#1b2a22;color:#fff;
+    padding:10px 18px;border-radius:24px;font-size:14px;z-index:80;opacity:0;transition:.25s;pointer-events:none}
+  .toast.show{opacity:1}
+
+  /* mobile nav */
+  .botnav{display:none}
+  @media(max-width:767px){
+    .side{display:none}
+    .botnav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:30;
+      background:#fff;border-top:1px solid var(--line);
+      padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+      justify-content:space-around}
+    .botnav a{flex:1;text-decoration:none;color:var(--mut);display:flex;flex-direction:column;
+      align-items:center;gap:2px;font-size:11px;font-weight:600;padding:4px 0;position:relative}
+    .botnav a.active{color:var(--green-d)}
+    .botnav a .tag{position:absolute;top:0;right:22%;background:var(--green);color:#fff;font-size:10px;border-radius:20px;padding:0 5px}
+    .main{padding:14px 13px 78px}
+    .grid2{grid-template-columns:1fr}
+    .brand p{display:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- icon sprite -->
+<svg style="display:none" aria-hidden="true">
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 3v12M7 11l5 5 5-5M5 21h14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 21V9M7 13l5-5 5 5M5 3h14" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><path d="M4 7h16v13H4zM4 7l1-3h14l1 3M8 3v4M16 3v4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 013 3v13H8a3 3 0 01-3-3V4zM5 4v13" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></symbol>
+  <symbol id="i-mic" viewBox="0 0 24 24"><path d="M12 3a3 3 0 00-3 3v6a3 3 0 006 0V6a3 3 0 00-3-3zM5 11a7 7 0 0014 0M12 18v3" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-vid" viewBox="0 0 24 24"><path d="M3 6h13v12H3zM16 10l5-3v10l-5-3" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><path d="M4 12v7h16v-7M12 3v13M8 7l4-4 4 4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-seed" viewBox="0 0 24 24"><path d="M12 21c0-6 0-9 0-9M12 12c0-4 3-7 8-7 0 5-3 8-8 7zM12 12c0-4-3-7-8-7 0 5 3 8 8 7z" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><path d="M9 9h11v11H9zM5 15V4h11" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z" stroke="currentColor" stroke-width="2" fill="none" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div class="topbar">
+  <div class="brand">
+    <div class="logo">X</div>
+    <div>
+      <h1>内容生产台</h1>
+      <p>两系列叙事 · 成长日志 + 市场观察</p>
+    </div>
+  </div>
+  <div class="topacts">
+    <button class="btn line iconbtn" id="btnExport" title="导出 JSON 备份"><svg class="ic"><use href="#i-down"/></svg></button>
+    <button class="btn line iconbtn" id="btnImport" title="导入恢复"><svg class="ic"><use href="#i-up"/></svg></button>
+    <button class="btn ghost sm" id="btnClear">清空示例</button>
+    <input type="file" id="fileInput" accept="application/json" style="display:none">
+  </div>
+</div>
+
+<div class="wrap">
+  <nav class="side">
+    <a href="#m1" data-tab="1" class="active"><svg class="ic"><use href="#i-seed"/></svg>选题库<span class="tag" id="cnt1">0</span></a>
+    <a href="#m2" data-tab="2"><svg class="ic"><use href="#i-mic"/></svg>素材 & 脚本<span class="tag" id="cnt2">0</span></a>
+    <a href="#m3" data-tab="3"><svg class="ic"><use href="#i-share"/></svg>发布 & SOP<span class="tag" id="cnt3">0</span></a>
+  </nav>
+
+  <main class="main">
+    <!-- TODAY -->
+    <div class="today">
+      <h2><svg class="ic" style="color:var(--green)"><use href="#i-bolt"/></svg>今天要处理</h2>
+      <p class="sub">逾期 / 今天该推进的选题会自动滚到这里 · 红色为已过期</p>
+      <div id="todayList"></div>
+    </div>
+
+    <div id="m1">
+      <div class="sec-head">
+        <h2>选题库 · Idea Bank</h2>
+        <div class="grow"></div>
+        <button class="btn" id="addIdea"><svg class="ic"><use href="#i-plus"/></svg>新建选题</button>
+      </div>
+      <div class="filterbar" id="ideaFilter">
+        <button class="chip active" data-f="all">全部</button>
+        <button class="chip" data-f="成长日志">01 成长日志</button>
+        <button class="chip" data-f="市场观察">02 市场观察</button>
+      </div>
+      <div id="ideaList"></div>
+    </div>
+
+    <div id="m2" style="display:none">
+      <div class="sec-head">
+        <h2>素材 & 脚本资产</h2>
+        <div class="grow"></div>
+        <button class="btn" id="addAsset"><svg class="ic"><use href="#i-plus"/></svg>添加资产</button>
+      </div>
+      <p class="sub" style="color:var(--mut);font-size:13px;margin:-6px 0 14px">思想资产沉淀：录音时长、口述稿字数、AI 脚本 v1、B-roll 与屏幕录制清单。保留所有原始录音。</p>
+      <div id="assetList"></div>
+    </div>
+
+    <div id="m3" style="display:none">
+      <div class="sec-head">
+        <h2>发布分发 & SOP</h2>
+        <div class="grow"></div>
+        <button class="btn ghost" id="openSop"><svg class="ic"><use href="#i-book"/></svg>SOP 工具箱</button>
+        <button class="btn" id="addDist"><svg class="ic"><use href="#i-plus"/></svg>添加分发</button>
+      </div>
+      <div id="distList"></div>
+    </div>
+  </main>
+</div>
+
+<nav class="botnav">
+  <a href="#m1" data-tab="1" class="active"><svg class="ic"><use href="#i-seed"/></svg>选题库<span class="tag" id="cnt1b">0</span></a>
+  <a href="#m2" data-tab="2"><svg class="ic"><use href="#i-mic"/></svg>素材脚本<span class="tag" id="cnt2b">0</span></a>
+  <a href="#m3" data-tab="3"><svg class="ic"><use href="#i-share"/></svg>发布SOP<span class="tag" id="cnt3b">0</span></a>
+</nav>
+
+<!-- MODAL -->
+<div class="mask" id="mask"><div class="modal" id="modal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const PREFIX='wb_xljr_content_';
+const K_IDEAS=PREFIX+'ideas', K_ASSETS=PREFIX+'assets', K_DIST=PREFIX+'dist', K_INIT=PREFIX+'init';
+const STAGES=['灵感种子','研究思考','语音输出','AI脚本','录制视频','剪辑包装','多平台分发','已发布'];
+const SERIES=['投资者成长日志','市场观察·市场朗读','市场观察·交易计划'];
+function si(s){return Math.max(0,STAGES.indexOf(s));}
+function prog(s){return Math.round(si(s)/(STAGES.length-1)*100);}
+function todayStr(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate());}
+function load(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v));}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+function esc(s){return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),1800);}
+
+let ideas=load(K_IDEAS,null), assets=load(K_ASSETS,[]), dist=load(K_DIST,[]);
+const SAMPLE={
+ ideas:[
+  {id:'s1',title:'AI 为什么让我停止交易？',conflict:'判断正确却依然亏钱——问题不在预测，在执行。',p1:'大多数亏损来自执行层而非判断层',p2:'AI 的价值不是预测，而是纪律约束',p3:'投资系统比预测能力更重要',aud:'普通投资者 / 金融从业者 / AI 探索者',cs:'一次没有按计划执行的黄金交易，利润在手中蒸发',end:'未来投资者真正需要的能力是什么？',plan:'2026-08-03',stage:'语音输出',series:'投资者成长日志',note:'第一期种子，已录 28 分钟口述'},
+  {id:'s2',title:'投资者最大的敌人不是市场',conflict:'我们总把亏损怪给市场，但真正的对手是自己的痛阈与提前平仓。',p1:'浮亏厌恶导致结构性止损',p2:'周期错配：用 M5 止损管日线',p3:'机械预设优于意志力',aud:'期货交易者 / 短线选手',cs:'XAUUSD 210 笔统计：方向正确率 93% 但信念兑现率仅 11.7%',end:'如何把"知道"变成"做到"？',plan:'2026-08-12',stage:'灵感种子',series:'投资者成长日志',note:''},
+  {id:'s3',title:'预测和决策有什么区别？',conflict:'会预测的人很多，能决策的人很少。',p1:'预测是概率，决策是风险预算',p2:'CIO 层只做资产配置与风险暴露',p3:'系统不为预测市场，而为管理风险',aud:'研究型投资者 / 体系构建者',cs:'Trading OS 八层决策树',end:'你的决策框架里谁在拍板？',plan:'2026-08-09',stage:'AI脚本',series:'市场观察·交易计划',note:'AI 脚本 v1 已整理'},
+  {id:'s4',title:'我的 AI 投资系统如何工作？',conflict:'从数据到 CIO，一个个人投资操作系统长什么样。',p1:'Data→Research→IC→CIO→Learning',p2:'风险预算驱动仓位',p3:'复盘闭环：Plan→Trade→Review',aud:'AI 探索者 / 技术派',cs:'GitHub 仓库 + 本地数据库演示',end:'你能复制这套系统吗？',plan:'2026-08-16',stage:'录制视频',series:'投资者成长日志',note:'准备屏幕录制素材'}
+ ],
+ assets:[
+  {id:'a1',ideaId:'s1',recMin:28,words:8200,script:'（AI 脚本 v1）\n开头：冲突——"我的 AI 第一次阻止我交易，我逃过一次大亏。"\n第一部分：我的黄金交易经历\n第二部分：发现的问题——执行层才是瓶颈\n第三部分：解决方案——Trading Coach 纪律引擎\n结尾：未来投资者需要什么能力？',link:'',broll:'K线动画 / 账户回撤图 / 系统界面截图',screen:'GitHub 仓库 / 数据库查询 / 风险预算面板'}
+ ],
+ dist:[
+  {id:'d1',ideaId:'s1',ytLong:true,shorts:[true,false,false,false,false],wechat:false,github:true,
+   data:[{platform:'YouTube',date:'2026-08-05',views:0,follow:0}]}
+ ]
+};
+if(ideas===null){ideas=SAMPLE.ideas;assets=SAMPLE.assets;dist=SAMPLE.dist;saveAll();}
+
+function saveAll(){save(K_IDEAS,ideas);save(K_ASSETS,assets);save(K_DIST,dist);save(K_INIT,'1');}
+function ideaById(id){return ideas.find(i=>i.id===id);}
+function ideaTitle(id){const i=ideaById(id);return i?i.title:'(已删除选题)';}
+
+/* ---------- TODAY ---------- */
+function renderToday(){
+  const t=todayStr();
+  const list=ideas.filter(i=>i.plan&&i.plan<=t&&i.stage!=='已发布')
+    .sort((a,b)=> (a.plan<b.plan?-1:1));
+  const box=document.getElementById('todayList');
+  if(!list.length){box.innerHTML='<div class="empty">暂无逾期或待推进的选题，状态良好 ✅</div>';return;}
+  box.innerHTML=list.map(i=>{
+    const over=i.plan<t;
+    return `<div class="titem ${over?'over':''}">
+      <span class="pill ${over?'over':''}">${over?'已逾期':'今天'}</span>
+      <div class="tt"><b>${esc(i.title)}</b><span>计划 ${esc(i.plan)} · 当前阶段：${esc(i.stage)}</span></div>
+      <button class="btn sm" onclick="advance('${i.id}')">推进阶段</button>
+    </div>`;
+  }).join('');
+}
+function advance(id){
+  const i=ideaById(id);if(!i)return;
+  const nx=si(i.stage)+1;
+  if(nx<STAGES.length){i.stage=STAGES[nx];saveAll();toast('已推进至：'+i.stage);renderAll();}
+  else toast('已是最终阶段');
+}
+
+/* ---------- IDEAS ---------- */
+let curFilter='all';
+function renderIdeas(){
+  const box=document.getElementById('ideaList');
+  let list=ideas;
+  if(curFilter!=='all') list=list.filter(i=>(i.series||'').indexOf(curFilter)>-1);
+  if(!list.length){box.innerHTML='<div class="empty">'+(curFilter==='all'?'还没有选题，点右上角「新建选题」种下第一颗种子。':'该系列下还没有选题。')+'</div>';return;}
+  box.innerHTML=list.map(i=>{
+    const p=prog(i.stage);
+    const due=i.plan?`计划 ${esc(i.plan)}`:'未排期';
+    return `<div class="card">
+      <div class="ch" onclick="toggleBody('b${i.id}')">
+        <div class="ttl"><b>${esc(i.title)}</b>
+          <div class="meta"><span>${due}</span>${i.aud?`<span>· ${esc(i.aud)}</span>`:''}</div>
+        </div>
+        <span class="series-badge">${esc(i.series||'未分类')}</span>
+        <span class="stage-badge">${esc(i.stage)}</span>
+        <svg class="ic" style="color:var(--mut)"><use href="#i-edit"/></svg>
+      </div>
+      <div class="bar"><i style="width:${p}%"></i></div>
+      <div class="body" id="b${i.id}">
+        ${i.conflict?`<div class="kv"><b>核心冲突</b>${esc(i.conflict)}</div>`:''}
+        ${(i.p1||i.p2||i.p3)?`<div class="kv"><b>三个观点</b>1. ${esc(i.p1)}<br>2. ${esc(i.p2)}<br>3. ${esc(i.p3)}</div>`:''}
+        ${i.cs?`<div class="kv"><b>真实案例</b>${esc(i.cs)}</div>`:''}
+        ${i.end?`<div class="kv"><b>结尾问题</b>${esc(i.end)}</div>`:''}
+        ${i.note?`<div class="kv"><b>备注</b>${esc(i.note)}</div>`:''}
+        <div class="acts">
+          <button class="btn ghost sm" onclick="editIdea('${i.id}')"><svg class="ic"><use href="#i-edit"/></svg>编辑</button>
+          <button class="btn line sm" onclick="advance('${i.id}')"><svg class="ic"><use href="#i-bolt"/></svg>推进阶段</button>
+          <button class="btn line sm" onclick="del('idea','${i.id}')"><svg class="ic"><use href="#i-trash"/></svg>删除</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- ASSETS ---------- */
+function renderAssets(){
+  const box=document.getElementById('assetList');
+  if(!assets.length){box.innerHTML='<div class="empty">还没有素材资产，录完音后把口述稿字数、脚本、B-roll 清单记在这里。</div>';return;}
+  box.innerHTML=assets.map(a=>{
+    return `<div class="card">
+      <div class="ch" onclick="toggleBody('ba${a.id}')">
+        <div class="ttl"><b>${esc(ideaTitle(a.ideaId))}</b>
+          <div class="meta"><span>🎙 ${a.recMin||0} 分钟</span><span>✍ ${a.words||0} 字</span></div>
+        </div>
+        <svg class="ic" style="color:var(--mut)"><use href="#i-mic"/></svg>
+      </div>
+      <div class="body" id="ba${a.id}">
+        ${a.script?`<div class="kv"><b>AI 脚本 v1</b></div><pre style="white-space:pre-wrap;word-break:break-word;font-size:13px;background:#f8faf9;border:1px solid var(--line);border-radius:8px;padding:10px;font-family:inherit">${esc(a.script)}</pre>`:''}
+        ${a.broll?`<div class="kv"><b>B-roll 清单</b>${esc(a.broll)}</div>`:''}
+        ${a.screen?`<div class="kv"><b>屏幕录制</b>${esc(a.screen)}</div>`:''}
+        ${a.link?`<div class="kv"><b>脚本链接</b>${esc(a.link)}</div>`:''}
+        <div class="acts">
+          <button class="btn ghost sm" onclick="editAsset('${a.id}')"><svg class="ic"><use href="#i-edit"/></svg>编辑</button>
+          <button class="btn line sm" onclick="del('asset','${a.id}')"><svg class="ic"><use href="#i-trash"/></svg>删除</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- DIST ---------- */
+function renderDist(){
+  const box=document.getElementById('distList');
+  if(!dist.length){box.innerHTML='<div class="empty">还没有分发记录，发布时勾选「一鱼多吃」清单并记下各平台数据。</div>';return;}
+  box.innerHTML=dist.map(d=>{
+    const sh=d.shorts.map((v,k)=>`<label class="chk"><input type="checkbox" ${v?'checked':''} disabled> Shorts ${k+1}</label>`).join('');
+    const rows=(d.data||[]).map(r=>`<div class="datarow"><span style="font-size:13px;min-width:84px">${esc(r.platform)}</span><span style="font-size:12px;color:var(--mut)">${esc(r.date)}</span><span style="font-size:12px;color:var(--mut)">播放 ${r.views||0} · 涨粉 ${r.follow||0}</span></div>`).join('');
+    return `<div class="card">
+      <div class="ch" onclick="toggleBody('bd${d.id}')">
+        <div class="ttl"><b>${esc(ideaTitle(d.ideaId))}</b>
+          <div class="meta"><span>${d.ytLong?'长视频✓':''}</span><span>${d.wechat?'公众号✓':''}</span><span>${d.github?'GitHub✓':''}</span></div>
+        </div>
+        <svg class="ic" style="color:var(--mut)"><use href="#i-share"/></svg>
+      </div>
+      <div class="body" id="bd${d.id}">
+        <div class="kv"><b>一鱼多吃</b></div>
+        <div class="row" style="margin-bottom:10px">
+          <label class="chk"><input type="checkbox" ${d.ytLong?'checked':''} disabled> YouTube 长视频</label>
+          <label class="chk"><input type="checkbox" ${d.wechat?'checked':''} disabled> 微信公众号</label>
+          <label class="chk"><input type="checkbox" ${d.github?'checked':''} disabled> GitHub 日志</label>
+        </div>
+        <div class="row" style="margin-bottom:10px">${sh}</div>
+        ${rows?`<div class="kv"><b>平台数据</b></div>${rows}`:''}
+        <div class="acts">
+          <button class="btn ghost sm" onclick="editDist('${d.id}')"><svg class="ic"><use href="#i-edit"/></svg>编辑</button>
+          <button class="btn line sm" onclick="del('dist','${d.id}')"><svg class="ic"><use href="#i-trash"/></svg>删除</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- counts / banner ---------- */
+function renderCounts(){
+  const c=ideas.length+assets.length+dist.length;
+  ['cnt1','cnt1b'].forEach(id=>document.getElementById(id).textContent=ideas.length);
+  ['cnt2','cnt2b'].forEach(id=>document.getElementById(id).textContent=assets.length);
+  ['cnt3','cnt3b'].forEach(id=>document.getElementById(id).textContent=dist.length);
+  const hasBanner=document.getElementById('dataBanner');
+  if(c>=30 && !hasBanner){
+    const b=document.createElement('div');b.className='banner';b.id='dataBanner';
+    b.innerHTML='<svg class="ic" style="color:var(--amber)"><use href="#i-bolt"/></svg> 数据已积累 '+c+' 条，建议点右上角「导出 JSON」备份。';
+    document.querySelector('.main').insertBefore(b,document.querySelector('.main').firstChild);
+  }
+}
+function renderAll(){renderToday();renderIdeas();renderAssets();renderDist();renderCounts();}
+function toggleBody(id){document.getElementById(id).classList.toggle('open');}
+
+/* ---------- delete ---------- */
+function del(type,id){
+  if(!confirm('确定删除这条记录？此操作不可撤销。'))return;
+  if(type==='idea'){ideas=ideas.filter(i=>i.id!==id);assets=assets.filter(a=>a.ideaId!==id);dist=dist.filter(d=>d.ideaId!==id);}
+  if(type==='asset')assets=assets.filter(a=>a.id!==id);
+  if(type==='dist')dist=dist.filter(d=>d.id!==id);
+  saveAll();renderAll();toast('已删除');
+}
+
+/* ---------- MODAL ---------- */
+const mask=document.getElementById('mask'),modal=document.getElementById('modal');
+function openModal(html){modal.innerHTML=html;mask.classList.add('open');}
+function closeModal(){mask.classList.remove('open');}
+mask.addEventListener('click',e=>{if(e.target===mask)closeModal();});
+
+function ideaOptions(sel){
+  if(!ideas.length)return '<option value="">（请先建选题）</option>';
+  return ideas.map(i=>`<option value="${i.id}" ${i.id===sel?'selected':''}>${esc(i.title)}</option>`).join('');
+}
+function stageOptions(sel){return STAGES.map(s=>`<option ${s===sel?'selected':''}>${s}</option>`).join('');}
+function seriesOptions(sel){return SERIES.map(s=>`<option ${s===sel?'selected':''}>${s}</option>`).join('');}
+
+function addIdea(){
+  openModal(`<h3><svg class="ic"><use href="#i-seed"/></svg>新建选题</h3>
+   <button class="x" onclick="closeModal()"><svg class="ic"><use href="#i-x"/></svg></button>
+   <label>标题 *</label><input id="f_title" placeholder="例如：AI 为什么让我停止交易？">
+   <label>所属系列</label><select id="f_series">${seriesOptions('投资者成长日志')}</select>
+   <label>核心冲突</label><textarea id="f_conflict" placeholder="人类投资者为什么需要 AI 约束自己？"></textarea>
+   <label>三个观点</label>
+   <input id="f_p1" placeholder="观点 1"><input id="f_p2" placeholder="观点 2" style="margin-top:8px"><input id="f_p3" placeholder="观点 3" style="margin-top:8px">
+   <label>目标观众</label><input id="f_aud" placeholder="普通投资者 / 金融从业者 / AI 探索者">
+   <label>真实案例</label><textarea id="f_cs"></textarea>
+   <label>结尾想留下的问题</label><textarea id="f_end"></textarea>
+   <div class="grid2">
+     <div><label>计划发布日期</label><input id="f_plan" type="date"></div>
+     <div><label>当前阶段</label><select id="f_stage">${stageOptions('灵感种子')}</select></div>
+   </div>
+   <label>备注</label><input id="f_note">
+   <div class="foot"><button class="btn line" onclick="closeModal()">取消</button><button class="btn" onclick="saveIdea()">保存种子</button></div>`);
+}
+function editIdea(id){
+  const i=ideaById(id);if(!i)return;
+  openModal(`<h3><svg class="ic"><use href="#i-edit"/></svg>编辑选题</h3>
+   <button class="x" onclick="closeModal()"><svg class="ic"><use href="#i-x"/></svg></button>
+   <label>标题 *</label><input id="f_title" value="${esc(i.title)}">
+   <label>所属系列</label><select id="f_series">${seriesOptions(i.series)}</select>
+   <label>核心冲突</label><textarea id="f_conflict">${esc(i.conflict)}</textarea>
+   <label>三个观点</label>
+   <input id="f_p1" value="${esc(i.p1)}"><input id="f_p2" value="${esc(i.p2)}" style="margin-top:8px"><input id="f_p3" value="${esc(i.p3)}" style="margin-top:8px">
+   <label>目标观众</label><input id="f_aud" value="${esc(i.aud)}">
+   <label>真实案例</label><textarea id="f_cs">${esc(i.cs)}</textarea>
+   <label>结尾想留下的问题</label><textarea id="f_end">${esc(i.end)}</textarea>
+   <div class="grid2">
+     <div><label>计划发布日期</label><input id="f_plan" type="date" value="${esc(i.plan)}"></div>
+     <div><label>当前阶段</label><select id="f_stage">${stageOptions(i.stage)}</select></div>
+   </div>
+   <label>备注</label><input id="f_note" value="${esc(i.note)}">
+   <div class="foot"><button class="btn line" onclick="closeModal()">取消</button><button class="btn" onclick="saveIdea('${i.id}')">保存</button></div>`);
+}
+function saveIdea(id){
+  const g=k=>document.getElementById(k).value.trim();
+  const title=g('f_title');if(!title){toast('标题不能为空');return;}
+  const o={title,series:document.getElementById('f_series').value,conflict:g('f_conflict'),p1:g('f_p1'),p2:g('f_p2'),p3:g('f_p3'),
+    aud:g('f_aud'),cs:g('f_cs'),end:g('f_end'),plan:g('f_plan'),stage:document.getElementById('f_stage').value,note:g('f_note')};
+  if(id){Object.assign(ideaById(id),o);}else{ideas.unshift({id:uid(),...o});}
+  saveAll();closeModal();renderAll();toast('已保存');
+}
+
+function addAsset(){
+  openModal(`<h3><svg class="ic"><use href="#i-mic"/></svg>添加素材资产</h3>
+   <button class="x" onclick="closeModal()"><svg class="ic"><use href="#i-x"/></svg></button>
+   <label>关联选题 *</label><select id="f_idea">${ideaOptions('')}</select>
+   <div class="grid2">
+     <div><label>录音时长（分钟）</label><input id="f_rec" type="number" min="0" placeholder="28"></div>
+     <div><label>口述稿字数</label><input id="f_words" type="number" min="0" placeholder="8200"></div>
+   </div>
+   <label>AI 脚本 v1（整理后）</label><textarea id="f_script"></textarea>
+   <label>脚本链接</label><input id="f_link" placeholder="https://...">
+   <label>B-roll 清单</label><textarea id="f_broll" placeholder="K线动画 / 账户回撤图 / 系统截图"></textarea>
+   <label>屏幕录制清单</label><textarea id="f_screen" placeholder="GitHub / 数据库 / 风险预算面板"></textarea>
+   <div class="foot"><button class="btn line" onclick="closeModal()">取消</button><button class="btn" onclick="saveAsset()">保存</button></div>`);
+}
+function editAsset(id){
+  const a=assets.find(x=>x.id===id);if(!a)return;
+  openModal(`<h3><svg class="ic"><use href="#i-edit"/></svg>编辑资产</h3>
+   <button class="x" onclick="closeModal()"><svg class="ic"><use href="#i-x"/></svg></button>
+   <label>关联选题 *</label><select id="f_idea">${ideaOptions(a.ideaId)}</select>
+   <div class="grid2">
+     <div><label>录音时长（分钟）</label><input id="f_rec" type="number" min="0" value="${a.recMin||''}"></div>
+     <div><label>口述稿字数</label><input id="f_words" type="number" min="0" value="${a.words||''}"></div>
+   </div>
+   <label>AI 脚本 v1</label><textarea id="f_script">${esc(a.script)}</textarea>
+   <label>脚本链接</label><input id="f_link" value="${esc(a.link)}">
+   <label>B-roll 清单</label><textarea id="f_broll">${esc(a.broll)}</textarea>
+   <label>屏幕录制清单</label><textarea id="f_screen">${esc(a.screen)}</textarea>
+   <div class="foot"><button class="btn line" onclick="closeModal()">取消</button><button class="btn" onclick="saveAsset('${a.id}')">保存</button></div>`);
+}
+function saveAsset(id){
+  const idea=document.getElementById('f_idea').value;
+  if(!idea){toast('请先选择关联选题');return;}
+  const g=k=>(document.getElementById(k).value||'').trim();
+  const n=k=>(document.getElementById(k).value||'');
+  const o={ideaId:idea,recMin:parseInt(n('f_rec'))||0,words:parseInt(n('f_words'))||0,
+    script:g('f_script'),link:g('f_link'),broll:g('f_broll'),screen:g('f_screen')};
+  if(id){Object.assign(assets.find(x=>x.id===id),o);}else{assets.unshift({id:uid(),...o});}
+  saveAll();closeModal();renderAll();toast('已保存');
+}
+
+function addDist(){
+  openModal(`<h3><svg class="ic"><use href="#i-share"/></svg>添加分发</h3>
+   <button class="x" onclick="closeModal()"><svg class="ic"><use href="#i-x"/></svg></button>
+   <label>关联选题 *</label><select id="f_idea">${ideaOptions('')}</select>
+   <label>一鱼多吃清单</label>
+   <div class="row" style="margin:6px 0 10px">
+     <label class="chk"><input type="checkbox" id="f_yt"> YouTube 长视频</label>
+     <label class="chk"><input type="checkbox" id="f_wx"> 微信公众号</label>
+     <label class="chk"><input type="checkbox" id="f_gh"> GitHub 日志</label>
+   </div>
+   <label>Shorts（5 条）</label>
+   <div class="row" style="margin:6px 0 10px">
+     ${[1,2,3,4,5].map(k=>`<label class="chk"><input type="checkbox" id="f_sh${k}"> Shorts ${k}</label>`).join('')}
+   </div>
+   <label>平台数据（可选，可多条）</label>
+   <div id="dataRows"></div>
+   <button class="btn ghost sm" onclick="addDataRow()" style="margin-top:6px"><svg class="ic"><use href="#i-plus"/></svg>添加数据行</button>
+   <div class="foot"><button class="btn line" onclick="closeModal()">取消</button><button class="btn" onclick="saveDist()">保存</button></div>`);
+  addDataRow();
+}
+function editDist(id){
+  const d=dist.find(x=>x.id===id);if(!d)return;
+  openModal(`<h3><svg class="ic"><use href="#i-edit"/></svg>编辑分发</h3>
+   <button class="x" onclick="closeModal()"><svg class="ic"><use href="#i-x"/></svg></button>
+   <label>关联选题 *</label><select id="f_idea">${ideaOptions(d.ideaId)}</select>
+   <label>一鱼多吃清单</label>
+   <div class="row" style="margin:6px 0 10px">
+     <label class="chk"><input type="checkbox" id="f_yt" ${d.ytLong?'checked':''}> YouTube 长视频</label>
+     <label class="chk"><input type="checkbox" id="f_wx" ${d.wechat?'checked':''}> 微信公众号</label>
+     <label class="chk"><input type="checkbox" id="f_gh" ${d.github?'checked':''}> GitHub 日志</label>
+   </div>
+   <label>Shorts（5 条）</label>
+   <div class="row" style="margin:6px 0 10px">
+     ${[1,2,3,4,5].map(k=>`<label class="chk"><input type="checkbox" id="f_sh${k}" ${(d.shorts&&d.shorts[k-1])?'checked':''}> Shorts ${k}</label>`).join('')}
+   </div>
+   <label>平台数据</label>
+   <div id="dataRows"></div>
+   <button class="btn ghost sm" onclick="addDataRow()" style="margin-top:6px"><svg class="ic"><use href="#i-plus"/></svg>添加数据行</button>
+   <div class="foot"><button class="btn line" onclick="closeModal()">取消</button><button class="btn" onclick="saveDist('${d.id}')">保存</button></div>`);
+  (d.data||[]).forEach(r=>addDataRow(r));
+  if(!(d.data||[]).length)addDataRow();
+}
+function addDataRow(r){
+  r=r||{};
+  const box=document.getElementById('dataRows');if(!box)return;
+  const div=document.createElement('div');div.className='datarow';
+  div.innerHTML=`<input placeholder="平台" value="${esc(r.platform||'')}">
+    <input type="date" value="${esc(r.date||'')}">
+    <input type="number" min="0" placeholder="播放量" value="${r.views||''}">
+    <input type="number" min="0" placeholder="涨粉" value="${r.follow||''}">
+    <button class="btn line sm" onclick="this.parentNode.remove()"><svg class="ic"><use href="#i-trash"/></svg></button>`;
+  box.appendChild(div);
+}
+function saveDist(id){
+  const idea=document.getElementById('f_idea').value;
+  if(!idea){toast('请先选择关联选题');return;}
+  const sh=[1,2,3,4,5].map(k=>document.getElementById('f_sh'+k).checked);
+  const rows=[...document.getElementById('dataRows').children].map(d=>{
+    const inp=d.querySelectorAll('input');
+    return {platform:inp[0].value.trim(),date:inp[1].value,views:parseInt(inp[2].value)||0,follow:parseInt(inp[3].value)||0};
+  }).filter(r=>r.platform);
+  const o={ideaId:idea,ytLong:document.getElementById('f_yt').checked,wechat:document.getElementById('f_wx').checked,
+    github:document.getElementById('f_gh').checked,shorts:sh,data:rows};
+  if(id){Object.assign(dist.find(x=>x.id===id),o);}else{dist.unshift({id:uid(),...o});}
+  saveAll();closeModal();renderAll();toast('已保存');
+}
+
+/* ---------- SOP ---------- */
+const SOP={
+  growth:`【投资者成长日志 · 提纲】
+我是谁 / 为什么值得关注：
+真实市场经历（一次具体交易或一个阶段）：
+我当时的判断与行动：
+错误 / 偏差发生在哪一环：
+我如何纠正（认知升级 / 系统迭代）：
+AI 如何辅助我的成长：
+这集想留下的核心认知：`,
+  reading:`【市场朗读 · 提纲】（不预测，只解释市场）
+今天发生了什么：
+市场交易的核心逻辑是什么：
+资金在哪里（流入 / 流出）：
+哪些资产强、哪些弱：
+我的当前认知是什么：
+哪些因素会让我改变观点：`,
+  plan:`【交易计划 · 提纲】（展示决策过程，而非结果）
+当前环境：
+我的观点：
+交易逻辑：
+入场条件：
+风险位置：
+仓位计划：
+失效条件：
+复盘结果（事后回填）：`,
+  record:`【录音提示】
+· 打开手机录音，假设对面是一个朋友，自然聊 15-30 分钟
+· 允许停顿、改口、想几秒、重新解释——不要追求一次完美
+· 一条 30 分钟录音里 5 分钟废话 + 3 分钟重复 + 2 分钟跑题都很正常
+· 保留所有原始录音，未来它们是你的"思想数据库"`,
+  prompt:`【AI 整理 Prompt】
+你是一名 YouTube 财经频道编导，请将以下口述内容整理成 10 分钟视频脚本。
+保留我的个人经历和观点。优化：
+1. 开头 30 秒制造冲突
+2. 增加故事结构
+3. 删除重复表达
+4. 保留专业深度`,
+  edit:`【AI 剪辑流水线】（CapCut / 剪映）
+视频导入 → 自动字幕 → AI 删除停顿 → 自动生成章节 → 添加 B-roll
+· 找高价值片段：10 分钟视频 AI 提取 5 个 30 秒高潮 → 生成 Shorts
+· 自动标题：生成 20 个标题，选"冲突型"而非"说明型"
+  普通：《我的 AI 投资系统》
+  更强：《AI 第一次阻止我交易，我逃过了一次大亏》`,
+  dist:`【发布检查表 · 一鱼多吃】
+□ YouTube 长视频（1 个，10 分钟）
+□ Shorts ×5（拆 5 个 30 秒高潮）
+□ 微信公众号文章
+□ GitHub 研究日志
+比例参考（第一年）：真人 50% / AI 辅助 30% / 屏幕 20%`
+};
+function openSop(){
+  const box=Object.entries(SOP).map(([k,v],i)=>{
+    const title={growth:'成长日志提纲',reading:'市场朗读提纲',plan:'交易计划提纲',record:'录音提示',prompt:'AI 整理 Prompt',edit:'剪辑流水线',dist:'发布检查表'}[k];
+    const icon=['i-seed','i-book','i-vid','i-mic','i-bolt','i-edit','i-share'][i];
+    return `<div class="sop-box"><h4><svg class="ic"><use href="#${icon}"/></svg>${title}</h4>
+      <pre id="sop_${k}">${esc(v)}</pre>
+      <button class="btn ghost sm" style="margin-top:8px" onclick="copySop('sop_${k}')"><svg class="ic"><use href="#i-copy"/></svg>复制</button></div>`;
+  }).join('');
+  openModal(`<h3><svg class="ic"><use href="#i-book"/></svg>视频生产 SOP v1.0</h3>
+   <button class="x" onclick="closeModal()"><svg class="ic"><use href="#i-x"/></svg></button>
+   <p class="sub" style="color:var(--mut);font-size:13px;margin:0 0 12px">先说清楚，再写清楚，最后拍清楚。</p>
+   <div class="sop-grid">${box}</div>
+   <div class="foot"><button class="btn" onclick="closeModal()">关闭</button></div>`);
+}
+function copySop(id){
+  const t=document.getElementById(id).textContent;
+  navigator.clipboard.writeText(t).then(()=>toast('已复制')).catch(()=>toast('复制失败'));
+}
+
+/* ---------- import / export / clear ---------- */
+document.getElementById('btnExport').onclick=()=>{
+  const blob=new Blob([JSON.stringify({ideas,assets,dist},null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='XLJR_content_'+todayStr()+'.json';a.click();toast('已导出备份');
+};
+document.getElementById('btnImport').onclick=()=>document.getElementById('fileInput').click();
+document.getElementById('fileInput').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=()=>{try{
+    const d=JSON.parse(r.result);
+    if(!confirm('导入将覆盖当前数据，确定继续？'))return;
+    ideas=d.ideas||[];assets=d.assets||[];dist=d.dist||[];saveAll();renderAll();toast('导入成功，共 '+(ideas.length+assets.length+dist.length)+' 条');
+  }catch(err){toast('文件格式错误');}};
+  r.readAsText(f);e.target.value='';
+};
+document.getElementById('btnClear').onclick=()=>{
+  if(!confirm('清空全部示例与数据？此操作不可撤销，建议先导出备份。'))return;
+  ideas=[];assets=[];dist=[];saveAll();renderAll();toast('已清空');
+};
+
+/* ---------- nav ---------- */
+function setTab(t){
+  ['1','2','3'].forEach(n=>{
+    document.getElementById('m'+n).style.display=(n===t?'block':'none');
+  });
+  document.querySelectorAll('[data-tab]').forEach(a=>a.classList.toggle('active',a.dataset.tab===t));
+  document.querySelector('.main').scrollIntoView({behavior:'smooth',block:'start'});
+}
+document.querySelectorAll('[data-tab]').forEach(a=>a.onclick=e=>{e.preventDefault();setTab(a.dataset.tab);});
+document.querySelectorAll('#ideaFilter .chip').forEach(c=>c.onclick=()=>{
+  document.querySelectorAll('#ideaFilter .chip').forEach(x=>x.classList.remove('active'));
+  c.classList.add('active'); curFilter=c.dataset.f; renderIdeas();
+});
+
+/* init */
+renderAll();
+</script>
+</body>
+</html>

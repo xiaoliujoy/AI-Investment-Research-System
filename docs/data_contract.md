@@ -91,6 +91,15 @@ field:
 | exit_planned | int(0/1/NULL) | 布尔(可空) | 事件 | 手动录入 | 1=按计划退出；驱动 Holding Discipline；可选 |
 | decision_state | categorical | {normal/hesitant/urgent/revenge/fomo} | 事件 | 手动录入 | §4 最低优先级，可空 |
 | reason | text | — | 事件 | 手动录入 | 一句理由，可空 |
+| **signal_grade** | categorical | {A/B/C} | 事件(开仓前) | 手动录入 | **E3**：信心水平；A=高/B=中/C=低；可空（保 ≤60s） |
+| **expected_scenario** | categorical | {A趋势延续/B反转捕捉/C区间震荡/D新闻事件} | 事件(开仓前) | 手动录入 | **E3**：交易假设（"你相信未来发生什么"）；可空 |
+| **invalid_condition** | text | — | 事件(开仓前) | 手动录入 | **E3**：失效条件（"什么证明我错了"）；文本，可空 |
+| **willing_hold_4h** | int(0/1/NULL) | 布尔(可空) | 事件(开仓前) | 手动录入 | **E3**：时间预期；holding_duration 的事前代理；可空 |
+| **planned_exit** | text | — | 事件(开仓前) | 手动录入 | **E3**：退出计划；文本，可空 |
+| **exit_trigger** | categorical | {target/structure_break/time_exit/emotion_exit/protect_profit/other} | 事件(平仓后) | 手动录入 | **平仓层（实验性）**：实际平仓原因；与 `planned_exit` 配对可算「计划偏离率」；可空 |
+| **exit_decision_state** | categorical | {wrong_exit/pain_threshold/weak_exit/disoriented/other} | 事件(平仓后) | 手动录入 | **平仓层（实验性，非诊断）**：平仓时刻主导认知自我报告；待 Q2 验证，禁止升级为心理诊断；可空 |
+| **mfe_usd** | float | **美元** | 事件(后期回填) | mt5_mfe_mae.py | **Phase 2**：最大有利波动（USD）；NULL 待重建 |
+| **mae_usd** | float | **美元** | 事件(后期回填) | mt5_mfe_mae.py | **Phase 2**：最大不利波动（USD）；NULL 待重建 |
 | content_hash | text | — | 事件 | 计算 | 防篡改，预留 |
 
 ### decision_snapshot（Trader OS 事前信息封存，防后视偏差，见 §2.1）

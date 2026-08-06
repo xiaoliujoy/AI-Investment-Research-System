@@ -63,7 +63,8 @@ def init_db():
         opportunity_cost_flag INTEGER,
         failure_type_candidate TEXT,
         governance_version TEXT,
-        decision_confidence TEXT
+        decision_confidence TEXT,
+        decision_conflict_type TEXT
     )''')
     try:
         con.execute('ALTER TABLE cio_decision_history ADD COLUMN alloc_mode TEXT')
@@ -77,6 +78,7 @@ def init_db():
         ('failure_type_candidate', 'TEXT'),
         ('governance_version', 'TEXT'),
         ('decision_confidence', 'TEXT'),
+        ('decision_conflict_type', 'TEXT'),
     ]:
         try:
             con.execute(f'ALTER TABLE cio_decision_history ADD COLUMN {col} {ctype}')
@@ -232,15 +234,16 @@ def save_decision(dec):
     gov = dec.get('governance_observation') or {}
     con.execute('''INSERT OR REPLACE INTO cio_decision_history
         (date,regime_class,risk_state,risk_score,alloc_equity,alloc_gold,alloc_bond,alloc_cash,alloc_mode,action,confidence,reasons_json,source,
-         risk_governance_state,days_in_crisis,recovery_stage,opportunity_cost_flag,failure_type_candidate,governance_version,decision_confidence)
-        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
+         risk_governance_state,days_in_crisis,recovery_stage,opportunity_cost_flag,failure_type_candidate,governance_version,decision_confidence,decision_conflict_type)
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)''',
         (dec['date'], dec['regime_class'], dec['risk_state'], dec['risk_score'],
          dec['allocation']['equity'], dec['allocation']['gold'], dec['allocation']['bond'], dec['allocation']['cash'],
          dec.get('alloc_mode'), dec['action'], dec['confidence'], json.dumps(dec['reasons'], ensure_ascii=False),
          'cio_decision_engine',
          gov.get('risk_governance_state'), gov.get('days_in_crisis'), gov.get('recovery_stage'),
          gov.get('opportunity_cost_flag'), gov.get('failure_type_candidate'),
-         gov.get('governance_version'), gov.get('decision_confidence')))
+         gov.get('governance_version'), gov.get('decision_confidence'),
+         gov.get('decision_conflict_type')))
     con.commit()
     con.close()
 

@@ -25,8 +25,9 @@ Phase 2.0 把研究客体从"交易策略"升级为"个人 CIO 的风险治理�
 | Recovery Protocol | 新增(本层) | Crisis 的镜像：渐进恢复 |
 | Crisis Aging | 新增(本层) | 危机持续天数追踪与强制复核 |
 | Opportunity Cost Monitor | 新增(本层) | 低仓但广度恢复 → 标记防御错误 |
-| Failure Log | 升级(`build_failure_log.py`) | 5 类错误分类 |
-| Decision Quality Dashboard | 新增(`decision_quality_dashboard.py`) | Checkpoint C 三指标 |
+| Failure Log | 升级(`build_failure_log.py`) | 5 类错误分类（结果错误，滞后） |
+| Decision Conflict Log | 新增(观测字段 `decision_conflict_type`) | 依据不一致（症状，提前） |
+| Decision Quality Dashboard | 新增(`decision_quality_dashboard.py`) | Checkpoint C 四指标 |
 
 ---
 
@@ -68,20 +69,48 @@ score_to_budget()  →  基础暴露(连续, 1.9B)
 
 ---
 
-## 五、Checkpoint C（2026-12-31）三指标
+## 四-B、Decision Conflict Log（与 Failure Log 的区别）
+
+用户 2026-08-04 末提议：现有 Failure Log 记录"结果错误"（病情，滞后），
+但还需要记录"决策依据之间不一致"（症状，提前）。二者不同：
+
+| 类型 | 记录什么 | 例子 | 价值 |
+|---|---|---|---|
+| Failure Log | 结果错误 | 降仓后市场涨 30% | 事后问责 |
+| Conflict Log | 依据不一致 | 风险高但广度强 | 提前发现 |
+
+Conflict 往往早于 Failure，类似医学"症状出现即记录，不等恶化"。
+实现方式（已在 2.0-A 落地，observation-only）：`cio_decision_history` 增加观测字段
+`decision_conflict_type`，由 `risk_governance.decision_conflict_type()` 判定，取值：
+
+- `risk_vs_breadth`：防御信号 vs 广度强势（过度保护风险）/ 扩张信号 vs 广度弱势（冒进风险）
+- `risk_vs_trend`：信号与趋势（stage）背离
+- `signal_vs_market`：其他信号-市场背离
+
+首条真实记录（2026-08-04）即命中 `risk_vs_breadth`：score=45（防御）但 breadth=0.672（67% 个股上涨）。
+这正是"系统认知冲突事件"——优秀系统的进化不来自预测正确的数据，而来自判断分歧在哪里、为何产生。
+
+Conflict 与 Failure 的关联（Checkpoint C 后回看）：
+- **有价值冲突**：risk 高但后来真跌 → Risk 领先，保留。
+- **无价值冲突**：risk 高市场续涨 → 过度防御，对应 Failure Log 的 false_positive。
+
+---
+
+## 五、Checkpoint C（2026-12-31）四指标
 
 | 指标 | 公式 | 目标 |
 |---|---|---|
 | Crisis Precision | 成功Crisis / 全部Crisis | > 70% |
 | Miss Rate | 重大下跌前未降风险的比例 | < 20% |
 | Recovery Speed | 危机解除→恢复正常风险天数 | < 60 天 |
+| Decision Conflict Rate | 冲突决策 / 全部决策 | < 25%（暂定，验收前钉死） |
 
 **分母定义须在验收前钉死（防游戏化）**：
 - Crisis 事件 = 未来 60 日出现 >=20% 回撤的窗口起点
 - 成功 Crisis = 触发后该窗口确实发生 >=20% 回撤
 - Miss = 发生 >=20% 回撤但前 20 日未触发 Crisis
 
-现状：真实 decision history 仅 1 条，三指标 `insufficient_data`，框架已就绪待累积。
+现状：真实 decision history 仅 1 条，四指标 `insufficient_data`，框架已就绪待累积。
 
 ---
 
@@ -91,6 +120,25 @@ score_to_budget()  →  基础暴露(连续, 1.9B)
 - 仅消费已有：regime_history.risk_score + market_daily 广度。
 - 未来 5 个月（至 Checkpoint C）**只观察、不优化**：三指标与 Failure Log 随真实决策累积自动填充。
 - 验收全过（三指标达标 + 真实信号长周期成立）后，才进入 Phase 2.0 之后的全球资产扩展。
+
+---
+
+## 附录 A、系统版本标签：AI Investment Research OS v2.0-alpha
+
+用户在 2026-08-04 末将本里程碑标记为 **Phase 2.0 的真正起点**，并建议冻结版本标签：
+
+| 模块 | 状态 |
+|---|---|
+| 数据层 | 稳定 |
+| Regime Engine | 运行 |
+| Risk Budget | 验证中 |
+| Risk Governance | 上线 |
+| Failure Log | 运行 |
+| Decision History | 积累中 |
+
+**目标不是优化，而是积累第一批"系统自我认知数据"**（Decision Trace）。
+Phase 2.0-A 让系统从"产生判断"进入"记录自己如何判断、何时可能犯错"，
+是架构跃迁：从"产生判断的系统"→"记录自己判断的系统"。
 
 ---
 

@@ -98,5 +98,23 @@ mt5_history*
 *_orders.csv
 *_trades.csv
 
+# MT5 原始数据与路径重建产物目录（含账户号、逐笔成交、真实盈亏，绝不入库）
+mt5_raw/
+
+# 个人交易行为分析文档（含真实账户入金/净盈亏/胜率，属个人隐私，不公开）
+# 分析「代码」照常入库（backend/mt5_*.py、backend/trade_path_*.py），只排除含真实数据的文档
+docs/xauusd_trading_behavior_profile_*.md
+docs/trader_os_behavior_engine_*.md
+
 # 生成的交易日报（运行产物，类 output/）
 backend/reports/
+
+# 个人交易心理/反思（私密档案：爆仓事件、身份重建、私人复盘，绝不公开）
+backend/os_layers/_seed_reflections.py
+docs/trading_coach/
+
+# 个人净盈亏框架文档（含真实账户净盈亏 +35,638 等，属个人隐私，不公开）
+Belief_Execution_Engine_框架.md
+
+# 一次性备份脚本（运行产物，不公开）
+*.bak

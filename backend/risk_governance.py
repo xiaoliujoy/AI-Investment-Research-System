@@ -102,6 +102,35 @@ def consistency_confidence(score, breadth=None):
     return 'medium'
 
 
+def decision_conflict_type(score, breadth=None):
+    """判定信号-市场背离的具体冲突类型（仅当一致性为 low 时有意义）。
+
+    与 Failure Log 区分（用户 2026-08-04 末提案）：
+      - Failure Log  : 记录"结果错误"（病情，滞后；如降仓后市场涨30%）
+      - Conflict     : 记录"决策依据之间不一致"（症状，提前；如风险高但广度强）
+    Conflict 往往早于 Failure，类似医学"症状出现即记录，不等恶化"。
+    返回 None 或 'risk_vs_breadth' / 'risk_vs_trend' / 'signal_vs_market'。
+    """
+    if breadth is None:
+        return None
+    br = breadth.get('ratio') if isinstance(breadth, dict) else None
+    stage = breadth.get('stage') if isinstance(breadth, dict) else None
+    risk_on = score >= RECOVERY_SCORE
+    up = (br is not None and br >= 0.55) or (stage and '上涨' in stage)
+    dn = (br is not None and br <= 0.45) or (stage and '下跌' in stage)
+    if (not risk_on) and up:
+        return 'risk_vs_breadth'       # 防御信号 vs 广度强势 → 过度保护风险
+    if risk_on and dn:
+        return 'risk_vs_breadth'       # 扩张信号 vs 广度弱势 → 冒进风险
+    if (not risk_on) and stage and '下跌' in stage:
+        return 'risk_vs_trend'
+    if risk_on and stage and '上涨' in stage:
+        return 'risk_vs_trend'
+    if up or dn:
+        return 'signal_vs_market'
+    return None
+
+
 def governance_observation(score, prev_days_in_crisis=0, prev_state='normal', breadth=None):
     """旁路观测：返回治理状态字段，**绝不修改 CIO 决策**。
 
@@ -125,12 +154,14 @@ def governance_observation(score, prev_days_in_crisis=0, prev_state='normal', br
     elif recovery_stage == 'active' and not g['breadth_ok']:
         cand = 'recovery_failure'
     dc = consistency_confidence(score, breadth)
+    conflict_type = decision_conflict_type(score, breadth) if dc == 'low' else None
     return {
         'risk_governance_state': mode,
         'days_in_crisis': days,
         'recovery_stage': recovery_stage,
         'opportunity_cost_flag': 1 if g['opportunity_cost'] else 0,
         'failure_type_candidate': cand,
+        'decision_conflict_type': conflict_type,
         'governance_version': GOVERNANCE_VERSION,
         'decision_confidence': dc,
         'alerts': g['alerts'],

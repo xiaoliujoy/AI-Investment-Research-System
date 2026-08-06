@@ -28,7 +28,7 @@ from __future__ import annotations
 
 import json
 import sqlite3
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Optional
 
 from db import get_conn
@@ -38,17 +38,35 @@ from commodity_engine.snapshot import _REGIME_THRESHOLDS, _score_macro_item
 
 
 # ── 数据加载 ──────────────────────────────────────────────────
-def _load_series() -> dict:
-    """一次性加载回溯所需的全部序列，返回字典供快速查询。"""
+def _date_clause(date_from: str = None, date_to: str = None):
+    """返回 (where_clause, and_clause, params)。
+    where_clause 用于无前置 WHERE 的表；and_clause 用于已有 WHERE 的表。"""
+    if date_from and date_to:
+        return ("WHERE date >= ? AND date <= ?", "AND date >= ? AND date <= ?", (date_from, date_to))
+    if date_from:
+        return ("WHERE date >= ?", "AND date >= ?", (date_from,))
+    if date_to:
+        return ("WHERE date <= ?", "AND date <= ?", (date_to,))
+    return ("", "", ())
+
+
+def _shift(d: str, days: int) -> str:
+    """YYYY-MM-DD ± N 天。"""
+    return (datetime.strptime(d, "%Y-%m-%d") + timedelta(days=days)).strftime("%Y-%m-%d")
+
+
+def _load_series(date_from: str = None, date_to: str = None) -> dict:
+    """加载回溯所需序列（按日期窗口，增量/单日模式下只加载目标日附近，避免全表扫描）。"""
     conn = get_conn()
     cur = conn.cursor()
     data: dict[str, Any] = {}
+    w, a, dp = _date_clause(date_from, date_to)
 
     # 1) 宏观：global_history 的 DXY / US10Y / BTC（date -> close）
     macro = {"DXY": {}, "US10Y": {}, "BTC": {}}
     for sym in macro:
         cur.execute(
-            "SELECT date, close FROM global_history WHERE symbol=? ORDER BY date", (sym,))
+            f"SELECT date, close FROM global_history WHERE symbol=? {a} ORDER BY date", (sym,) + dp)
         for d, v in cur.fetchall():
             macro[sym][d] = v
     data["macro"] = macro
@@ -56,24 +74,33 @@ def _load_series() -> dict:
     # 2) 黄金：commodity_daily AU0（date -> (close, change_pct)）
     gold = {}
     cur.execute(
-        "SELECT date, close, change_pct FROM commodity_daily WHERE symbol='AU0' ORDER BY date")
+        f"SELECT date, close, change_pct FROM commodity_daily WHERE symbol='AU0' {a} ORDER BY date", dp)
     for d, c, cp in cur.fetchall():
         gold[d] = (c, cp)
     data["gold"] = gold
 
     # 3) A股代理：stock_daily 每日全市场均值涨跌%（date -> mean change_pct）
     ashare = {}
-    cur.execute("SELECT date, AVG(change_pct) FROM stock_daily GROUP BY date ORDER BY date")
+    cur.execute(
+        f"SELECT date, AVG(change_pct) FROM stock_daily {w} GROUP BY date ORDER BY date", dp)
     for d, m in cur.fetchall():
         if m is not None:
             ashare[d] = m
     data["ashare"] = ashare
 
+    # 3b) A股交易日集合（去重 date，含 change_pct 为空的交易日；用于决定 regime 覆盖，
+    #     不依赖 commodity_factor_daily，也不因 change_pct 为空而漏日）
+    astock = set()
+    cur.execute(f"SELECT DISTINCT date FROM stock_daily {w} ORDER BY date", dp)
+    for (d,) in cur.fetchall():
+        astock.add(d)
+    data["astock"] = astock
+
     # 4) A股状态：market_daily（date -> (emotion_score, stage)）
     astate = {}
     try:
         cur.execute(
-            "SELECT date, emotion_score, stage FROM market_daily WHERE emotion_score IS NOT NULL ORDER BY date")
+            f"SELECT date, emotion_score, stage FROM market_daily WHERE emotion_score IS NOT NULL {a} ORDER BY date", dp)
         for d, e, s in cur.fetchall():
             astate[d] = (e, s)
     except Exception:
@@ -83,7 +110,7 @@ def _load_series() -> dict:
     # 5) 商品因子：commodity_factor_daily（date -> {symbol: (score, stage)}）
     cfac = {}
     cur.execute(
-        "SELECT date, symbol, total_score, stage FROM commodity_factor_daily ORDER BY date")
+        f"SELECT date, symbol, total_score, stage FROM commodity_factor_daily {w} ORDER BY date", dp)
     for d, sym, sc, st in cur.fetchall():
         cfac.setdefault(d, {})[sym] = (sc, st)
     data["cfac"] = cfac
@@ -160,29 +187,81 @@ def ensure_schema() -> None:
 
 
 # ── 回溯构建 ──────────────────────────────────────────────────
-def build_regime_history() -> dict:
-    """逐日回溯 regime_history（含远期收益）。幂等 upsert。"""
+def build_regime_history(full: bool = False, target_date: str = None,
+                         incremental: bool = True) -> dict:
+    """逐日回溯 regime_history（含远期收益）。幂等 upsert。
+
+    覆盖范围已**解耦 commodity_factor_daily**：
+    - 以「A股交易日(stock_daily) ∩ 有 DXY 宏观值的日期」为准，向下延伸到最新交易日。
+    - commodity_factor_daily 仅贡献 commodity_states(AU0/CU0/SC0 stage)，缺则留空 dict，
+      不再因商品因子采集滞后而漏掉整日 regime（这是原全量脚本的坑）。
+
+    运行模式（向后兼容，无参=增量补缺失）：
+    - 增量（默认）：仅加载最新日附近窗口 + 补 regime_history 缺失的交易日 → 秒级。
+    - full=True：从 commodity_factor_daily 起点到最新+21天全量重算（数据大补后刷新旧行用）。
+    - target_date='YYYY-MM-DD'：只算单日。
+    """
     ensure_schema()
-    data = _load_series()
-    gold = data["gold"]
-    ashare = data["ashare"]
-
-    # 观测窗口：有商品因子 + 有宏观的交易日
-    obs_dates = sorted(set(data["cfac"].keys()) & set(data["macro"]["DXY"].keys()))
-    if not obs_dates:
-        return {"built": 0, "samples": 0}
-
-    # 黄金有序日期表（用于远期收益定位）
-    gold_dates = sorted(gold.keys())
-    ashare_dates = sorted(ashare.keys())
-
     conn = get_conn()
     cur = conn.cursor()
-    built = 0
 
-    for i, d in enumerate(obs_dates):
-        rs = _risk_state_at(d, data["macro"])
-        cf = data["cfac"].get(d, {})
+    # 最新 A股交易日（单次聚合，快）
+    latest = cur.execute("SELECT MAX(date) FROM stock_daily").fetchone()[0]
+    if not latest:
+        conn.close()
+        return {"built": 0, "samples": 0}
+
+    # 加载窗口：避免全表扫描（原全量慢的根因）
+    if target_date:
+        lo, hi = _shift(target_date, -60), _shift(target_date, 21)
+    elif full:
+        # 全量：commodity_factor_daily 起点 → 最新+21（窗口本身已限定范围，不爆炸到全历史）
+        row = cur.execute("SELECT MIN(date) FROM commodity_factor_daily").fetchone()[0]
+        lo = row if row else _shift(latest, -400)
+        hi = _shift(latest, 21)
+    else:
+        # 增量：只加载最近 ~90 天窗口（每日只补最新缺失日，秒级）
+        lo, hi = _shift(latest, -70), _shift(latest, 21)
+
+    data = _load_series(lo, hi)
+    gold = data["gold"]
+    ashare = data["ashare"]
+    astock = data["astock"]
+    cfac = data["cfac"]
+    macro = data["macro"]
+
+    # 目标日期集合（窗口内）：A股交易日（stock_daily 去重）∩ 有 DXY 宏观值
+    # 用 astock 而非 ashare：change_pct 为空的交易日仍计入（a_ret 允许 NULL，与原逻辑一致）
+    base = sorted(astock & set(macro["DXY"].keys()))
+    if not base:
+        conn.close()
+        return {"built": 0, "samples": 0}
+
+    if target_date:
+        target_dates = [d for d in base if d == target_date]
+    elif not full:
+        # 增量：排除窗口内已存在日期
+        cur.execute("SELECT date FROM regime_history WHERE date >= ? AND date <= ?", (lo, hi))
+        existing = set(r[0] for r in cur.fetchall())
+        target_dates = [d for d in base if d not in existing]
+    else:
+        target_dates = base  # 全量：窗口内全部重算
+
+    if not target_dates:
+        conn.close()
+        return {"built": 0, "samples": 0}
+
+    # 预建索引字典，远期收益定位 O(1)（替代原 .index() 的 O(n) 扫描）
+    gold_dates = sorted(gold.keys())
+    ashare_dates = sorted(ashare.keys())
+    gold_idx = {d: i for i, d in enumerate(gold_dates)}
+    ashare_idx = {d: i for i, d in enumerate(ashare_dates)}
+
+    built = 0
+    for d in target_dates:
+        rs = _risk_state_at(d, macro)
+        # commodity_states 仅作可选增强：缺 commodity_factor_daily 当日则留空（解耦核心）
+        cf = cfac.get(d, {})
         comm_states = {s: cf[s][1] for s in ("AU0", "CU0", "SC0") if s in cf}
 
         # A股状态 + 当日收益代理
@@ -196,14 +275,13 @@ def build_regime_history() -> dict:
         gold_ret = gold_pt[1] if gold_pt else None
 
         # ── 远期收益 ──
-        # 黄金（价格序列）：定位 d 在 gold_dates 的索引
         fwd = {k: None for k in (
             "fwd_1d_a_share", "fwd_5d_a_share", "fwd_20d_a_share",
             "fwd_1d_gold", "fwd_5d_gold", "fwd_20d_gold", "fwd_20d_max_dd_gold")}
-        try:
-            gi = gold_dates.index(d)
+        gi = gold_idx.get(d)
+        if gi is not None:
+            c0 = gold[d][0]
             if gi + 1 < len(gold_dates):
-                c0 = gold[d][0]
                 c1 = gold[gold_dates[gi + 1]][0]
                 fwd["fwd_1d_gold"] = round((c1 / c0 - 1) * 100, 2)
             if gi + 5 < len(gold_dates):
@@ -217,12 +295,10 @@ def build_regime_history() -> dict:
                 peak = max(closes)
                 dd = min((c / peak - 1) for c in closes)
                 fwd["fwd_20d_max_dd_gold"] = round(dd * 100, 2)
-        except (ValueError, KeyError, ZeroDivisionError):
-            pass
 
         # A股（收益序列）：累计 N 日乘积
-        try:
-            ai = ashare_dates.index(d)
+        ai = ashare_idx.get(d)
+        if ai is not None:
             for n, key in [(1, "fwd_1d_a_share"), (5, "fwd_5d_a_share"), (20, "fwd_20d_a_share")]:
                 if ai + n < len(ashare_dates):
                     prod = 1.0
@@ -231,8 +307,6 @@ def build_regime_history() -> dict:
                         if r is not None:
                             prod *= (1 + r / 100.0)
                     fwd[key] = round((prod - 1) * 100, 2)
-        except ValueError:
-            pass
 
         cur.execute("""
             INSERT OR REPLACE INTO regime_history
@@ -253,7 +327,7 @@ def build_regime_history() -> dict:
 
     conn.commit()
     conn.close()
-    return {"built": built, "samples": len(obs_dates)}
+    return {"built": built, "samples": len(target_dates)}
 
 
 # ── 验证查询 ──────────────────────────────────────────────────
@@ -301,7 +375,14 @@ def format_regime_report(state: Optional[str] = None) -> str:
 
 
 if __name__ == "__main__":
-    res = build_regime_history()
+    import argparse
+    ap = argparse.ArgumentParser(description="回溯构建 regime_history（增量/全量/单日）")
+    ap.add_argument("--full", action="store_true", help="全量重算（默认增量补缺失）")
+    ap.add_argument("--date", type=str, default=None, help="只算单日 YYYY-MM-DD")
+    ap.add_argument("--incremental", action="store_true",
+                    help="显式指定增量（默认即增量，无参等价）")
+    args = ap.parse_args()
+    res = build_regime_history(full=args.full, target_date=args.date)
     print(f"regime_history built: {res}")
     print()
     print(format_regime_report())
