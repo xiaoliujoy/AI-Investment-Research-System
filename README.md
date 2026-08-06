@@ -290,6 +290,7 @@ The framework runs rule-based out of the box. To enable the AI narrative/reasoni
 
 | Doc | What it covers |
 |-----|----------------|
+| [`USAGE.md`](USAGE.md) | 中文使用说明：怎么初始化、跑每日流程、看产物（How to run it locally） |
 | [`docs/research-framework.md`](docs/research-framework.md) | The framework "constitution": philosophy → discipline → 8 layers → committee → learning |
 | [`docs/investment-philosophy.md`](docs/investment-philosophy.md) | The moat: 判环境 / 选方向 / 定标的, Research > Prediction |
 | [`docs/decision-process.md`](docs/decision-process.md) | The five-step discipline: environment → sector → stock → position → risk |
