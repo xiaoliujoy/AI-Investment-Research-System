@@ -99,6 +99,13 @@ def init():
         con.execute("ALTER TABLE trade_execution ADD COLUMN risk_plan TEXT")
     except sqlite3.OperationalError:
         pass  # 已存在
+    # 补列：Trading Constitution v1.0 开仓四问 + 闸门结果（迁移安全）
+    for col, typ in [("why_now", "TEXT"), ("regime_support", "TEXT"),
+                     ("planned_hold_min", "INTEGER"), ("constitution_check", "TEXT")]:
+        try:
+            con.execute("ALTER TABLE trade_execution ADD COLUMN %s %s" % (col, typ))
+        except sqlite3.OperationalError:
+            pass  # 已存在
     # 盘中执行三问的持久化（原引擎只生成 prompt，不落库）
     con.execute("""
     CREATE TABLE IF NOT EXISTS trader_checkin (
@@ -153,16 +160,19 @@ def init():
 # ---------------------------------------------------------------------------
 def record_plan(market_type, symbol, direction, hypothesis, invalid_condition,
                 risk_plan, signal_grade=None, expected_scenario=None,
-                willing_hold_4h=None, planned_exit=None):
+                willing_hold_4h=None, planned_exit=None,
+                why_now=None, regime_support=None, planned_hold_min=None):
     """写入一条交易计划。exec_status='planned'，待 executed/skipped 回填。
-    返回新计划 id。设计目标 ≤60s：参数化录入，无交互阻塞。"""
+    返回新计划 id。设计目标 ≤60s：参数化录入，无交互阻塞。
+    新增（Constitution v1.0）：why_now / regime_support / planned_hold_min 落位开仓四问。"""
     con = _con()
     cur = con.execute(
         """INSERT INTO trade_execution
            (trade_date, market_type, symbol, direction, exec_status, planned,
             reason, signal_grade, expected_scenario, invalid_condition,
-            risk_plan, willing_hold_4h, planned_exit, source)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+            risk_plan, willing_hold_4h, planned_exit, source,
+            why_now, regime_support, planned_hold_min)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
         (date.today().isoformat(), market_type.upper(), symbol, direction.upper(),
          "planned", 1, hypothesis,
          SG_MAP.get((signal_grade or "").lower()),
@@ -170,7 +180,9 @@ def record_plan(market_type, symbol, direction, hypothesis, invalid_condition,
          invalid_condition, risk_plan,
          (1 if willing_hold_4h in ("y", "Y", True) else
           (0 if willing_hold_4h in ("n", "N", False) else None)),
-         planned_exit, "discipline_plan"),
+         planned_exit, "discipline_plan",
+         why_now or None, regime_support or None,
+         int(planned_hold_min) if planned_hold_min is not None else None),
     )
     tid = cur.lastrowid
     con.commit()
@@ -180,6 +192,20 @@ def record_plan(market_type, symbol, direction, hypothesis, invalid_condition,
     print("   失效: %s" % invalid_condition)
     print("   风险: %s" % risk_plan)
     return tid
+
+
+def record_constitution_check(tid, gate_result):
+    """把 Trading Constitution 事前闸门结果写入 trade_execution.constitution_check。
+    gate_result 为 trading_constitution.pre_trade_gate() 返回值（dict）。"""
+    import json as _json
+    con = _con()
+    con.execute(
+        "UPDATE trade_execution SET constitution_check=? WHERE id=?",
+        (_json.dumps(gate_result, ensure_ascii=False), int(tid)),
+    )
+    con.commit()
+    con.close()
+    print("   ↳ 宪法闸门: %s" % gate_result.get("decision"))
 
 
 def record_checkin(tid, q1_logic_broken, q1_note="", q2_reason="", q3_pattern="", note=""):

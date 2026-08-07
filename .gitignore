@@ -118,3 +118,18 @@ Belief_Execution_Engine_框架.md
 
 # 一次性备份脚本（运行产物，不公开）
 *.bak
+
+# 个人三账户交易明细导出（股票/期货/MT5 逐笔真实成交，属个人隐私，绝不入库）
+整理后三份交易数据.xlsx
+*交易数据*.xlsx
+
+# Trading DNA / 交易宪法模块：docstring 与常量里硬编码真实账户净盈亏与分品种亏损
+# （PS −31,486.61 / AU −21,963 / 三账户 −37,002.92 等），属个人隐私，不公开。
+# 同族脚本一并排除以保持模块完整（否则公开仓库会出现悬空 import）。
+# 若日后脱敏（金额改为占位或从配置读取），再逐个从本清单移出。
+backend/trading_dna_v1*.py
+backend/deep_mine.py
+backend/au_holding_analysis.py
+backend/export_three_trades.py
+backend/os_layers/trading_constitution.py
+backend/test_constitution.py
