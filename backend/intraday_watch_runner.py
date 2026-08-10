@@ -476,12 +476,16 @@ def main():
 
     print(f"[{tp}] stage={stage} ({STAGE_LABEL[stage]}) | 条件: {STAGE_COND[stage]}")
     print(f"  板块来源: {src}" + (f" | {date_note}" if date_note else ""))
+    # 合并备注只贴到"被合并到"的那个板块行，不污染其他板块
+    merge_note_by_sector = {}
     if merged:
         for a, b, ov in merged:
             print(f"  合并: {a} -> {b} (成分重叠 {ov:.0%}, 同一主线)")
-        date_note = "; ".join(
-            x for x in (date_note, "已合并同主线: " + ",".join(f"{a}->{b}" for a, b, _ in merged)) if x
-        )
+            merge_note_by_sector.setdefault(b, []).append(a)
+        merge_note_by_sector = {
+            b: "已合并同主线: " + ",".join(f"{a}->{b}" for a in srcs)
+            for b, srcs in merge_note_by_sector.items()
+        }
 
     if not sectors and stage != "midday":
         print("  !! 无板块可判定，退出（未写库）")
@@ -502,6 +506,8 @@ def main():
             extra.append("龙头为T-1兜底(无实时行情)")
         if date_note:
             extra.append(date_note)
+        if merge_note_by_sector.get(name):
+            extra.append(merge_note_by_sector[name])
         note = "; ".join(x for x in (judge_note, *extra) if x)
         results.append((name, STAGE_COND[stage], met, actual, note))
 

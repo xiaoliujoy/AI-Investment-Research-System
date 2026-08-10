@@ -100,7 +100,11 @@ def main():
 
     steps = STEPS
     if args.only == "decision" or args.skip_step1:
-        steps = [s for s in STEPS if not s[0].startswith("step1")]
+        # 只跳过外部采集 step1；step1b 是纯本地技术回填，必须保留。
+        # 2026-08-10 事故：前缀匹配 startswith("step1") 把 step1b 一起跳掉 → high_20d 未回填
+        # → decision_tree.latest_date() 要求「high_20d IS NOT NULL 且当日>4000行」才算完整交易日
+        # → 决策树/简报日期卡死在 T-1（08-07），日报据此空算。
+        steps = [s for s in STEPS if s[0] != "step1_数据采集"]
     if args.no_push or args.memo_only:
         steps = [s for s in steps if s[0] != "step3_推送看板"]
 

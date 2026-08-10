@@ -37,6 +37,24 @@ ENG = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(ENG)
 ENG.init()
 
+# 装载交易宪法引擎（事前闸门）
+# trading_constitution.py 含个人化交易参数，不随仓库分发。
+# 缺失时闸门降级为放行，Plan/Trade/Review 其余功能不受影响。
+try:
+    import trading_constitution as TC
+except ImportError:  # pragma: no cover - 仓库未包含该私有模块
+    TC = None
+
+_NO_TC = {"decision": "ALLOW", "violations": [], "warnings": [],
+          "note": "trading_constitution 未配置，事前闸门已跳过"}
+
+
+def _gate(proposal):
+    """交易宪法闸门；私有模块缺失时降级为 ALLOW，不阻断录入。"""
+    if TC is None:
+        return dict(_NO_TC)
+    return TC.pre_trade_gate(proposal)
+
 
 class Handler(BaseHTTPRequestHandler):
     def _send(self, code, obj=None, text=None, ctype="application/json"):
@@ -87,6 +105,14 @@ class Handler(BaseHTTPRequestHandler):
                 out["tar_error"] = str(e)
             self._send(200, out)
             return
+        if path == "/api/constitution":
+            if TC is None:
+                self._send(200, {"version": None, "text": "",
+                                 "note": _NO_TC["note"]})
+                return
+            self._send(200, {"version": TC.CONSTITUTION_VERSION,
+                             "text": TC.CONSTITUTION_TEXT})
+            return
         self._send(404, {"error": "not found"})
 
     def do_POST(self):
@@ -99,20 +125,57 @@ class Handler(BaseHTTPRequestHandler):
         path = self.path.split("?")[0]
 
         try:
-            if path == "/api/plan":
+            if path == "/api/gate":
+                # 纯校验，不落库：返回 ALLOW/BLOCK/WARN + 触发的宪法条款 + 证据
+                proposal = {
+                    "market_type": data.get("market", ""),
+                    "symbol": data.get("symbol", ""),
+                    "direction": data.get("direction", ""),
+                    "why_now": data.get("why_now", ""),
+                    "regime_support": data.get("regime_support", ""),
+                    "invalid_condition": data.get("invalid", ""),
+                    "planned_hold_min": data.get("planned_hold_min"),
+                    "planned_exit": data.get("exit", ""),
+                    "risk_plan": data.get("risk", ""),
+                }
+                self._send(200, _gate(proposal))
+                return
+
+            elif path == "/api/plan":
+                # 录入前先过交易宪法闸门；BLOCK 级违规拒绝记录，并回写 constitution_check
+                proposal = {
+                    "market_type": data.get("market", "MT5"),
+                    "symbol": data.get("symbol", ""),
+                    "direction": data.get("direction", ""),
+                    "why_now": data.get("why_now", ""),
+                    "regime_support": data.get("regime_support", ""),
+                    "invalid_condition": data.get("invalid", ""),
+                    "planned_hold_min": data.get("planned_hold_min"),
+                    "planned_exit": data.get("exit", ""),
+                    "risk_plan": data.get("risk", ""),
+                }
+                gate = _gate(proposal)
+                if gate["decision"] == "BLOCK":
+                    self._send(200, {"ok": False, "blocked": True, "gate": gate,
+                                     "msg": "违反交易宪法，计划未记录。见 violations。"})
+                    return
                 tid = ENG.record_plan(
-                    data.get("market", "MT5"),
-                    data.get("symbol", ""),
-                    data.get("direction", ""),
+                    proposal["market_type"],
+                    proposal["symbol"],
+                    proposal["direction"],
                     data.get("hypothesis", ""),
-                    data.get("invalid", ""),
-                    data.get("risk", ""),
+                    proposal["invalid_condition"],
+                    proposal["risk_plan"],
                     data.get("signal", ""),
                     data.get("scenario", ""),
                     data.get("hold4h", ""),
-                    data.get("exit", ""),
+                    proposal["planned_exit"],
+                    why_now=proposal["why_now"],
+                    regime_support=proposal["regime_support"],
+                    planned_hold_min=proposal["planned_hold_min"],
                 )
-                self._send(200, {"ok": True, "id": tid})
+                ENG.record_constitution_check(tid, gate)
+                self._send(200, {"ok": True, "id": tid, "gate": gate})
 
             elif path == "/api/trade":
                 ENG.record_checkin(

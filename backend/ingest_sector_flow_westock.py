@@ -114,13 +114,30 @@ def load_sector_daily(conn, date):
 
 
 def align(name, sdict):
+    """跨源板块名对齐，按 精确 > 归一精确 > 子串 三级优先。
+
+    子串轮必须择优，不能先到先得：dict 遍历顺序由 SQL 决定，短名会抢占长名。
+    实例（2026-08-10）：westock「半导体设备概念」归一为「半导体设备」，遍历时先撞上
+    sector_daily「半导体」（"半导体" in "半导体设备" 成立）即返回，导致 +52.13亿 被错配到
+    -29.79亿、误报为方向分歧；而真正对应的「半导体设备」(+36.88亿) 就在同一张表里。
+    择优规则：归一名长度与目标最接近者优先，长度差相同则取更长者（更具体的板块）。
+    """
     if name in sdict:
         return name
     na = norm(name)
+    if not na:
+        return None
+    for sname in sdict:  # 第二轮：归一化后精确相等
+        if norm(sname) == na:
+            return sname
+    cands = []  # 第三轮：子串包含，择优而非先到先得
     for sname in sdict:
         nb = norm(sname)
-        if na and nb and (na == nb or na in nb or nb in na):
-            return sname
+        if nb and (na in nb or nb in na):
+            cands.append((abs(len(nb) - len(na)), -len(nb), sname))
+    if cands:
+        cands.sort()
+        return cands[0][2]
     return None
 
 

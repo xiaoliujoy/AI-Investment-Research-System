@@ -82,23 +82,55 @@ def build_plate_ranking(fundflow):
     return {"top": top, "bottom": bottom}
 
 
-def build_sector_rank(rank):
-    """rank.plate/concept/area 主列表 -> 按 bd_code 去重的 sector_rank[]。"""
+def build_sector_rank(rank, fundflow=None):
+    """rank.plate/concept/area -> 按 bd_code 去重的 sector_rank[]。
+
+    两处补充（都用 westock 实时原始字段，不造数）：
+      1) 除主列表外，同时吃 plate_hsl/plate_zdf5/concept_lb/... 等派生排序子列表，
+         它们是同源实时快照，只是排序口径不同，能覆盖更多板块的涨幅+领涨股。
+      2) fundflow.plate/concept.top|bottom[].lzg 也带实时领涨股(code/name/zdf)，
+         这些板块常不在涨幅榜里（如白酒Ⅱ/电网设备/生物医药），补进来可避免误判「未知」。
+    """
     sr = {}
+
+    def put(name, code, zdf, nzg_code, nzg_name, nzg_zdf):
+        if not code:
+            return
+        cur = sr.get(code)
+        if cur and cur.get("nzg_zdf") is not None:
+            return  # 已有更早（更权威）的一条，不覆盖
+        sr[code] = {
+            "bd_name": name,
+            "bd_code": code,
+            "bd_zdf": zdf,
+            "nzg_code": nzg_code,
+            "nzg_name": nzg_name,
+            "nzg_zdf": nzg_zdf,
+        }
+
     for grp in ("plate", "concept", "area"):
-        for r in rank.get(grp) or []:
-            code = r.get("bd_code")
-            if not code:
-                continue
-            sr[code] = {
-                "bd_name": r.get("bd_name"),
-                "bd_code": code,
-                "bd_zdf": r.get("bd_zdf"),
-                "nzg_code": r.get("nzg_code"),
-                "nzg_name": r.get("nzg_name"),
-                "nzg_zdf": r.get("nzg_zdf"),
-            }
+        keys = [grp] + sorted(k for k in rank.keys() if k.startswith(grp + "_"))
+        for k in keys:
+            for r in rank.get(k) or []:
+                put(r.get("bd_name"), r.get("bd_code"), r.get("bd_zdf"),
+                    r.get("nzg_code"), r.get("nzg_name"), r.get("nzg_zdf"))
+
+    for grp in ("plate", "concept"):
+        g = (fundflow or {}).get(grp) or {}
+        for key in ("top", "bottom"):
+            for x in g.get(key) or []:
+                lzg = x.get("lzg") or {}
+                put(x.get("name"), x.get("code"), x.get("zdf"),
+                    lzg.get("code"), lzg.get("name"), lzg.get("zdf"))
+
     return list(sr.values())
+
+
+# 伪板块：由「昨日涨停/连板」等状态聚合而成，不是产业主线，不进热点池
+PSEUDO_SECTORS = {
+    "昨日涨停", "昨日连板", "昨日首板", "昨日高换手", "昨日振幅", "龙头股",
+    "转融券标的", "融资融券", "沪股通", "深股通", "MSCI概念", "富时罗素",
+}
 
 
 def select_hot(rank, fundflow, top_n_money=6, top_n_momentum=4, cap=10):
@@ -119,6 +151,8 @@ def select_hot(rank, fundflow, top_n_money=6, top_n_momentum=4, cap=10):
     momentum = []
     for r in cand:
         n = r.get("bd_name")
+        if n in PSEUDO_SECTORS:
+            continue
         if n and n not in seen:
             momentum.append(n)
             seen.add(n)
@@ -162,7 +196,7 @@ def main():
 
     sector_net = build_sector_net(fundflow)
     plate_ranking = build_plate_ranking(fundflow)
-    sector_rank = build_sector_rank(rank)
+    sector_rank = build_sector_rank(rank, fundflow)
     index_amount = build_index_amount(idx_raw)
     watch = select_hot(rank, fundflow, args.top_money, args.top_momentum, args.cap)
 
