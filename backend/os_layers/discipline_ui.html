@@ -104,8 +104,10 @@
       </div>
     </div>
   </div>
-  <label>逻辑 / 假设（为什么做）</label>
+  <label>逻辑 / 假设（为什么做 · 映射第五条 why_now）</label>
   <textarea id="pl-hypo" placeholder="例：日线下降趋势线突破，高低点结构改变，宏观支持"></textarea>
+  <label>市场环境支持吗？（regime · 引用 CIO/regime 结论）</label>
+  <input id="pl-regime" placeholder="例：趋势朝上 / 震荡 / 黄金避险需求强">
   <label>失效条件（证明我错）</label>
   <input id="pl-invalid" placeholder="例：跌破3990 说明趋势判断错误">
   <div class="row">
@@ -116,13 +118,52 @@
     <div>
       <label>愿意持有≥4h?</label>
       <div class="toggle" id="pl-hold">
-        <button data-v="y">是</button>
-        <button data-v="n" class="on">否</button>
+        <button data-v="y" class="on">是</button>
+        <button data-v="n">否</button>
       </div>
     </div>
   </div>
+  <label>计划持仓时间（第二条 · 事前承诺）</label>
+  <div class="seg" id="pl-holdmin">
+    <button data-v="120">2小时</button>
+    <button data-v="240" class="on">4小时</button>
+    <button data-v="1440">1天</button>
+    <button data-v="4320">3天</button>
+  </div>
+  <p class="hint">D_captured 中位 3.13h。MT5 &lt;10分钟直接 BLOCK、&lt;1小时 WARN；期货 &lt;1天 BLOCK。</p>
+
   <label>退出计划（止损 / 目标）</label>
   <input id="pl-exit" placeholder="例：3990 止损，4236 为目标">
+
+  <label>入场确认层级（第五条 · 必选）</label>
+  <div class="seg" id="pl-entry">
+    <button data-v="retest_confirmed">回踩确认</button>
+    <button data-v="trend_continuation">趋势延续</button>
+    <button data-v="breakout_confirmed">突破未回踩</button>
+    <button data-v="anticipatory">预期未确认</button>
+  </div>
+  <p class="hint">预期未确认 = 宪法 BLOCK，禁止开仓。方向正确≠时机正确。</p>
+
+  <div class="row">
+    <div>
+      <label>FOMO 自检（怕错过?）</label>
+      <div class="toggle" id="pl-fomo">
+        <button data-v="n">不会</button>
+        <button data-v="y">会焦虑</button>
+      </div>
+    </div>
+    <div>
+      <label>周期对齐？（止损周期=趋势周期）</label>
+      <div class="toggle" id="pl-cycleal">
+        <button data-v="y">一致</button>
+        <button data-v="n">不一致</button>
+      </div>
+    </div>
+  </div>
+
+  <label>盘后归因守护（第六条 · 什么情况你会记为 D 情绪退出？）</label>
+  <textarea id="pl-attr" placeholder="例：浮盈回撤到成本附近就想平、怕利润没了 —— 这些就是 D 类陷阱，盘后必须诚实归因"></textarea>
+
   <button class="btn" id="pl-submit">记录计划</button>
   <p class="hint">≤60 秒录完。这里只记你的计划，不替你判断买卖。</p>
 </div>
@@ -232,7 +273,7 @@
 <script>
 const $=s=>document.querySelector(s);
 const $$=s=>document.querySelectorAll(s);
-let state={pl_dir:'BUY',pl_hold:'n',tr_q1:'n',tr_q2:'',rv_judge:'y',rv_exec:'y',
+let state={pl_dir:'BUY',pl_hold:'y',pl_holdmin:'240',pl_entry:'',pl_fomo:'',pl_cycle:'',tr_q1:'n',tr_q2:'',rv_judge:'y',rv_exec:'y',
   rv_dev:'none',rf_cat:'psych_profile',stars:{dq:0,eq:0,em:0}};
 
 // tabs
@@ -254,6 +295,17 @@ function bindToggle(sel,key,after){
 }
 bindToggle('#pl-dir','pl_dir');
 bindToggle('#pl-hold','pl_hold');
+// 计划持仓时间：选中后同步「愿意持有≥4h」，两者不再可能矛盾
+bindToggle('#pl-holdmin','pl_holdmin',v=>{
+  state.pl_hold = (parseInt(v,10)>=240) ? 'y' : 'n';
+  $$('#pl-hold button').forEach(x=>x.classList.toggle('on',x.dataset.v===state.pl_hold));
+});
+bindToggle('#pl-fomo','pl_fomo');
+bindToggle('#pl-cycleal','pl_cycle');
+$$('#pl-entry button').forEach(b=>b.onclick=()=>{
+  $$('#pl-entry button').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); state.pl_entry=b.dataset.v;
+});
 bindToggle('#tr-q1','tr_q1',v=>$('#tr-q1note').style.display=v==='y'?'block':'none');
 bindToggle('#rv-judge','rv_judge');
 bindToggle('#rv-exec','rv_exec');
@@ -323,7 +375,8 @@ $('#pl-quick-btn').onclick=async()=>{
   const p=parseQuick(t);
   if(!p.dir||!p.symbol){toast('无法识别方向或品种',true);return;}
   const d={market:p.market,symbol:p.symbol,direction:p.dir,
-    hypothesis:'',invalid:p.invalid,risk:p.risk,hold4h:'',exit:p.planned};
+    hypothesis:'',invalid:p.invalid,risk:p.risk,hold4h:'',exit:p.planned,
+    fomo_self_check:'n',cycle_aligned:'y',quick:true,planned_attribution:''};
   const r=await post('/api/plan',d);
   if(r.ok){toast(`✅ #${r.id} ${p.dir==='LONG'?'多':'空'} ${p.symbol} 已记录`);
     $('#pl-quick').value='';}
@@ -334,14 +387,28 @@ $('#pl-quick-btn').onclick=async()=>{
 $('#pl-submit').onclick=async()=>{
   const sym=$('#pl-symbol').value.trim();
   if(!sym){toast('先填品种',true);return;}
+  if(!state.pl_entry){toast('先选入场确认层级（第五条）',true);return;}
+  if(!state.pl_fomo){toast('先做 FOMO 自检',true);return;}
+  if(!state.pl_cycle){toast('先做周期对齐自检',true);return;}
   const d={market:'MT5',symbol:sym,direction:state.pl_dir,
-    hypothesis:$('#pl-hypo').value.trim(),invalid:$('#pl-invalid').value.trim(),
+    hypothesis:$('#pl-hypo').value.trim(),why_now:$('#pl-hypo').value.trim(),
+    regime_support:$('#pl-regime').value.trim(),invalid:$('#pl-invalid').value.trim(),
     risk:$('#pl-risk').value.trim(),cycle:$('#pl-cycle').value.trim(),
-    hold4h:state.pl_hold,exit:$('#pl-exit').value.trim()};
+    hold4h:state.pl_hold,planned_hold_min:parseInt(state.pl_holdmin,10),
+    exit:$('#pl-exit').value.trim(),
+    entry_stage:state.pl_entry,fomo_self_check:state.pl_fomo,
+    cycle_aligned:state.pl_cycle,planned_attribution:$('#pl-attr').value.trim()};
   const r=await post('/api/plan',d);
-  if(r.ok){toast('✅ 计划 #'+r.id+' 已记录');
-    $('#pl-symbol').value='';$('#pl-hypo').value='';$('#pl-invalid').value='';
-    $('#pl-risk').value='';$('#pl-exit').value='';$('#pl-cycle').value='';}
+  if(r.ok){toast('✅ 计划 #'+r.id+' 已记录'+(r.gate&&r.gate.decision==='WARN'?'（有 WARN，看详情）':''));
+    $('#pl-symbol').value='';$('#pl-hypo').value='';$('#pl-regime').value='';$('#pl-invalid').value='';
+    $('#pl-risk').value='';$('#pl-exit').value='';$('#pl-cycle').value='';
+    $('#pl-attr').value='';state.pl_entry='';state.pl_fomo='';state.pl_cycle='';
+    $$('#pl-entry button').forEach(x=>x.classList.remove('on'));
+    $$('#pl-fomo button').forEach(x=>x.classList.remove('on'));
+    $$('#pl-cycleal button').forEach(x=>x.classList.remove('on'));
+    state.pl_holdmin='240';state.pl_hold='y';
+    $$('#pl-holdmin button').forEach(x=>x.classList.toggle('on',x.dataset.v==='240'));
+    $$('#pl-hold button').forEach(x=>x.classList.toggle('on',x.dataset.v==='y'));}
   else toast('失败：'+(r.error||''),true);
 };
 
@@ -354,7 +421,10 @@ async function loadToday(){
     <div class="kv"><span>逻辑</span><span>${r.reason||'—'}</span></div>
     <div class="kv"><span>失效</span><span>${r.invalid_condition||'—'}</span></div>
     <div class="kv"><span>风险</span><span>${r.risk_plan||'—'}</span></div>
-    <div class="kv"><span>退出</span><span>${r.planned_exit||'—'}</span></div></div>`;
+    <div class="kv"><span>退出</span><span>${r.planned_exit||'—'}</span></div>
+    <div class="kv"><span>入场确认</span><span>${r.entry_stage||'—'}</span></div>
+    <div class="kv"><span>周期对齐</span><span>${r.cycle_aligned||'—'}</span></div>
+    <div class="kv"><span>归因守护</span><span>${r.planned_attribution||'—'}</span></div></div>`;
   form.style.display='block'; state.tr_tid=r.id;
 }
 $('#tr-submit').onclick=async()=>{

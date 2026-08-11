@@ -135,8 +135,13 @@ class Handler(BaseHTTPRequestHandler):
                     "regime_support": data.get("regime_support", ""),
                     "invalid_condition": data.get("invalid", ""),
                     "planned_hold_min": data.get("planned_hold_min"),
+                    "willing_hold_4h": data.get("hold4h"),
                     "planned_exit": data.get("exit", ""),
                     "risk_plan": data.get("risk", ""),
+                    "entry_stage": data.get("entry_stage", ""),
+                    "fomo_self_check": data.get("fomo_self_check", ""),
+                    "cycle_aligned": data.get("cycle_aligned", ""),
+                    "quick": data.get("quick", False),
                 }
                 self._send(200, _gate(proposal))
                 return
@@ -151,8 +156,13 @@ class Handler(BaseHTTPRequestHandler):
                     "regime_support": data.get("regime_support", ""),
                     "invalid_condition": data.get("invalid", ""),
                     "planned_hold_min": data.get("planned_hold_min"),
+                    "willing_hold_4h": data.get("hold4h"),
                     "planned_exit": data.get("exit", ""),
                     "risk_plan": data.get("risk", ""),
+                    "entry_stage": data.get("entry_stage", ""),
+                    "fomo_self_check": data.get("fomo_self_check", ""),
+                    "cycle_aligned": data.get("cycle_aligned", ""),
+                    "quick": data.get("quick", False),
                 }
                 gate = _gate(proposal)
                 if gate["decision"] == "BLOCK":
@@ -173,6 +183,10 @@ class Handler(BaseHTTPRequestHandler):
                     why_now=proposal["why_now"],
                     regime_support=proposal["regime_support"],
                     planned_hold_min=proposal["planned_hold_min"],
+                    entry_stage=data.get("entry_stage", ""),
+                    fomo_self_check=data.get("fomo_self_check", ""),
+                    cycle_aligned=data.get("cycle_aligned", ""),
+                    planned_attribution=data.get("planned_attribution", ""),
                 )
                 ENG.record_constitution_check(tid, gate)
                 self._send(200, {"ok": True, "id": tid, "gate": gate})

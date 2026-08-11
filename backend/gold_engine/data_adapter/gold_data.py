@@ -168,6 +168,77 @@ def _fetch_akshare_oil() -> Optional[dict]:
     return None
 
 
+def _fetch_db_global(symbol: str) -> Optional[dict]:
+    """Fallback: read latest global asset data from global_history table.
+
+    Used when thsdk/akshare fail. Covers DXY, CL (WTI oil), etc.
+    """
+    try:
+        con = sqlite3.connect(str(DB_PATH))
+        con.row_factory = sqlite3.Row
+        row = con.execute(
+            "SELECT symbol, name, date, close, change_pct "
+            "FROM global_history WHERE symbol=? ORDER BY date DESC LIMIT 1",
+            (symbol,)
+        ).fetchone()
+        con.close()
+        if row:
+            return {
+                "price": float(row["close"]),
+                "change_pct": float(row["change_pct"]) if row["change_pct"] is not None else 0.0,
+                "date": str(row["date"]),
+                "source": "global_history",
+            }
+    except Exception:
+        pass
+    return None
+
+
+def _fetch_518880_from_tdx() -> Optional[dict]:
+    """Fetch 黄金ETF华安(518880) as GLD proxy from tdx connector.
+
+    Used when thsdk GLD data overflows or is unavailable.
+    Returns dict with price, volume, change_pct, prev_close.
+    """
+    try:
+        import subprocess, json as _json
+        cmd = [
+            "C:\\Users\\JOY\\.workbuddy\\binaries\\node\\versions\\22.22.2\\node.exe",
+            "-e",
+            "console.log(JSON.stringify({ok:false}))"
+        ]
+        # tdx connector is MCP, not directly callable from Python.
+        # Instead, read from stock_daily table in DB.
+        con = sqlite3.connect(str(DB_PATH))
+        con.row_factory = sqlite3.Row
+        row = con.execute(
+            "SELECT date, open, high, low, close, volume, amount "
+            "FROM stock_daily WHERE code='518880' ORDER BY date DESC LIMIT 2"
+        ).fetchall()
+        con.close()
+        if len(row) >= 1:
+            latest = dict(row[0])
+            prev_close = float(row[1]["close"]) if len(row) > 1 else float(latest["close"])
+            close = float(latest["close"])
+            # stock_daily may store ETF prices at 10x face value.
+            # 518880 trades around 8-10 yuan; if close > 50, divide by 10.
+            if close > 50:
+                close /= 10.0
+                prev_close /= 10.0
+            change_pct = ((close - prev_close) / prev_close * 100) if prev_close else 0
+            return {
+                "price": round(close, 4),
+                "volume": int(latest.get("volume", 0) or 0),
+                "change_pct": round(change_pct, 2),
+                "prev_close": round(prev_close, 4),
+                "date": str(latest["date"]),
+                "source": "stock_daily(518880)",
+            }
+    except Exception:
+        pass
+    return None
+
+
 def _fetch_akshare_gold_inventory() -> Optional[dict]:
     """Fetch gold ETF inventory from akshare macro_cons_gold."""
     try:
@@ -320,7 +391,15 @@ def get_all_gold_factors() -> GoldFactors:
             dxy_source = "thsdk"
             raw["dxy"] = dxy_data
     if dxy == 0:
-        gaps.append("dxy_missing")
+        # Fallback: read from global_history table
+        dxy_fb = _fetch_db_global("DXY")
+        if dxy_fb:
+            dxy = dxy_fb["price"]
+            dxy_change = dxy_fb.get("change_pct", 0.0)
+            dxy_source = dxy_fb.get("source", "global_history")
+            raw["dxy"] = dxy_fb
+        else:
+            gaps.append("dxy_missing")
     
     # GLD ETF
     gld_price = 0.0
@@ -330,14 +409,33 @@ def get_all_gold_factors() -> GoldFactors:
     if ths:
         gld_data = _fetch_thsdk_us(ths, "UNYNGLD")
         if gld_data:
-            gld_price = float(gld_data.get("价格", 0))
-            gld_volume = int(gld_data.get("成交量", 0))
-            prev_gld = float(gld_data.get("昨收价", gld_price))
-            gld_change = ((gld_price - prev_gld) / prev_gld * 100) if prev_gld else 0
-            gld_source = "thsdk"
-            raw["gld"] = gld_data
+            raw_price = float(gld_data.get("价格", 0))
+            # Sanity check: GLD ETF price should be $100-$600 range.
+            # thsdk sometimes returns int32 overflow (2147483648) for this field.
+            if raw_price > 10000:
+                # Overflow detected, fall back to 昨收价
+                raw_price = float(gld_data.get("昨收价", 0))
+                gld_data["价格"] = raw_price  # fix in-place
+                gld_source = "thsdk(overflow_fix→昨收价)"
+            else:
+                gld_source = "thsdk"
+            if raw_price > 0:
+                gld_price = raw_price
+                gld_volume = int(gld_data.get("成交量", 0))
+                prev_gld = float(gld_data.get("昨收价", gld_price))
+                gld_change = ((gld_price - prev_gld) / prev_gld * 100) if prev_gld else 0
+                raw["gld"] = gld_data
     if gld_price == 0:
-        gaps.append("gld_missing")
+        # Fallback: use 518880 (黄金ETF华安) from stock_daily as proxy
+        gld_fb = _fetch_518880_from_tdx()
+        if gld_fb:
+            gld_price = gld_fb["price"]
+            gld_volume = gld_fb.get("volume", 0)
+            gld_change = gld_fb.get("change_pct", 0.0)
+            gld_source = gld_fb.get("source", "518880_proxy")
+            raw["gld"] = gld_fb
+        else:
+            gaps.append("gld_missing")
     
     # Disconnect thsdk
     if ths:
@@ -382,7 +480,14 @@ def get_all_gold_factors() -> GoldFactors:
         oil_change = oil_data["change_pct"]
         raw["oil"] = oil_data
     else:
-        gaps.append("oil_missing")
+        # Fallback: read WTI from global_history table
+        oil_fb = _fetch_db_global("CL")
+        if oil_fb:
+            oil_price = oil_fb["price"]
+            oil_change = oil_fb.get("change_pct", 0.0)
+            raw["oil"] = oil_fb
+        else:
+            gaps.append("oil_missing")
     
     # Gold inventory (akshare)
     gold_inv = _fetch_akshare_gold_inventory()

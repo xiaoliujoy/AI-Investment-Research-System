@@ -106,6 +106,13 @@ def init():
             con.execute("ALTER TABLE trade_execution ADD COLUMN %s %s" % (col, typ))
         except sqlite3.OperationalError:
             pass  # 已存在
+    # 补列：交易宪法 v1.1 补丁 + 信念兑现引擎 —— 盘前计划必填字段（迁移安全）
+    for col, typ in [("entry_stage", "TEXT"), ("fomo_self_check", "TEXT"),
+                     ("cycle_aligned", "TEXT"), ("planned_attribution", "TEXT")]:
+        try:
+            con.execute("ALTER TABLE trade_execution ADD COLUMN %s %s" % (col, typ))
+        except sqlite3.OperationalError:
+            pass  # 已存在
     # 盘中执行三问的持久化（原引擎只生成 prompt，不落库）
     con.execute("""
     CREATE TABLE IF NOT EXISTS trader_checkin (
@@ -161,18 +168,23 @@ def init():
 def record_plan(market_type, symbol, direction, hypothesis, invalid_condition,
                 risk_plan, signal_grade=None, expected_scenario=None,
                 willing_hold_4h=None, planned_exit=None,
-                why_now=None, regime_support=None, planned_hold_min=None):
+                why_now=None, regime_support=None, planned_hold_min=None,
+                entry_stage=None, fomo_self_check=None, cycle_aligned=None,
+                planned_attribution=None):
     """写入一条交易计划。exec_status='planned'，待 executed/skipped 回填。
     返回新计划 id。设计目标 ≤60s：参数化录入，无交互阻塞。
-    新增（Constitution v1.0）：why_now / regime_support / planned_hold_min 落位开仓四问。"""
+    新增（Constitution v1.0）：why_now / regime_support / planned_hold_min 落位开仓四问。
+    新增（v1.1 补丁 + 信念兑现引擎）：entry_stage / fomo_self_check / cycle_aligned /
+          planned_attribution —— 盘前计划必填字段，过 pre_trade_gate 联动。"""
     con = _con()
     cur = con.execute(
         """INSERT INTO trade_execution
            (trade_date, market_type, symbol, direction, exec_status, planned,
             reason, signal_grade, expected_scenario, invalid_condition,
             risk_plan, willing_hold_4h, planned_exit, source,
-            why_now, regime_support, planned_hold_min)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
+            why_now, regime_support, planned_hold_min,
+            entry_stage, fomo_self_check, cycle_aligned, planned_attribution)
+           VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)""",
         (date.today().isoformat(), market_type.upper(), symbol, direction.upper(),
          "planned", 1, hypothesis,
          SG_MAP.get((signal_grade or "").lower()),
@@ -182,7 +194,11 @@ def record_plan(market_type, symbol, direction, hypothesis, invalid_condition,
           (0 if willing_hold_4h in ("n", "N", False) else None)),
          planned_exit, "discipline_plan",
          why_now or None, regime_support or None,
-         int(planned_hold_min) if planned_hold_min is not None else None),
+         int(planned_hold_min) if planned_hold_min is not None else None,
+         (entry_stage or "").strip().lower() or None,
+         (fomo_self_check or "").strip().lower() or None,
+         (cycle_aligned or "").strip().lower() or None,
+         planned_attribution or None),
     )
     tid = cur.lastrowid
     con.commit()
@@ -191,6 +207,9 @@ def record_plan(market_type, symbol, direction, hypothesis, invalid_condition,
     print("   假设: %s" % hypothesis)
     print("   失效: %s" % invalid_condition)
     print("   风险: %s" % risk_plan)
+    if entry_stage:
+        print("   入场确认: %s  周期对齐: %s  FOMO: %s" %
+              (entry_stage, cycle_aligned or "—", fomo_self_check or "—"))
     return tid
 
 
@@ -404,7 +423,8 @@ def get_today_plan():
     con = _con()
     row = con.execute(
         "SELECT id, market_type, symbol, direction, reason, invalid_condition, "
-        "risk_plan, planned_exit, willing_hold_4h, signal_grade "
+        "risk_plan, planned_exit, willing_hold_4h, signal_grade, "
+        "entry_stage, cycle_aligned, planned_attribution "
         "FROM trade_execution WHERE trade_date=? AND exec_status='planned' "
         "ORDER BY id DESC LIMIT 1",
         (date.today().isoformat(),),
@@ -413,7 +433,8 @@ def get_today_plan():
     if not row:
         return None
     keys = ["id", "market_type", "symbol", "direction", "reason", "invalid_condition",
-            "risk_plan", "planned_exit", "willing_hold_4h", "signal_grade"]
+            "risk_plan", "planned_exit", "willing_hold_4h", "signal_grade",
+            "entry_stage", "cycle_aligned", "planned_attribution"]
     return dict(zip(keys, row))
 
 

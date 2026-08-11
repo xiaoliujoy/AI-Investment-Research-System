@@ -90,7 +90,9 @@ YouTube_*
 QUICK_REF.md
 
 # 一次性调试/探查脚本（含个人绝对路径，不公开；正式模块勿用 _ 前缀命名）
+# 覆盖 backend/ 下任意子目录的 _*.py（原 backend/_*.py 仅匹配顶层，会漏掉 os_layers/ 等子目录）
 backend/_*.py
+backend/**/_*.py
 
 # MT5 个人交易记录导出（真实成交与盈亏，属个人隐私，绝不入库）
 mt5_history*
@@ -133,3 +135,10 @@ backend/au_holding_analysis.py
 backend/export_three_trades.py
 backend/os_layers/trading_constitution.py
 backend/test_constitution.py
+
+# 个人交易计划备份（含 XAUUSD 计划/失效位/风险计划，属个人交易意图，不公开）
+archive/test_plans_*.json
+archive/*_backup.json
+
+# 个人 IP 内容创作产物：交易笔记口播稿（品牌内容，不随代码仓库发布）
+content/交易笔记_*.md

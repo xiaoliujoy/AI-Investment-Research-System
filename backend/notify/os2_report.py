@@ -551,6 +551,24 @@ body { margin:0; background:#eef1f5; font-family:-apple-system,"Segoe UI","PingF
 .learn table { width:100%; border-collapse:collapse; font-size:12px; margin-top:6px; }
 .learn th, .learn td { text-align:left; padding:3px 6px; border-bottom:1px solid #eef1f5; }
 .alpha { background:linear-gradient(135deg,#1d3b2a,#2c5a3f); color:#eafaf0; border-radius:12px; padding:14px 18px; margin-bottom:14px; font-size:15px; line-height:1.55; }
+/* ── 跨市场交易机会（黄金独立通道）── */
+.gold-sec { border:1px solid #d4a843; border-radius:12px; padding:16px 18px; margin-bottom:14px; background:#fffdf5; }
+.gold-sec .gh { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.gold-sec .gh .gt { font-size:16px; font-weight:700; color:#8a6d00; }
+.gold-sec .gh .gb { font-size:11px; font-weight:700; padding:3px 10px; border-radius:20px; color:#fff; }
+.gold-sec .gb.bull { background:#c0392b; }
+.gold-sec .gb.neutral { background:#c79a16; }
+.gold-sec .gb.bear { background:#1ba784; }
+.gold-sec .ggrid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:10px; }
+.gold-sec .gcell { background:#fff; border:1px solid #e8e0c0; border-radius:8px; padding:8px 10px; text-align:center; }
+.gold-sec .gcell .gk { font-size:11px; color:#8a7d50; margin-bottom:2px; }
+.gold-sec .gcell .gv { font-size:18px; font-weight:800; color:#5a4a00; }
+.gold-sec .gcell .gv.red { color:#c0392b; }
+.gold-sec .gcell .gv.green { color:#1ba784; }
+.gold-sec .gaction { font-size:14px; line-height:1.6; background:#fff8e0; border-left:4px solid #d4a843; padding:8px 12px; border-radius:6px; margin-top:8px; }
+.gold-sec .gaction b { color:#8a6d00; }
+.gold-sec .gcat { font-size:12px; color:#8a7d50; margin-top:6px; line-height:1.5; }
+.gold-sec .gnote { font-size:11px; color:#a89c70; margin-top:6px; }
 .appendix { background:#f7f9fb; border:1px solid #e4e9ef; border-radius:12px; padding:14px 18px; font-size:13px; }
 .appendix h3 { margin:0 0 8px; font-size:14px; color:#5a6b7b; }
 .appendix .arow { margin:5px 0; line-height:1.55; }
@@ -878,6 +896,9 @@ def render_html(memo):
     # ── ⑧ 今日 Alpha ──
     alpha_sec = f'<div class="alpha">每日 Alpha · {_esc(alpha)}</div>'
 
+    # ── ⑧b 跨市场交易机会（黄金·独立通道，不受A股裁决影响）──
+    gold_sec = _render_gold_opportunity(memo)
+
     # ── 数据健康（Data Integrity Layer 闸门）──
     dh = decision.get("health") or {}
     if dh:
@@ -912,7 +933,7 @@ def render_html(memo):
             f'<meta name="viewport" content="width=device-width,initial-scale=1">'
             f'<title>A股 Trading OS · {_esc(memo.trade_date)}</title><style>{CSS}</style></head>'
             f'<body><div class="wrap">{top}{cockpit}{exec_sec}{health_sec}{pf_sec}{dec_sec}{watch_sec}{cand_sec}{leader_sec}'
-            f'{why_sec}{ga_sec}{risk_sec}{learn_sec}{alpha_sec}{app_sec}'
+            f'{why_sec}{ga_sec}{risk_sec}{learn_sec}{alpha_sec}{gold_sec}{app_sec}'
             f'<div class="foot">Trading OS · 唯一裁决 · 驾驶舱首屏 · 由个人AI研投系统生成 · 仅供参考，买卖决策以人工看图为准</div>'
             f'</div></body></html>')
 
@@ -1320,6 +1341,9 @@ def render_wechat_html(memo):
     alpha_sec = (f'<section style="background:#1f4d33;color:#eafaf0;border-radius:12px;padding:14px 18px;'
                  f'margin:16px 0;font-size:15px;line-height:1.55;">每日 Alpha · {_esc(alpha)}</section>')
 
+    # ── 跨市场交易机会 · 黄金（独立通道，不受A股裁决影响）──
+    gold_wx_sec = _render_gold_wechat(memo)
+
     # ── 附录（裁决推导链 + 原始数据；公众号编辑器不支持折叠，故置末尾并压缩）──
     chain_html = ('<div style="font-size:12px;color:#5a6b7b;line-height:1.8;background:#fff;'
                   'border:1px solid #e4e9ef;border-radius:8px;padding:8px 12px;margin-bottom:10px;">'
@@ -1350,7 +1374,7 @@ def render_wechat_html(memo):
     return (f'<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">'
             f'<title>A股 Trading OS · {_esc(memo.trade_date)}</title></head><body>'
             f'{intro}{top}{cockpit}{exec_sec}{health_sec}{pf_sec}{dec_sec}{watch_sec}{cand_sec}{leader_sec}'
-            f'{why_sec}{ga_sec}{risk_sec}{learn_sec}{alpha_sec}{app_sec}{footer}'
+            f'{why_sec}{ga_sec}{risk_sec}{learn_sec}{alpha_sec}{gold_wx_sec}{app_sec}{footer}'
             f'</body></html>')
 
 
@@ -1501,6 +1525,181 @@ def render_push(memo):
         compute_alpha(memo),
     ]
     return "\n".join(lines)
+
+
+# ═══════════════════════════════════════════════════════
+#  跨市场交易机会（黄金独立通道）
+#  不受A股"不交易"裁决影响，独立展示黄金周期/评分/建议
+# ═══════════════════════════════════════════════════════
+def _render_gold_opportunity(memo) -> str:
+    """Read gold_report.json and render a cross-market gold trading section.
+
+    This section is independent of the A-share decision (YES/NO/CAUTION).
+    It surfaces gold_engine output directly to the user.
+    """
+    import json as _json
+    gold_path = os.path.join(ROOT, "output", "gold_report.json")
+    if not os.path.exists(gold_path):
+        return ""
+    try:
+        with open(gold_path, "r", encoding="utf-8") as f:
+            gr = _json.load(f)
+    except Exception:
+        return ""
+
+    ds = gr.get("drive_score", {})
+    cycle = gr.get("cycle", {})
+    plan = gr.get("plan", {})
+    factors = gr.get("factors", {})
+    radar = gr.get("radar", {})
+
+    score = ds.get("composite_score", 0)
+    direction = ds.get("direction", "neutral")
+    phase = cycle.get("phase_name_cn", "未知")
+    action = cycle.get("suggested_action", "观察")
+    signal_level = plan.get("signal_level", "")
+    pos_guide = plan.get("position_guidance", "")
+
+    # Direction badge
+    dir_map = {
+        "bullish": ("偏多", "bull", "#c0392b"),
+        "neutral_bullish": ("中性偏多", "bull", "#c0392b"),
+        "neutral": ("中性", "neutral", "#c79a16"),
+        "bearish": ("偏空", "bear", "#1ba784"),
+    }
+    dir_label, dir_cls, dir_color = dir_map.get(direction, ("中性", "neutral", "#c79a16"))
+
+    # Key metrics
+    gold_price = factors.get("gold_price", 0)
+    gold_chg = factors.get("gold_change_pct", 0)
+    dxy = factors.get("dxy", 0)
+    tips = factors.get("tips_10y_yield", 0)
+    oil = factors.get("oil_price", 0)
+    fed_rate = factors.get("fed_rate", 0)
+
+    chg_cls = "red" if gold_chg >= 0 else "green"
+    chg_str = f"{gold_chg:+.1f}%" if gold_chg else "0.0%"
+
+    # Catalysts (top 2)
+    cat_items = radar.get("current_week_events", [])[:2]
+    cat_str = " ｜ ".join(f"{_esc(c.get('name',''))}({_esc(c.get('date',''))})"
+                         for c in cat_items) if cat_items else "无重大事件"
+
+    # Data gaps warning
+    gaps = factors.get("gaps", [])
+    gap_note = ""
+    if gaps:
+        gap_note = f'<div class="gnote">⚠ 数据缺失: {_esc(", ".join(gaps))}，评分可能偏低</div>'
+
+    return (f'<div class="gold-sec">'
+            f'<div class="gh"><div class="gt">跨市场交易机会 · 黄金</div>'
+            f'<div class="gb {dir_cls}">{dir_label} {score:.0f}/100</div></div>'
+            f'<div class="ggrid">'
+            f'<div class="gcell"><div class="gk">金价 XAUUSD</div><div class="gv {chg_cls}">${gold_price:,.0f}<br><span style="font-size:12px">{chg_str}</span></div></div>'
+            f'<div class="gcell"><div class="gk">美元指数 DXY</div><div class="gv">{dxy:.1f}</div></div>'
+            f'<div class="gcell"><div class="gk">实际利率 TIPS</div><div class="gv">{tips:.2f}%</div></div>'
+            f'<div class="gcell"><div class="gk">美联储利率</div><div class="gv">{fed_rate:.1f}%</div></div>'
+            f'</div>'
+            f'<div class="gaction"><b>周期: {phase}</b> → 建议操作: <b>{action}</b>'
+            f' ｜ 信号等级: <b>{signal_level}</b>'
+            f'{f" ｜ 仓位建议: <b>{pos_guide}</b>" if pos_guide else ""}</div>'
+            f'<div class="gcat">本周关注: {cat_str}</div>'
+            f'{gap_note}'
+            f'<div class="gnote">独立通道: 此板块不受A股"不交易"裁决影响。黄金是你的最强alpha来源（方向正确率93.3%），请独立关注。</div>'
+            f'</div>')
+
+
+def _render_gold_wechat(memo) -> str:
+    """WeChat inline-styled version of gold opportunity section.
+
+    Reads the same gold_report.json but renders with inline styles
+    (WeChat editor doesn't support CSS classes).
+    """
+    import json as _json
+    gold_path = os.path.join(ROOT, "output", "gold_report.json")
+    if not os.path.exists(gold_path):
+        return ""
+    try:
+        with open(gold_path, "r", encoding="utf-8") as f:
+            gr = _json.load(f)
+    except Exception:
+        return ""
+
+    ds = gr.get("drive_score", {})
+    cycle = gr.get("cycle", {})
+    plan = gr.get("plan", {})
+    factors = gr.get("factors", {})
+    radar = gr.get("radar", {})
+
+    score = ds.get("composite_score", 0)
+    direction = ds.get("direction", "neutral")
+    phase = cycle.get("phase_name_cn", "未知")
+    action = cycle.get("suggested_action", "观察")
+    signal_level = plan.get("signal_level", "")
+    pos_guide = plan.get("position_guidance", "")
+
+    dir_map = {
+        "bullish": ("偏多", "#cf3b2f"),
+        "neutral_bullish": ("中性偏多", "#cf3b2f"),
+        "neutral": ("中性", "#c79a16"),
+        "bearish": ("偏空", "#1ba784"),
+    }
+    dir_label, dir_color = dir_map.get(direction, ("中性", "#c79a16"))
+
+    gold_price = factors.get("gold_price", 0)
+    gold_chg = factors.get("gold_change_pct", 0)
+    dxy = factors.get("dxy", 0)
+    tips = factors.get("tips_10y_yield", 0) or 0
+    fed_rate = factors.get("fed_rate", 0) or 0
+    gaps = factors.get("gaps", [])
+
+    chg_color = "#cf3b2f" if gold_chg >= 0 else "#1ba784"
+    chg_str = f"{gold_chg:+.1f}%" if gold_chg else "0.0%"
+
+    cat_items = radar.get("current_week_events", [])[:2]
+    cat_str = " ｜ ".join(f'{_esc(c.get("name",""))}({_esc(c.get("date",""))})'
+                         for c in cat_items) if cat_items else "无重大事件"
+
+    gap_html = ""
+    if gaps:
+        gap_html = (f'<div style="font-size:11px;color:#e65100;margin-top:6px;">'
+                    f'⚠ 数据缺失: {_esc(", ".join(gaps))}，评分可能偏低</div>')
+
+    # 4-metric grid
+    def _mcell(k, v, sub=""):
+        return (f'<td style="width:25%;background:rgba(255,255,255,.12);border-radius:6px;'
+                f'padding:8px 6px;text-align:center;vertical-align:top;">'
+                f'<div style="font-size:10px;opacity:.8;">{_esc(k)}</div>'
+                f'<div style="font-size:15px;font-weight:800;margin-top:2px;">{_esc(v)}</div>'
+                f'{f"<div style=\"font-size:10px;opacity:.7;\">{sub}</div>" if sub else ""}</td>')
+
+    chg_sub = f'<span style="color:{chg_color};">{chg_str}</span>'
+    metrics = (f'<table style="width:100%;border-collapse:separate;border-spacing:4px;margin:8px 0;">'
+               f'<tr>{_mcell("金价 XAUUSD", f"${gold_price:,.0f}", chg_sub)}'
+               f'{_mcell("美元指数 DXY", f"{dxy:.1f}")}'
+               f'{_mcell("实际利率 TIPS", f"{tips:.2f}%")}'
+               f'{_mcell("美联储利率", f"{fed_rate:.1f}%")}</tr></table>')
+
+    return (f'<section style="background:#1a1520;border:1px solid #c79a16;border-radius:12px;'
+            f'padding:14px 16px;margin:16px 0;color:#f5e6c8;">'
+            f'<div style="display:flex;justify-content:space-between;align-items:center;'
+            f'margin-bottom:6px;">'
+            f'<div style="font-size:15px;font-weight:800;color:#c79a16;">跨市场交易机会 · 黄金</div>'
+            f'<div style="font-size:14px;font-weight:800;color:{dir_color};'
+            f'background:rgba(255,255,255,.1);padding:3px 12px;border-radius:12px;">'
+            f'{dir_label} {score:.0f}/100</div></div>'
+            f'{metrics}'
+            f'<div style="font-size:13px;line-height:1.6;margin-top:6px;">'
+            f'<b>周期: {_esc(phase)}</b> → 建议操作: <b>{_esc(action)}</b>'
+            f' ｜ 信号等级: <b>{_esc(signal_level)}</b>'
+            f'{f" ｜ 仓位建议: <b>{_esc(pos_guide)}</b>" if pos_guide else ""}</div>'
+            f'<div style="font-size:12px;color:#c79a16;margin-top:4px;">'
+            f'本周关注: {_esc(cat_str)}</div>'
+            f'{gap_html}'
+            f'<div style="font-size:11px;color:#8a7a5a;margin-top:6px;line-height:1.5;">'
+            f'独立通道: 此板块不受A股"不交易"裁决影响。'
+            f'黄金是你的最强alpha来源（方向正确率93.3%），请独立关注。</div>'
+            f'</section>')
 
 
 # ═══════════════════════════════════════════════════════
