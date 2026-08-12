@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>刘晓每日系统 v1.0</title>
+<style>
+  :root{
+    --bg0:#0d1410; --bg1:#16241c; --brand:#2E7D52; --brand-soft:#3a9b6a;
+    --ink:#e8f0ea; --ink-dim:#9fb3a8; --line:#243a30; --card:#13201a;
+    --warn:#c9a14a; --good:#3a9b6a; --bad:#b85c5c;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+    background:linear-gradient(160deg,var(--bg0),var(--bg1));
+    color:var(--ink);min-height:100vh;line-height:1.6;
+  }
+  .wrap{max-width:880px;margin:0 auto;padding:28px 18px 80px}
+  header{display:flex;justify-content:space-between;align-items:flex-end;
+    border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:8px;flex-wrap:wrap;gap:12px}
+  .brand{font-size:13px;letter-spacing:3px;color:var(--brand-soft);text-transform:uppercase}
+  h1{font-size:24px;font-weight:600;margin-top:4px}
+  .score-box{text-align:right}
+  .score-num{font-size:40px;font-weight:700;color:var(--brand-soft);line-height:1}
+  .score-lbl{font-size:12px;color:var(--ink-dim)}
+  nav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 24px}
+  nav a{font-size:13px;color:var(--ink-dim);text-decoration:none;
+    border:1px solid var(--line);padding:6px 14px;border-radius:20px;transition:.2s}
+  nav a:hover{color:var(--ink);border-color:var(--brand)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:22px;margin-bottom:20px}
+  .card h2{font-size:17px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+  .card .sub{font-size:12px;color:var(--ink-dim);margin-bottom:16px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--brand);display:inline-block}
+  label{display:block;font-size:13px;color:var(--ink-dim);margin:14px 0 6px}
+  textarea,input[type=text]{width:100%;background:#0e1813;border:1px solid var(--line);
+    color:var(--ink);border-radius:8px;padding:10px;font-size:14px;font-family:inherit;resize:vertical}
+  textarea:focus,input:focus{outline:none;border-color:var(--brand)}
+  .states{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+  .state-btn{padding:8px 16px;border:1px solid var(--line);border-radius:20px;
+    background:transparent;color:var(--ink-dim);cursor:pointer;font-size:13px;transition:.15s}
+  .state-btn.sel{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .row{display:flex;gap:12px;flex-wrap:wrap}
+  .row>div{flex:1;min-width:200px}
+  .slider-row{display:flex;align-items:center;gap:12px;margin:10px 0}
+  .slider-row .name{width:90px;font-size:13px;color:var(--ink)}
+  .slider-row input[type=range]{flex:1;accent-color:var(--brand)}
+  .slider-row .val{width:36px;text-align:center;font-weight:600;color:var(--brand-soft)}
+  .chk{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:13px;color:var(--ink)}
+  .chk input{accent-color:var(--brand);width:16px;height:16px}
+  button.save{background:var(--brand);color:#fff;border:none;border-radius:8px;
+    padding:11px 22px;font-size:14px;cursor:pointer;margin-top:16px;transition:.15s}
+  button.save:hover{background:var(--brand-soft)}
+  button.ghost{background:transparent;border:1px solid var(--line);color:var(--ink-dim);
+    border-radius:8px;padding:10px 18px;font-size:13px;cursor:pointer;
+    margin-top:12px;margin-right:8px}
+  button.ghost:hover{color:var(--ink);border-color:var(--brand)}
+  .trade-item{border:1px solid var(--line);border-radius:10px;padding:14px;margin-top:12px;
+    font-size:13px;background:#0e1813}
+  .trade-item b{color:var(--brand-soft)}
+  .hint{font-size:12px;color:var(--ink-dim);font-style:italic;margin-top:8px}
+  .pill{display:inline-block;font-size:11px;padding:2px 8px;border-radius:10px;
+    border:1px solid var(--line);color:var(--ink-dim);margin-right:6px}
+  .pill.yes{color:var(--good);border-color:var(--good)}
+  .pill.no{color:var(--bad);border-color:var(--bad)}
+  .kpis{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+  .kpi{flex:1;min-width:150px;background:#0e1813;border:1px solid var(--line);
+    border-radius:12px;padding:16px}
+  .kpi .t{font-size:12px;color:var(--ink-dim);letter-spacing:1px}
+  .kpi .v{font-size:26px;font-weight:700;color:var(--brand-soft);margin-top:4px}
+  .kpi .d{font-size:12px;margin-top:4px}
+  .up{color:var(--good)} .down{color:var(--bad)} .flat{color:var(--ink-dim)}
+  svg{width:100%;height:auto;display:block;background:#0e1813;border-radius:10px;margin-top:10px}
+  .legend{font-size:11px;color:var(--ink-dim);margin-top:6px}
+  footer{text-align:center;font-size:12px;color:var(--ink-dim);margin-top:30px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+    background:var(--brand);color:#fff;padding:10px 22px;border-radius:22px;font-size:14px;
+    opacity:0;transition:.3s;pointer-events:none}
+  .toast.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="brand">Xiao Liu Joy Research</div>
+      <h1>刘晓每日系统 v1.0</h1>
+      <div class="score-lbl" id="dateLbl"></div>
+    </div>
+    <div class="score-box">
+      <div class="score-num" id="dssNum">--</div>
+      <div class="score-lbl">Daily State Score / 5</div>
+    </div>
+  </header>
+
+  <nav>
+    <a href="#noon">🌱 中午·状态重启</a>
+    <a href="#trade">📈 白天·交易系统</a>
+    <a href="#evening">🧘 晚上·复盘</a>
+    <a href="#trend">📊 30日趋势</a>
+  </nav>
+
+  <!-- 中午 -->
+  <section class="card" id="noon">
+    <h2><span class="dot"></span>🌱 中午 · 状态重启</h2>
+    <div class="sub">约 12:30 · 10–20 分钟 · 把上午切换出来，回到自己</div>
+    <div class="hint">丰盛冥想 → 观想理想生活 → 观想丰盛圆满的自己 → 感受"我已经拥有"</div>
+    <label>此刻的我，是什么状态？（一个词）</label>
+    <div class="states" id="stateBtns"></div>
+    <label>状态觉察备注（可选）</label>
+    <textarea id="noonNote" rows="2" placeholder="此刻感受到的画面、身体、情绪……"></textarea>
+    <button class="save" onclick="saveNoon()">保存中午状态</button>
+  </section>
+
+  <!-- 白天 交易 -->
+  <section class="card" id="trade">
+    <h2><span class="dot"></span>📈 白天 · 交易系统</h2>
+    <div class="sub">发生交易时触发 · 没有计划，不开仓</div>
+    <div class="row">
+      <div>
+        <label>今天是否存在符合系统的机会？</label>
+        <div class="states">
+          <button class="state-btn" data-k="has_chance" data-v="是">是</button>
+          <button class="state-btn" data-k="has_chance" data-v="否">否</button>
+        </div>
+        <label>当前市场环境</label>
+        <input type="text" id="t_env" placeholder="趋势/震荡/情绪">
+        <label>交易方向</label>
+        <input type="text" id="t_dir" placeholder="多/空/观望">
+      </div>
+      <div>
+        <label>入场条件</label>
+        <textarea id="t_entry" rows="2" placeholder="具体触发"></textarea>
+        <label>止损在哪里</label>
+        <textarea id="t_stop" rows="2" placeholder="价格/金额"></textarea>
+        <label>能否接受"不交易"？</label>
+        <div class="states">
+          <button class="state-btn" data-k="accept_no" data-v="能">能</button>
+          <button class="state-btn" data-k="accept_no" data-v="不能">不能</button>
+        </div>
+      </div>
+    </div>
+    <label>交易中执行（开仓后回填）</label>
+    <div class="chk"><input type="checkbox" id="c_plan"><span>按交易前计划执行</span></div>
+    <div class="chk"><input type="checkbox" id="c_chase"><span>出现追涨杀跌</span></div>
+    <div class="chk"><input type="checkbox" id="c_early"><span>出现提前止盈</span></div>
+    <div class="chk"><input type="checkbox" id="c_loss"><span>出现扩大亏损</span></div>
+    <label>这笔交易备注</label>
+    <textarea id="t_note" rows="2" placeholder="品种/理由/结果……"></textarea>
+    <button class="save" onclick="addTrade()">记录这笔交易</button>
+    <div id="tradeList"></div>
+    <hr style="border:none;border-top:1px solid var(--line);margin:18px 0">
+    <button class="ghost" onclick="importTrades()">⬇ 从交易OS导入今日交易</button>
+    <span id="importStatus" class="hint"></span>
+  </section>
+
+  <!-- 晚上 -->
+  <section class="card" id="evening">
+    <h2><span class="dot"></span>🧘 晚上 · 复盘</h2>
+    <div class="sub">约 21:30 · 20–30 分钟 · 灵修 → 交易 → 成长 → 评分</div>
+
+    <h3 style="font-size:14px;margin:6px 0 2px;color:var(--brand-soft)">灵修与觉察</h3>
+    <label>今天什么时候，我最接近那个理想中的自己？</label>
+    <textarea id="e_closest" rows="2"></textarea>
+    <label>今天什么时候，我被恐惧/贪婪/焦虑/欲望带走了？</label>
+    <textarea id="e_taken" rows="2"></textarea>
+
+    <h3 style="font-size:14px;margin:18px 0 2px;color:var(--brand-soft)">交易复盘（若当天交易）</h3>
+    <div class="chk"><input type="checkbox" id="r_plan"><span>遵守交易计划</span></div>
+    <div class="chk"><input type="checkbox" id="r_entry"><span>按系统入场</span></div>
+    <div class="chk"><input type="checkbox" id="r_stop"><span>按系统止损</span></div>
+    <div class="chk"><input type="checkbox" id="r_early"><span>提前退出</span></div>
+    <div class="chk"><input type="checkbox" id="r_miss"><span>错过计划内机会</span></div>
+    <label>今天有没有一个明显的执行错误？</label>
+    <textarea id="e_error" rows="2" placeholder="描述一个，不必多"></textarea>
+    <label>信念兑现率（判断→行动的兑现，0–5）</label>
+    <div class="slider-row">
+      <span class="name">信念兑现</span>
+      <input type="range" id="e_belief" min="0" max="5" step="1" value="3" oninput="document.getElementById('e_belief_v').textContent=this.value">
+      <span class="val" id="e_belief_v">3</span>
+    </div>
+    <div class="hint">你过去大量交易数据暴露的核心问题：分析能力与执行能力之间存在明显断层。这个分是给"判断质量×执行质量"的。</div>
+
+    <div id="osTradeBox" style="margin-top:14px;display:none">
+      <label>从交易OS导入的今日交易 · 平仓归因（A/B/C/D，<span style="color:var(--bad)">D=情绪退出即训练失败信号</span>）</label>
+      <div id="osTrades"></div>
+    </div>
+    <button class="ghost" onclick="syncReview()">⬆ 同步复盘到交易OS（trader_review）</button>
+    <span id="syncStatus" class="hint"></span>
+
+    <h3 style="font-size:14px;margin:18px 0 2px;color:var(--brand-soft)">成长记录（3–5 分钟）</h3>
+    <label>① 今天我学到了什么？（一句话）</label>
+    <input type="text" id="g_learn">
+    <label>② 今天我哪里做得很好？</label>
+    <input type="text" id="g_good">
+    <label>③ 明天只改进一件什么事情？（只能一件）</label>
+    <input type="text" id="g_next" placeholder="例如：明天所有交易必须先写计划">
+
+    <h3 style="font-size:14px;margin:18px 0 2px;color:var(--brand-soft)">每日状态评分（各 0–5）</h3>
+    <div class="slider-row"><span class="name">🧘 内在稳定</span><input type="range" min="0" max="5" step="1" value="3" id="s_inner" oninput="upd(this)"><span class="val" id="s_inner_v">3</span></div>
+    <div class="slider-row"><span class="name">✨ 丰盛状态</span><input type="range" min="0" max="5" step="1" value="3" id="s_abun" oninput="upd(this)"><span class="val" id="s_abun_v">3</span></div>
+    <div class="slider-row"><span class="name">📈 交易纪律</span><input type="range" min="0" max="5" step="1" value="3" id="s_disc" oninput="upd(this)"><span class="val" id="s_disc_v">3</span></div>
+    <div class="slider-row"><span class="name">🧠 清醒觉察</span><input type="range" min="0" max="5" step="1" value="3" id="s_aware" oninput="upd(this)"><span class="val" id="s_aware_v">3</span></div>
+    <div class="slider-row"><span class="name">❤️ 喜悦感</span><input type="range" min="0" max="5" step="1" value="3" id="s_joy" oninput="upd(this)"><span class="val" id="s_joy_v">3</span></div>
+
+    <button class="save" onclick="saveEvening()">保存晚间复盘</button>
+  </section>
+
+  <!-- 趋势 -->
+  <section class="card" id="trend">
+    <h2><span class="dot"></span>📊 长期数据 · 30 日趋势</h2>
+    <div class="sub">不盯打卡率，观察三个指标：Presence / Discipline / Joy</div>
+    <div class="kpis" id="kpis"></div>
+    <h3 style="font-size:14px;margin:6px 0;color:var(--brand-soft)">Daily State Score</h3>
+    <svg id="chart_dss" viewBox="0 0 680 180"></svg>
+    <h3 style="font-size:14px;margin:18px 0 0;color:var(--brand-soft)">三项长期指标</h3>
+    <svg id="chart_idx" viewBox="0 0 680 220"></svg>
+    <div class="legend">Presence = 均值(清醒觉察, 内在稳定) · Discipline = 交易纪律(信念兑现率加权) · Joy = 均值(喜悦感, 丰盛状态) ｜ 均为提案映射，可在 app.py compute_scores 调整</div>
+  </section>
+
+  <footer>修状态 → 守纪律 → 做判断 → 执行动作 → 复盘 → 迭代 → 保持喜悦</footer>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const STATES=["平静","喜悦","丰盛","焦虑","疲惫","混乱","其他"];
+const TODAY=new URLSearchParams(location.search).get("date")||new Date().toISOString().slice(0,10);
+let cur={};
+let importedTrades=[]; const importedIds=new Set();
+
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1800);}
+function upd(el){document.getElementById(el.id+"_v").textContent=el.value;}
+async function api(path,method="GET",body){const r=await fetch(path,{method,headers:{"Content-Type":"application/json"},body:body?JSON.stringify(body):undefined});return r.json();}
+
+// 状态按钮组
+function buildStates(){
+  const box=document.getElementById("stateBtns");
+  STATES.forEach(s=>{
+    const b=document.createElement("button");
+    b.className="state-btn";b.textContent=s;b.dataset.state=s;
+    b.onclick=()=>{[...box.children].forEach(c=>c.classList.remove("sel"));b.classList.add("sel");};
+    box.appendChild(b);
+  });
+}
+// 交易 yes/no 按钮组
+const tradeSel={};
+document.querySelectorAll('[data-k]').forEach(b=>{
+  b.onclick=()=>{
+    const k=b.dataset.k;
+    document.querySelectorAll(`[data-k="${k}"]`).forEach(x=>x.classList.remove("sel"));
+    b.classList.add("sel");tradeSel[k]=b.dataset.v;
+  };
+});
+
+async function load(){
+  document.getElementById("dateLbl").textContent=TODAY;
+  cur=await api("/api/today?date="+TODAY);
+  // 中午
+  if(cur.noon_state){[...document.getElementById("stateBtns").children].forEach(c=>c.classList.toggle("sel",c.dataset.state===cur.noon_state));}
+  if(cur.noon_note)document.getElementById("noonNote").value=cur.noon_note;
+  // 交易
+  try{const trades=JSON.parse(cur.trade_data||"[]");renderTrades(trades);}catch(e){}
+  // 晚上
+  const ev=cur.evening_data||{};
+  if(ev.closest)document.getElementById("e_closest").value=ev.closest;
+  if(ev.taken)document.getElementById("e_taken").value=ev.taken;
+  if(ev.error)document.getElementById("e_error").value=ev.error;
+  if(ev.review)setChk("r_plan",ev.review.plan);
+  if(ev.review)setChk("r_entry",ev.review.entry);
+  if(ev.review)setChk("r_stop",ev.review.stop);
+  if(ev.review)setChk("r_early",ev.review.early);
+  if(ev.review)setChk("r_miss",ev.review.miss);
+  if(ev.growth){document.getElementById("g_learn").value=ev.growth.learn||"";document.getElementById("g_good").value=ev.growth.good||"";document.getElementById("g_next").value=ev.growth.next||"";}
+  if(cur.belief_fulfillment!=null)setSlider("e_belief",cur.belief_fulfillment);
+  setSlider("s_inner",cur.score_inner);setSlider("s_abun",cur.score_abundance);
+  setSlider("s_disc",cur.score_discipline);setSlider("s_aware",cur.score_awareness);
+  setSlider("s_joy",cur.score_joy);
+  // 评分显示
+  document.getElementById("dssNum").textContent=cur.daily_state_score!=null?cur.daily_state_score:"--";
+  // 还原已导入的交易（按 trade_link）
+  if(cur.trade_link){
+    const ids=String(cur.trade_link).split(",").filter(Boolean);
+    const rows=await api("/api/import_trades?date="+TODAY);
+    (rows||[]).filter(t=>ids.includes(String(t.journal_id))).forEach(t=>{
+      if(!importedIds.has(t.journal_id)){importedIds.add(t.journal_id);importedTrades.push(t);}
+    });
+    renderOsTrades();
+  }
+  await loadTrend();
+}
+function setSlider(id,v){if(v==null)return;const el=document.getElementById(id);if(!el)return;el.value=v;const vEl=document.getElementById(id+"_v");if(vEl)vEl.textContent=v;}
+function setChk(id,v){if(v==null)return;document.getElementById(id).checked=!!v;}
+
+async function saveNoon(){
+  const sel=document.querySelector("#stateBtns .sel");
+  await api("/api/noon","POST",{date:TODAY,state:sel?sel.dataset.state:null,note:document.getElementById("noonNote").value});
+  toast("中午状态已保存");
+}
+function renderTrades(trades){
+  const box=document.getElementById("tradeList");box.innerHTML="";
+  trades.forEach(t=>{
+    const d=document.createElement("div");d.className="trade-item";
+    d.innerHTML=`<b>${t.env||"未知环境"}</b> · ${t.dir||""} 
+      <span class="pill ${t.has_chance==='是'?'yes':'no'}">机会:${t.has_chance||"-"}</span>
+      <span class="pill ${t.accept_no==='能'?'yes':'no'}">接受不交易:${t.accept_no||"-"}</span><br>
+      <span class="pill ${t.plan?'yes':'no'}">按计划:${t.plan?'是':'否'}</span>
+      <span class="pill ${t.chase?'no':'yes'}">追涨杀跌:${t.chase?'有':'无'}</span>
+      <span class="pill ${t.early?'no':'yes'}">提前止盈:${t.early?'有':'无'}</span>
+      <span class="pill ${t.loss?'no':'yes'}">扩大亏损:${t.loss?'有':'无'}</span><br>
+      ${t.note||""}`;
+    box.appendChild(d);
+  });
+}
+async function postTrade(sess){
+  await api("/api/trade","POST",{date:TODAY,session:sess});
+  const trades=JSON.parse(cur.trade_data||"[]");trades.push(sess);cur.trade_data=JSON.stringify(trades);
+  renderTrades(trades);
+}
+async function addTrade(){
+  const sess={
+    env:document.getElementById("t_env").value,dir:document.getElementById("t_dir").value,
+    entry:document.getElementById("t_entry").value,stop:document.getElementById("t_stop").value,
+    has_chance:tradeSel.has_chance||null,accept_no:tradeSel.accept_no||null,
+    plan:document.getElementById("c_plan").checked,chase:document.getElementById("c_chase").checked,
+    early:document.getElementById("c_early").checked,loss:document.getElementById("c_loss").checked,
+    note:document.getElementById("t_note").value,ts:new Date().toISOString()
+  };
+  await postTrade(sess);
+  toast("已记录一笔交易");
+  // 清空
+  ["t_env","t_dir","t_entry","t_stop","t_note"].forEach(id=>document.getElementById(id).value="");
+  document.querySelectorAll('[data-k]').forEach(x=>x.classList.remove("sel"));
+  ["c_plan","c_chase","c_early","c_loss"].forEach(id=>document.getElementById(id).checked=false);
+  tradeSel={};
+}
+async function importTrades(){
+  const rows=await api("/api/import_trades?date="+TODAY);
+  if(!rows||!rows.length){document.getElementById("importStatus").textContent="交易OS今日无 trade_journal 记录（或未连通）";return;}
+  let added=0;
+  for(const t of rows){
+    if(importedIds.has(t.journal_id))continue;
+    importedIds.add(t.journal_id);importedTrades.push(t);
+    await postTrade(t);added++;
+  }
+  if(added>0)await api("/api/link","POST",{date:TODAY,trade_link:[...importedIds].join(",")});
+  document.getElementById("importStatus").textContent="已导入 "+added+" 笔（来自交易OS）";
+  renderOsTrades();
+  if(added>0)toast("已导入今日交易台账");
+}
+function renderOsTrades(){
+  const box=document.getElementById("osTradeBox"),list=document.getElementById("osTrades");
+  if(!importedTrades.length){box.style.display="none";return;}
+  box.style.display="block";list.innerHTML="";
+  importedTrades.forEach(t=>{
+    const d=document.createElement("div");d.className="trade-item";
+    const execCls=t.exec_result&&t.exec_result!=="missed"?"yes":"no";
+    const pnl=t.pnl!=null?(" · 盈亏:"+t.pnl):"";
+    d.innerHTML=`<b>${t.name||""}</b> (${t.code||""}) · ${t.action||""}
+      <span class="pill ${t.judge_result==='right'?'yes':'no'}">判断:${t.judge_result||"-"}</span>
+      <span class="pill ${execCls}">执行:${t.exec_result||"未填"}</span>${pnl}<br>
+      平仓归因:
+      <select id="cr_${t.journal_id}" style="background:#0e1813;color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:4px;margin-top:6px">
+        <option value="">--</option>
+        <option value="A">A 逻辑错误（假设错，可接受）</option>
+        <option value="B">B 目标达成（按计划止盈）</option>
+        <option value="C">C 风险调整（仓位/结构被动）</option>
+        <option value="D">D 情绪退出（怕失去利润·训练失败信号）</option>
+      </select>`;
+    list.appendChild(d);
+  });
+}
+async function syncReview(){
+  if(!importedTrades.length){document.getElementById("syncStatus").textContent="没有可同步的交易（先导入）";return;}
+  const belief=+document.getElementById("e_belief").value;
+  const emotion=document.getElementById("e_taken").value;
+  const improvement=document.getElementById("g_next").value;
+  const deviation=document.getElementById("e_error").value;
+  const reviews=importedTrades.map(t=>({
+    trade_id:t.journal_id,belief,emotion,improvement,deviation_reason:deviation,
+    judgment_correct:t.judge_result,execution_correct:t.exec_result,
+    fear_trigger:emotion,
+    close_reason:(document.getElementById("cr_"+t.journal_id)||{}).value||""
+  }));
+  const r=await api("/api/sync_review","POST",{date:TODAY,reviews});
+  document.getElementById("syncStatus").textContent="已回写 trader_review："+r.inserted+" 条";
+  toast("复盘已同步到交易OS");
+}
+async function saveEvening(){
+  const evening_data={
+    closest:document.getElementById("e_closest").value,
+    taken:document.getElementById("e_taken").value,
+    error:document.getElementById("e_error").value,
+    review:{plan:document.getElementById("r_plan").checked,entry:document.getElementById("r_entry").checked,
+      stop:document.getElementById("r_stop").checked,early:document.getElementById("r_early").checked,miss:document.getElementById("r_miss").checked},
+    growth:{learn:document.getElementById("g_learn").value,good:document.getElementById("g_good").value,next:document.getElementById("g_next").value}
+  };
+  const body={date:TODAY,evening_data,
+    score_inner:+document.getElementById("s_inner").value,score_abundance:+document.getElementById("s_abun").value,
+    score_discipline:+document.getElementById("s_disc").value,score_awareness:+document.getElementById("s_aware").value,
+    score_joy:+document.getElementById("s_joy").value,belief_fulfillment:+document.getElementById("e_belief").value};
+  await api("/api/evening","POST",body);
+  toast("晚间复盘已保存");
+  await load();
+}
+
+// ---- 趋势图 ----
+function lineChart(svgId,series,opts){
+  const svg=document.getElementById(svgId);
+  const W=680,H=opts.h||180,pad=28;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  if(!series.length){svg.innerHTML=`<text x="${W/2}" y="${H/2}" fill="#9fb3a8" font-size="13" text-anchor="middle">暂无数据</text>`;return;}
+  const maxV=opts.max||5, minV=opts.min||0;
+  const n=series.length;
+  const x=i=>pad+(W-2*pad)*(i/(Math.max(n-1,1)));
+  const y=v=>H-pad-(H-2*pad)*((v-minV)/(maxV-minV));
+  let s=`<line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="#243a30"/>`;
+  series.forEach((p,i)=>{
+    const cx=x(i),cy=y(p.v);
+    if(i>0){const px=x(i-1),py=y(series[i-1].v);s+=`<line x1="${px}" y1="${py}" x2="${cx}" y2="${cy}" stroke="${opts.color}" stroke-width="2"/>`;}
+    s+=`<circle cx="${cx}" cy="${cy}" r="2.6" fill="${opts.color}"/>`;
+    if(i===n-1)s+=`<text x="${cx}" y="${cy-8}" fill="${opts.color}" font-size="11" text-anchor="end">${p.v}</text>`;
+  });
+  s+=`<text x="${pad}" y="14" fill="#9fb3a8" font-size="11">${series[0].label}</text>`;
+  s+=`<text x="${W-pad}" y="14" fill="#9fb3a8" font-size="11" text-anchor="end">${series[n-1].label}</text>`;
+  svg.innerHTML=s;
+}
+async function loadTrend(){
+  const rows=await api("/api/trend?days=30");
+  const dss=rows.map(r=>({label:r.date.slice(5),v:r.daily_state_score}));
+  lineChart("chart_dss",dss,{color:"#3a9b6a",max:5,min:0,h:180});
+  const idx=[
+    {key:"presence",color:"#7fb8e0",name:"Presence"},
+    {key:"discipline_idx",color:"#3a9b6a",name:"Discipline"},
+    {key:"joy_idx",color:"#c9a14a",name:"Joy"}
+  ];
+  // 多条线画在同一图
+  const svg=document.getElementById("chart_idx");const W=680,H=220,pad=28;
+  if(!rows.length){svg.innerHTML=`<text x="${W/2}" y="${H/2}" fill="#9fb3a8" font-size="13" text-anchor="middle">暂无数据</text>`;}
+  else{
+    const n=rows.length,maxV=5,minV=0;
+    const x=i=>pad+(W-2*pad)*(i/(Math.max(n-1,1)));
+    const y=v=>H-pad-(H-2*pad)*((v-minV)/(maxV-minV));
+    let s=`<line x1="${pad}" y1="${H-pad}" x2="${W-pad}" y2="${H-pad}" stroke="#243a30"/>`;
+    idx.forEach(seg=>{
+      rows.forEach((r,i)=>{
+        const v=r[seg.key];if(v==null)return;
+        if(i>0){const pv=rows[i-1][seg.key];if(pv==null)return;
+          s+=`<line x1="${x(i-1)}" y1="${y(pv)}" x2="${x(i)}" y2="${y(v)}" stroke="${seg.color}" stroke-width="2"/>`;}
+        s+=`<circle cx="${x(i)}" cy="${y(v)}" r="2.4" fill="${seg.color}"/>`;
+      });
+    });
+    idx.forEach((seg,i)=>s+=`<text x="${pad+4+i*90}" y="14" fill="${seg.color}" font-size="11">${seg.name}</text>`);
+    s+=`<text x="${pad}" y="14" fill="#9fb3a8" font-size="11">${rows[0].date.slice(5)}</text>`;
+    s+=`<text x="${W-pad}" y="14" fill="#9fb3a8" font-size="11" text-anchor="end">${rows[n-1].date.slice(5)}</text>`;
+    svg.innerHTML=s;
+  }
+  // KPI 三指标
+  const kpis=document.getElementById("kpis");kpis.innerHTML="";
+  idx.forEach(seg=>{
+    const vals=rows.map(r=>r[seg.key]).filter(v=>v!=null);
+    const last=vals.length?vals[vals.length-1]:null;
+    const first=vals.length?vals[0]:null;
+    let dir="flat",arrow="→";
+    if(last!=null&&first!=null){if(last>first+0.1){dir="up";arrow="↑";}else if(last<first-0.1){dir="down";arrow="↓";}}
+    const div=document.createElement("div");div.className="kpi";
+    div.innerHTML=`<div class="t">${seg.name}</div><div class="v">${last!=null?last:"--"}</div>
+      <div class="d ${dir}">${arrow} 30日 ${first!=null?first:"-"} → ${last!=null?last:"-"}</div>`;
+    kpis.appendChild(div);
+  });
+}
+
+buildStates();
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XLJR Video Cover — 我的交易笔记</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    background:#0d0d0d;
+    color:#ADA597;
+    font-family:-apple-system,"SF Pro Display","PingFang SC","Microsoft YaHei","Segoe UI",sans-serif;
+    display:flex;flex-direction:column;align-items:center;
+    padding:32px 24px;min-height:100vh;
+  }
+  h1{color:#F4F0E7;font-size:17px;font-weight:400;letter-spacing:3px;margin-bottom:20px;text-transform:uppercase}
+  .canvas-wrap{
+    width:100%;max-width:960px;border-radius:8px;overflow:hidden;
+    box-shadow:0 24px 80px rgba(0,0,0,.6),0 0 1px rgba(244,240,231,.08);line-height:0;
+  }
+  canvas{width:100%;height:auto;display:block}
+  .controls{width:100%;max-width:960px;margin-top:28px;display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap}
+  .input-group{flex:1;min-width:260px;display:flex;flex-direction:column;gap:8px}
+  label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#797166}
+  input[type=text]{
+    background:#1a1917;border:1px solid #3C3731;border-radius:6px;
+    color:#F4F0E7;padding:14px 18px;font-size:15px;font-family:inherit;
+    outline:none;transition:border-color .25s;height:48px;
+  }
+  input[type=text]:focus{border-color:#ADA597}
+  button{
+    background:#F4F0E7;color:#141210;border:none;border-radius:6px;
+    padding:14px 28px;font-size:13px;font-weight:600;letter-spacing:1.5px;
+    cursor:pointer;transition:all .2s;white-space:nowrap;font-family:inherit;
+  }
+  button:hover{opacity:.88;transform:translateY(-1px)}
+  button:active{transform:translateY(0)}
+  .btn-secondary{background:transparent;color:#ADA597;border:1px solid #3C3731}
+  .btn-secondary:hover{background:#1a1917;color:#F4F0E7}
+  .info-bar{width:100%;max-width:960px;margin-top:18px;display:flex;justify-content:space-between;font-size:11px;color:#524e48}
+  .spec-tag{display:inline-block;background:#1a1917;padding:3px 10px;border-radius:4px;font-size:10px;letter-spacing:1px;margin-right:8px}
+  .guide{
+    width:100%;max-width:960px;margin-top:16px;padding:16px 20px;
+    background:#111110;border:1px solid #2a2724;border-radius:6px;
+    font-size:12px;color:#797166;line-height:1.8;
+  }
+  .guide strong{color:#ADA597}
+  .guide code{background:#1a1917;padding:1px 6px;border-radius:3px;color:#F4F0E7;font-size:11px}
+</style>
+</head>
+<body>
+
+<h1>Video Cover Template — 我的交易笔记</h1>
+
+<div class="canvas-wrap">
+  <canvas id="cv" width="1920" height="1080"></canvas>
+</div>
+
+<div class="controls">
+  <div class="input-group">
+    <label>本期主题标题 (中文)</label>
+    <input type="text" id="titleCN" value="本期主题标题" placeholder="输入本期主题..." maxlength="30">
+  </div>
+  <div class="input-group" style="max-width:300px">
+    <label>English Subtitle (可选)</label>
+    <input type="text" id="titleEN" value="" placeholder="Episode subtitle..." maxlength="50">
+  </div>
+  <button onclick="doExport(1)">下载 PNG (1920&times;1080)</button>
+  <button class="btn-secondary" onclick="doExport(2)">下载 2x (3840&times;2160)</button>
+</div>
+
+<div class="info-bar">
+  <span><span class="spec-tag">16:9</span> Xiao Liu Joy Research &mdash; 固定品牌模板</span>
+  <span id="sizeInfo">1920 &times; 1080 px</span>
+</div>
+
+<div class="guide">
+  <strong>使用方法：</strong>在上方输入框填写每期主题标题，封面实时预览。<strong>只替换中央大标题文字</strong>，其他元素（XL logo、品牌名、系列标签、背景纹理、版式）保持不变。点击下载获取 PNG 直接用于 YouTube / Bilibili 封面。
+</div>
+
+<script>
+// ================================================================
+// XLJR VIDEO COVER TEMPLATE SYSTEM
+// Series: 我的交易笔记 | Brand: Xiao Liu Joy Research
+// Ratio: 16:9 | Base resolution: 1920 x 1080
+// ================================================================
+
+const cv   = document.getElementById('cv');
+const ctx  = cv.getContext('2d');
+const W = 1920, H = 1080;
+
+// ---- Brand colour palette (from BRAND_SPEC) ----
+const C = {
+  bg:        '#141210',
+  primary:   '#F4F0E7',     // warm white – main text
+  secondary: '#ADA597',     // warm gray – brand/series text
+  line:      '#3C3731',     // divider rule
+  muted:     '#797166',     // footer/subtitle
+  grid:      'rgba(244,240,231,0.025)',
+  curve:     'rgba(244,240,231,0.06)',
+};
+
+// ---- Font stacks ----
+const F = {
+  titleCN: 'bold 88px "SF Pro Display","PingFang SC","Microsoft YaHei","Noto Sans CJK SC","Helvetica Neue",sans-serif',
+  titleEN: '300 36px "SF Pro Display","Helvetica Neue","Arial",sans-serif',
+  series:  '500 26px "PingFang SC","Microsoft YaHei","Noto Sans CJK SC",sans-serif',
+  brandEN:  '400 22px "SF Pro Display","Helvetica Neue","Arial",sans-serif',
+  brandCN:  '400 20px "PingFang SC","Microsoft YaHei",sans-serif',
+  micro:    '400 18px "SF Pro Display","Helvetica Neue","Arial",sans-serif',
+};
+
+let logoImg = null;
+
+// ---- Load XL mark logo ----
+logoImg = new Image();
+logoImg.src = './xl-mark-light.png';
+logoImg.onload  = () => { render(); };
+logoImg.onerror = () => { logoImg = null; render(); };
+
+// ---- Live input binding ----
+['titleCN','titleEN'].forEach(id => {
+  document.getElementById(id).addEventListener('input', render);
+});
+
+// ================================================================
+// MAIN RENDER
+// ================================================================
+function render(targetCtx, scale) {
+  const tctx = targetCtx || ctx;
+  const s    = scale || 1;
+
+  const cn = document.getElementById('titleCN').value.trim() || '\u672C\u671F\u4E3B\u9898\u6807\u9898';
+  const en = document.getElementById('titleEN').value.trim();
+
+  // [1] Solid background
+  tctx.fillStyle = C.bg;
+  tctx.fillRect(0, 0, W * s, H * s);
+  if (s > 1) tctx.scale(s, s);
+
+  // [2] Ambient radial glow (subtle green hint, centre-right)
+  const rg = tctx.createRadialGradient(W * 0.62, H * 0.46, 0, W * 0.62, H * 0.46, W * 0.56);
+  rg.addColorStop(0, 'rgba(46,125,82,0.032)');
+  rg.addColorStop(1, 'rgba(0,0,0,0)');
+  tctx.fillStyle = rg;
+  tctx.fillRect(0, 0, W, H);
+
+  // [3] Dot-grid pattern
+  _grid(tctx);
+
+  // [4] Abstract data curves
+  _curve(tctx);
+
+  // [5] Brand column (top-left)
+  _brand(tctx);
+
+  // [6] Title block
+  _title(tctx, cn, en);
+
+  // [7] Footer bar
+  _footer(tctx);
+}
+
+// ---- [3] Subtle dot grid ----
+function _grid(t) {
+  t.strokeStyle = C.grid;
+  t.lineWidth   = 0.6;
+  const sp = 80;
+  for (let x = sp; x < W; x += sp) { t.beginPath(); t.moveTo(x,0); t.lineTo(x,H); t.stroke(); }
+  for (let y = sp; y < H; y += sp) { t.beginPath(); t.moveTo(0,y); t.lineTo(W,y); t.stroke(); }
+}
+
+// ---- [4] Abstract market curves (no K-line, no arrows) ----
+function _curve(t) {
+  t.save();
+
+  // Primary curve
+  t.strokeStyle = C.curve;
+  t.lineWidth   = 2;
+  t.beginPath();
+  t.moveTo(W * 0.07, H * 0.71);
+  t.bezierCurveTo(W * 0.24, H * 0.61, W * 0.51, H * 0.77, W * 0.76, H * 0.57);
+  t.bezierCurveTo(W * 0.89, H * 0.49, W * 0.95, H * 0.55, W * 0.99, H * 0.51);
+  t.stroke();
+
+  // Secondary curve (fainter)
+  t.globalAlpha = 0.35;
+  t.lineWidth   = 1.2;
+  t.beginPath();
+  t.moveTo(W * 0.04, H * 0.83);
+  t.bezierCurveTo(W * 0.31, H * 0.73, W * 0.61, H * 0.87, W * 0.93, H * 0.69);
+  t.stroke();
+
+  t.restore();
+}
+
+// ---- [5] Brand column (top-left) ----
+function _brand(t) {
+  const x0 = 80;
+
+  // XL mark logo
+  if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
+    t.drawImage(logoImg, x0, 68, 108, 108);
+  } else {
+    t.fillStyle = C.primary;
+    t.font = 'bold 64px "SF Pro Display","Helvetica Neue",sans-serif';
+    t.fillText('XL', x0, 148);
+  }
+
+  // "XIAO LIU JOY RESEARCH"
+  t.fillStyle = C.secondary;
+  t.font      = F.brandEN;
+  t.fillText('XIAO LIU JOY RESEARCH', x0 + 138, 114);
+
+  // Horizontal divider
+  t.strokeStyle = C.line;
+  t.lineWidth   = 1;
+  t.beginPath(); t.moveTo(x0, 154); t.lineTo(x0 + 520, 154); t.stroke();
+
+  // Series label: 我的交易笔记
+  t.fillStyle = C.secondary;
+  t.font      = F.series;
+  t.fillText('\u6211\u7684\u4EA4\u6613\u7B14\u8BB0', x0, 214);
+
+  // Vertical rule separating brand column from content area
+  t.strokeStyle = 'rgba(60,55,49,0.45)';
+  t.lineWidth   = 1;
+  t.beginPath(); t.moveTo(x0 + 520, 170); t.lineTo(x0 + 520, H - 90); t.stroke();
+}
+
+// ---- [6] Main title area ----
+function _title(t, cn, en) {
+  const x0 = 80;
+  const y0 = 500;
+
+  // Chinese main title – auto-shrink if overflow
+  t.fillStyle = C.primary;
+  let fs = 88;
+  t.font = `bold ${fs}px "SF Pro Display","PingFang SC","Microsoft YaHei","Noto Sans CJK SC","Helvetica Neue",sans-serif`;
+  while (t.measureText(cn).width > W - 220 && fs > 42) {
+    fs -= 2;
+    t.font = `bold ${fs}px "SF Pro Display","PingFang SC","Microsoft YaHei","Noto Sans CJK SC","Helvetica Neue",sans-serif`;
+  }
+  t.fillText(cn, x0, y0);
+
+  // English subtitle (optional)
+  if (en) {
+    t.fillStyle = C.muted;
+    t.font      = F.titleEN;
+    t.fillText(en.toUpperCase(), x0, y0 + fs * 1.14);
+  }
+}
+
+// ---- [7] Footer bar ----
+function _footer(t) {
+  const y = H - 70;
+
+  // Rule line
+  t.strokeStyle = C.line;
+  t.lineWidth   = 1;
+  t.beginPath(); t.moveTo(80, y); t.lineTo(W - 80, y); t.stroke();
+
+  // Left: 刘晓的喜悦研究
+  t.fillStyle = C.muted;
+  t.font      = F.brandCN;
+  t.fillText('\u5218\u6653\u7684\u559C\u60A6\u7814\u7A76', 80, y + 38);
+
+  // Right: AI增强投资研究实验室
+  t.font      = F.micro;
+  t.textAlign = 'right';
+  t.fillText('AI\u589E\u5F3A\u6295\u8D44\u7814\u7A76\u5B9E\u9A8C\u5BA4', W - 80, y + 38);
+  t.textAlign = 'left';
+}
+
+// ================================================================
+// EXPORT – true re-render at target resolution
+// ================================================================
+function doExport(scale) {
+  const sw = Math.round(W * scale);
+  const sh = Math.round(H * scale);
+
+  const expCV  = document.createElement('canvas');
+  expCV.width  = sw;
+  expCV.height = sh;
+  const ectx   = expCV.getContext('2d');
+
+  // Re-draw everything at export resolution
+  render(ectx, scale);
+
+  // Trigger download
+  const a      = document.createElement('a');
+  const cnRaw  = document.getElementById('titleCN').value.trim().replace(/[\\/:*?"<>|]/g, '_') || 'template';
+  a.download   = `XLJR_${cnRaw}_${sw}x${sh}.png`;
+  a.href       = expCV.toDataURL('image/png');
+  a.click();
+
+  document.getElementById('sizeInfo').textContent =
+    `${sw} \u00D7 ${sh} px \u2014 exported`;
+}
+
+// ---- Initial paint ----
+render();
+
+</script>
+</body>
+</html>
