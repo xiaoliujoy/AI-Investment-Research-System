@@ -62,7 +62,7 @@ AI-Investment-Research-System      (v0.1 · research framework — this repo, to
             ↓
 Investment-Research-OS             (v1.0 · integrated research operating system)
             ↓
-Xiao Liu Investment Intelligence Platform   (future ecosystem)
+Joy Investment Intelligence Platform   (future ecosystem)
 ```
 
 | Stage | Theme | Status |

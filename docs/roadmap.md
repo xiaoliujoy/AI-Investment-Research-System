@@ -1,6 +1,6 @@
 # Roadmap / 路线图
 
-Status of the flagship repository `AI-Investment-Research-System` (currently the v0.1 research-system stage; the long-term vision is `Investment-Research-OS`), and where it fits in the broader `Xiao Liu Research Lab` open-source plan.
+Status of the flagship repository `AI-Investment-Research-System` (currently the v0.1 research-system stage; the long-term vision is `Investment-Research-OS`), and where it fits in the broader `Joy Research Lab` open-source plan.
 
 ---
 

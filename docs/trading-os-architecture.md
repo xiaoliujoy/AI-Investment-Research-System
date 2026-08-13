@@ -422,7 +422,7 @@ v3.1 (远期)
   │
   ▼
 v4.0 (愿景)
-     Xiao Liu Investment Intelligence Platform
+     Joy Investment Intelligence Platform
 ```
 
 ### 关键原则
