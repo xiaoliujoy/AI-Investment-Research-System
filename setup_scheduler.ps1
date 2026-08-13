@@ -49,9 +49,9 @@ try {
         -WorkingDirectory $WorkDir
 
     $trigger = New-ScheduledTaskTrigger `
-        -Daily `
-        -At $RunTime `
-        -DaysOfWeek Monday, Tuesday, Wednesday, Thursday, Friday
+        -Weekly `
+        -DaysOfWeek Monday, Tuesday, Wednesday, Thursday, Friday `
+        -At $RunTime
 
     $settings = New-ScheduledTaskSettingsSet `
         -AllowStartIfOnBatteries `
