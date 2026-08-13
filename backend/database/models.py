@@ -403,6 +403,22 @@ def init_db():
         )
     """)
 
+    # 4.8 release_gate（Phase 1E 人工批准的 Release Gate，PRD §7「最后才允许接管」）
+    # 仅记录批准/撤销动作，绝不自动翻转 RISK_GUARD_ENABLED；接管生效需人工置常量 1 + 本 gate 批准。
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS release_gate (
+            gate_id        INTEGER PRIMARY KEY,
+            feature        TEXT,
+            status         TEXT,
+            approved_by    TEXT,
+            approved_at    TEXT,
+            eval_snapshot  TEXT,
+            criteria_hash  TEXT,
+            notes          TEXT,
+            created_at     REAL
+        )
+    """)
+
     # 创建索引
     conn.execute("CREATE INDEX IF NOT EXISTS idx_decision_item_run ON decision_item(run_id)")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_decision_item_parent ON decision_item(parent_item_id)")

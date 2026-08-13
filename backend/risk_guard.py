@@ -134,20 +134,35 @@ def assess_brain(brain: dict) -> dict:
 
 
 # ===========================================================================
-# Phase 1D Shadow Mode 开关（PRD §7）
+# Phase 1D/1E Shadow Mode 开关（PRD §7）
 # ---------------------------------------------------------------------------
 # RISK_GUARD_ENABLED = 0（默认）：Risk Guard 仅 Shadow 记录（shadow_run），
 #   绝不改写生产 can_buy / position / verdict / memo。生产裁决仍由既有 IC 决定。
 # RISK_GUARD_ENABLED = 1：Risk Guard 接管前置 gate（veto 实际生效）。
 #   此状态只有在 Shadow 并行 10–20 交易日、人工确认新系统未意外改变大量结果后，
-#   由人工置 1（PRD §7：「最后才允许接管」）。Phase 1D 默认 0，绝不自动开启。
+#   由人工置 1（PRD §7：「最后才允许接管」）。
+# 即便置 1，is_enabled() 仍会校验 release_gate 是否已人工批准（APPROVED）；
+# 缺少 gate 批准时一律锁定为 Shadow —— 接管是人工 Release Gate 决策，非脚本自动开启。
+# Phase 1D/1E 默认 0，绝不自动开启。
 # ===========================================================================
 RISK_GUARD_ENABLED = 0
 
 
 def is_enabled() -> bool:
-    """Risk Guard 是否已接管生产裁决（前置 gate 生效）。Phase 1D 默认 False。"""
-    return RISK_GUARD_ENABLED == 1
+    """Risk Guard 是否已接管生产裁决（前置 gate 生效）。
+
+    Phase 1D/1E 默认 False（RISK_GUARD_ENABLED=0）。
+    即便人工把常量置 1，仍必须经由 release_gate 人工批准（status=APPROVED）才真正生效，
+    防止脚本/误改自动接管 —— 与「学习可观察生产，不能未经批准改变生产」原则一致。
+    """
+    if RISK_GUARD_ENABLED != 1:
+        return False
+    try:
+        from release_gate import is_approved
+        return is_approved("risk_guard_takeover")
+    except Exception:
+        # gate 模块/表不可用 → 宁可锁定，绝不默认接管
+        return False
 
 
 def is_shadow() -> bool:
