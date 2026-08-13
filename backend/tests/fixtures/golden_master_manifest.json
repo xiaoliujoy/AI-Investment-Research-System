@@ -1,0 +1,331 @@
+{
+  "created_at": "2026-08-13T22:08:43",
+  "sample_count": 23,
+  "coverage": {
+    "LOW": false,
+    "MEDIUM": true,
+    "HIGH": true,
+    "EXTREME": true,
+    "YES": true,
+    "NO": true,
+    "CAUTION": false,
+    "hard_no": true,
+    "position_30_50": true,
+    "position_50_80": true,
+    "position_80_100": false,
+    "position_lt30": true
+  },
+  "required_states": [
+    "LOW",
+    "MEDIUM",
+    "HIGH",
+    "EXTREME",
+    "YES",
+    "NO",
+    "hard_no"
+  ],
+  "missing_required": [
+    "LOW"
+  ],
+  "coverage_ok": false,
+  "note": "Coverage 优先于 Count。关键否决态 EXTREME(comp>=70→hard_no+NO)已覆盖，Risk Guard 否决等价可被完整回归。LOW(comp<30)在 07-13~08-13 高风险窗口内真实缺失(最低 comp=34)，属非关键缺口：LOW 与 MEDIUM 对否决分支行为一致(均不否决)，二分逻辑已守住。建议后续在出现低风险交易日或找到历史平静日报告时补一个 LOW fixture，不阻断 Phase 1B。",
+  "samples": [
+    {
+      "trade_date": "2026-07-13",
+      "can_buy": "NO",
+      "direction": null,
+      "position_pct": "<30%（或空仓）",
+      "verdict": null,
+      "risk_composite": 85,
+      "risk_state": "EXTREME",
+      "hard_no": [
+        "全球避险主导",
+        "综合风险高(85)"
+      ],
+      "has_hard_no": true,
+      "fixture": "golden_master/brain_report_2026-07-13.json"
+    },
+    {
+      "trade_date": "2026-07-14",
+      "can_buy": "YES",
+      "direction": null,
+      "position_pct": "50-80%",
+      "verdict": null,
+      "risk_composite": 36,
+      "risk_state": "MEDIUM",
+      "hard_no": [],
+      "has_hard_no": false,
+      "fixture": "golden_master/brain_report_2026-07-14.json"
+    },
+    {
+      "trade_date": "2026-07-15",
+      "can_buy": "NO",
+      "direction": null,
+      "position_pct": "30-50%",
+      "verdict": null,
+      "risk_composite": 53,
+      "risk_state": "HIGH",
+      "hard_no": [
+        "资金面流出主导"
+      ],
+      "has_hard_no": true,
+      "fixture": "golden_master/brain_report_2026-07-15.json"
+    },
+    {
+      "trade_date": "2026-07-16",
+      "can_buy": "YES",
+      "direction": "bullish",
+      "position_pct": "30-50%",
+      "verdict": "加权投票 5支持:2反对:5中性｜支持占优 → 裁决 YES",
+      "risk_composite": 58,
+      "risk_state": "HIGH",
+      "hard_no": [],
+      "has_hard_no": false,
+      "fixture": "golden_master/brain_report_2026-07-16.json"
+    },
+    {
+      "trade_date": "2026-07-17",
+      "can_buy": "NO",
+      "direction": "bearish",
+      "position_pct": "21%",
+      "verdict": "⛔ 强否决触发（综合风险高(87)）→ 裁决 NO",
+      "risk_composite": 87,
+      "risk_state": "EXTREME",
+      "hard_no": [
+        "综合风险高(87)"
+      ],
+      "has_hard_no": true,
+      "fixture": "golden_master/brain_report_2026-07-17.json"
+    },
+    {
+      "trade_date": "2026-07-20",
+      "can_buy": "YES",
+      "direction": "bullish",
+      "position_pct": "30-50%",
+      "verdict": "加权投票 5支持:2反对:5中性｜支持占优 → 裁决 YES",
+      "risk_composite": 60,
+      "risk_state": "HIGH",
+      "hard_no": [],
+      "has_hard_no": false,
+      "fixture": "golden_master/brain_report_2026-07-20.json"
+    },
+    {
+      "trade_date": "2026-07-21",
+      "can_buy": "YES",
+      "direction": "bullish",
+      "position_pct": "50-80%",
+      "verdict": "加权投票 6支持:1反对:5中性｜支持占优 → 裁决 YES",
+      "risk_composite": 48,
+      "risk_state": "MEDIUM",
+      "hard_no": [],
+      "has_hard_no": false,
+      "fixture": "golden_master/brain_report_2026-07-21.json"
+    },
+    {
+      "trade_date": "2026-07-22",
+      "can_buy": "NO",
+      "direction": "neutral",
+      "position_pct": "<30%（或空仓）",
+      "verdict": "⛔ 强否决触发（综合风险高(72)）→ 裁决 NO",
+      "risk_composite": 72,
+      "risk_state": "EXTREME",
+      "hard_no": [
+        "综合风险高(72)"
+      ],
+      "has_hard_no": true,
+      "fixture": "golden_master/brain_report_2026-07-22.json"
+    },
+    {
+      "trade_date": "2026-07-23",
+      "can_buy": "YES",
+      "direction": "bullish",
+      "position_pct": "50-80%",
+      "verdict": "加权投票 6支持:1反对:5中性｜支持占优 → 裁决 YES",
+      "risk_composite": 36,
+      "risk_state": "MEDIUM",
+      "hard_no": [],
+      "has_hard_no": false,
+      "fixture": "golden_master/brain_report_2026-07-23.json"
+    },
+    {
+      "trade_date": "2026-07-24",
+      "can_buy": "NO",
+      "direction": "bearish",
+      "position_pct": "<30%（或空仓）",
+      "verdict": "⛔ 强否决触发（综合风险高(83)）→ 裁决 NO",
+      "risk_composite": 83,
+      "risk_state": "EXTREME",
+      "hard_no": [
+        "综合风险高(83)"
+      ],
+      "has_hard_no": true,
+      "fixture": "golden_master/brain_report_2026-07-24.json"
+    },
+    {
+      "trade_date": "2026-07-27",
+      "can_buy": "NO",
+      "direction": "bullish",
+      "position_pct": "50-80%",
+      "verdict": "⛔ 强否决触发（资金面流出主导）→ 裁决 NO",
+      "risk_composite": 39,
+      "risk_state": "MEDIUM",
+      "hard_no": [
+        "资金面流出主导"
+      ],
+      "has_hard_no": true,
+      "fixture": "golden_master/brain_report_2026-07-27.json"
+    },
+    {
+      "trade_date": "2026-07-28",
+      "can_buy": "NO",
+      "direction": "bearish",
+      "position_pct": "30-50%",
+      "verdict": "⛔ 强否决触发（资金面流出主导）→ 裁决 NO",
+      "risk_composite": 69,
+      "risk_state": "HIGH",
+      "hard_no": [
+        "资金面流出主导"
+      ],
+      "has_hard_no": true,
+      "fixture": "golden_master/brain_report_2026-07-28.json"
+    },
+    {
+      "trade_date": "2026-07-29",
+      "can_buy": "YES",
+      "direction": "bullish",
+      "position_pct": "50-80%",
+      "verdict": "加权投票 7支持:1反对:4中性｜支持占优 → 裁决 YES",
+      "risk_composite": 34,
+      "risk_state": "MEDIUM",
+      "hard_no": [],
+      "has_hard_no": false,
+      "fixture": "golden_master/brain_report_2026-07-29.json"
+    },
+    {
+      "trade_date": "2026-07-30",
+      "can_buy": "NO",
+      "direction": "bearish",
+      "position_pct": "26%",
+      "verdict": "⛔ 强否决触发（综合风险高(71)）→ 裁决 NO",
+      "risk_composite": 71,
+      "risk_state": "EXTREME",
+      "hard_no": [
+        "综合风险高(71)"
+      ],
+      "has_hard_no": true,
+      "fixture": "golden_master/brain_report_2026-07-30.json"
+    },
+    {
+      "trade_date": "2026-07-31",
+      "can_buy": "YES",
+      "direction": "bullish",
+      "position_pct": "50-80%",
+      "verdict": "加权投票 6支持:2反对:4中性｜支持占优 → 裁决 YES",
+      "risk_composite": 37,
+      "risk_state": "MEDIUM",
+      "hard_no": [],
+      "has_hard_no": false,
+      "fixture": "golden_master/brain_report_2026-07-31.json"
+    },
+    {
+      "trade_date": "2026-08-04",
+      "can_buy": "YES",
+      "direction": "bullish",
+      "position_pct": "50-80%",
+      "verdict": "加权投票 5支持:1反对:6中性｜支持占优 → 裁决 YES",
+      "risk_composite": 48,
+      "risk_state": "MEDIUM",
+      "hard_no": [],
+      "has_hard_no": false,
+      "fixture": "golden_master/brain_report_2026-08-04.json"
+    },
+    {
+      "trade_date": "2026-08-05",
+      "can_buy": "YES",
+      "direction": "bullish",
+      "position_pct": "50-80%",
+      "verdict": "加权投票 6支持:1反对:5中性｜支持占优 → 裁决 YES",
+      "risk_composite": 42,
+      "risk_state": "MEDIUM",
+      "hard_no": [],
+      "has_hard_no": false,
+      "fixture": "golden_master/brain_report_2026-08-05.json"
+    },
+    {
+      "trade_date": "2026-08-06",
+      "can_buy": "YES",
+      "direction": "bullish",
+      "position_pct": "30-50%",
+      "verdict": "加权投票 3支持:2反对:7中性｜支持占优 → 裁决 YES",
+      "risk_composite": 63,
+      "risk_state": "HIGH",
+      "hard_no": [],
+      "has_hard_no": false,
+      "fixture": "golden_master/brain_report_2026-08-06.json"
+    },
+    {
+      "trade_date": "2026-08-07",
+      "can_buy": "YES",
+      "direction": "bullish",
+      "position_pct": "30-50%",
+      "verdict": "加权投票 4支持:2反对:6中性｜支持占优 → 裁决 YES",
+      "risk_composite": 59,
+      "risk_state": "HIGH",
+      "hard_no": [],
+      "has_hard_no": false,
+      "fixture": "golden_master/brain_report_2026-08-07.json"
+    },
+    {
+      "trade_date": "2026-08-10",
+      "can_buy": "YES",
+      "direction": "bullish",
+      "position_pct": "50-80%",
+      "verdict": "加权投票 5支持:1反对:6中性｜支持占优 → 裁决 YES",
+      "risk_composite": 46,
+      "risk_state": "MEDIUM",
+      "hard_no": [],
+      "has_hard_no": false,
+      "fixture": "golden_master/brain_report_2026-08-10.json"
+    },
+    {
+      "trade_date": "2026-08-11",
+      "can_buy": "NO",
+      "direction": "bearish",
+      "position_pct": "26%",
+      "verdict": "⛔ 强否决触发（综合风险高(73)）→ 裁决 NO",
+      "risk_composite": 73,
+      "risk_state": "EXTREME",
+      "hard_no": [
+        "综合风险高(73)"
+      ],
+      "has_hard_no": true,
+      "fixture": "golden_master/brain_report_2026-08-11.json"
+    },
+    {
+      "trade_date": "2026-08-12",
+      "can_buy": "YES",
+      "direction": "bullish",
+      "position_pct": "50-80%",
+      "verdict": "加权投票 6支持:2反对:4中性｜支持占优 → 裁决 YES",
+      "risk_composite": 40,
+      "risk_state": "MEDIUM",
+      "hard_no": [],
+      "has_hard_no": false,
+      "fixture": "golden_master/brain_report_2026-08-12.json"
+    },
+    {
+      "trade_date": "2026-08-13",
+      "can_buy": "NO",
+      "direction": "bearish",
+      "position_pct": "<30%（或空仓）",
+      "verdict": "⛔ 强否决触发（综合风险高(79)）→ 裁决 NO",
+      "risk_composite": 79,
+      "risk_state": "EXTREME",
+      "hard_no": [
+        "综合风险高(79)"
+      ],
+      "has_hard_no": true,
+      "fixture": "golden_master/brain_report_2026-08-13.json"
+    }
+  ]
+}

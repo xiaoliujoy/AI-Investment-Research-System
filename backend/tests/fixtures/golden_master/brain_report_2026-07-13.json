@@ -1,0 +1,2609 @@
+{
+  "generated_at": "2026-07-13 23:29",
+  "trade_date": "2026-07-13",
+  "L0": {
+    "headline": "【全球】市场在交易「战争→油价→通胀→加息」链，而非避险　【A 股】中药、养殖业。",
+    "body": "全球叙事→A 股影响：全球加息预期 → 外资流出压力 → A 股成长股承压、防御/资源板块相对占优。　资金先攻中药、扩散至养殖业、医药商业；龙头已确认，情绪退潮，但上涨偏资金/情绪驱动、业绩未完全跟上，多数主线处高潮/退潮区、宜去弱留强",
+    "theme": "中药、养殖业",
+    "confirmed_industries": [],
+    "global_narrative": {
+      "headline": "市场在交易「战争→油价→通胀→加息」链，而非避险",
+      "headline_detail": "市场在交易「战争→油价→通胀→加息」链，而非避险\n跨资产信号：原油 📈+4.50% · 黄金 📉-2.21% · BTC 📉-1.98%\n真正的驱动变量是「美国实际利率（10Y TIPS），而非战争本身」，而非表面事件。",
+      "narrative_id": "inflation_fear",
+      "narrative_name": "通胀恐慌",
+      "narrative_name_en": "Inflation Fear",
+      "match_score": 1.0,
+      "match_count": 3,
+      "match_total": 3,
+      "mismatches": [],
+      "alternatives": [],
+      "moves": {
+        "oil": "up",
+        "gold": "down",
+        "btc": "down",
+        "equity": "flat",
+        "copper": "flat"
+      },
+      "raw_changes": {
+        "oil": 4.5,
+        "gold": -2.21,
+        "btc": -1.98,
+        "equity": -0.49,
+        "copper": 0.75
+      },
+      "decomposition": [
+        {
+          "step": "地缘事件 / 供给冲击",
+          "type": "event",
+          "type_label": "事件",
+          "verifiable": true,
+          "verifiable_label": "✅ 可验证",
+          "confidence": 0.95,
+          "confidence_label": "95%",
+          "supported": null
+        },
+        {
+          "step": "油价上涨",
+          "type": "data",
+          "type_label": "市场数据",
+          "verifiable": true,
+          "verifiable_label": "✅ 可验证",
+          "confidence": 0.95,
+          "confidence_label": "95%",
+          "supported": true
+        },
+        {
+          "step": "通胀预期上升",
+          "type": "inference",
+          "type_label": "推断",
+          "verifiable": false,
+          "verifiable_label": "❌ 不可验证",
+          "confidence": 0.8,
+          "confidence_label": "80%",
+          "supported": null
+        },
+        {
+          "step": "加息预期增强",
+          "type": "inference",
+          "type_label": "推断",
+          "verifiable": true,
+          "verifiable_label": "✅ 可验证",
+          "confidence": 0.6,
+          "confidence_label": "60%",
+          "supported": null
+        },
+        {
+          "step": "实际利率上升",
+          "type": "inference",
+          "type_label": "推断",
+          "verifiable": true,
+          "verifiable_label": "✅ 可验证",
+          "confidence": 0.85,
+          "confidence_label": "85%",
+          "supported": null
+        },
+        {
+          "step": "黄金 / BTC / 成长股下跌",
+          "type": "data",
+          "type_label": "市场数据",
+          "verifiable": true,
+          "verifiable_label": "✅ 可验证",
+          "confidence": 0.9,
+          "confidence_label": "90%",
+          "supported": true
+        }
+      ],
+      "causal_chain": [
+        "地缘事件 / 供给冲击",
+        "油价上涨",
+        "通胀预期上升",
+        "加息预期增强",
+        "实际利率上升",
+        "黄金 / BTC / 成长股下跌"
+      ],
+      "confidence_chain": [
+        {
+          "step": "地缘事件 / 供给冲击",
+          "confidence": 0.95
+        },
+        {
+          "step": "油价上涨",
+          "confidence": 0.95
+        },
+        {
+          "step": "通胀预期上升",
+          "confidence": 0.8
+        },
+        {
+          "step": "加息预期增强",
+          "confidence": 0.6
+        },
+        {
+          "step": "实际利率上升",
+          "confidence": 0.85
+        },
+        {
+          "step": "黄金 / BTC / 成长股下跌",
+          "confidence": 0.9
+        }
+      ],
+      "weakest_link": "通胀预期 → 加息预期",
+      "weakest_reason": "若就业恶化或经济快速衰退，即使油价上涨，Fed 也可能按兵不动。需同时关注就业、PMI、失业率，而非只看油。",
+      "true_driver": "美国实际利率（10Y TIPS），而非战争本身",
+      "counterfactual": {
+        "condition": "CPI 低于预期 / 非农就业走弱 / ISM PMI 跌破荣枯线",
+        "flow": "美元下跌 → 黄金反弹 → BTC 反弹 → 纳指反弹 → 整个逻辑链反转"
+      },
+      "consensus_stage": "形成中",
+      "consensus_note": "叙事正在被市场验证，部分资产已确认方向。此时入场性价比较高，但需等待更多确认。",
+      "a_share_impact": "全球加息预期 → 外资流出压力 → A 股成长股承压、防御/资源板块相对占优",
+      "upcoming_catalysts": [
+        {
+          "name": "中国M2/社融",
+          "name_en": "CN M2/Social Financing",
+          "country": "CN",
+          "catalyst_type": "m2",
+          "expected_date": "2026-07-13",
+          "days_until": 0,
+          "importance": "high",
+          "description": "中国货币供应量与社会融资规模",
+          "watch_fields": [
+            "M2同比",
+            "社融增量",
+            "新增人民币贷款"
+          ]
+        },
+        {
+          "name": "美国初请失业金",
+          "name_en": "US Jobless Claims",
+          "country": "US",
+          "catalyst_type": "jobless",
+          "expected_date": "2026-07-16",
+          "days_until": 3,
+          "importance": "medium",
+          "description": "美国当周初请失业金人数",
+          "watch_fields": [
+            "初请失业金人数",
+            "续请失业金人数"
+          ]
+        },
+        {
+          "name": "中国GDP",
+          "name_en": "CN GDP",
+          "country": "CN",
+          "catalyst_type": "gdp",
+          "expected_date": "2026-07-17",
+          "days_until": 4,
+          "importance": "high",
+          "description": "中国季度GDP",
+          "watch_fields": [
+            "GDP同比",
+            "季度环比"
+          ]
+        },
+        {
+          "name": "中国LPR",
+          "name_en": "CN LPR",
+          "country": "CN",
+          "catalyst_type": "lpr",
+          "expected_date": "2026-07-20",
+          "days_until": 7,
+          "importance": "high",
+          "description": "贷款市场报价利率",
+          "watch_fields": [
+            "1年期LPR",
+            "5年期LPR"
+          ]
+        },
+        {
+          "name": "美国初请失业金",
+          "name_en": "US Jobless Claims",
+          "country": "US",
+          "catalyst_type": "jobless",
+          "expected_date": "2026-07-23",
+          "days_until": 10,
+          "importance": "medium",
+          "description": "美国当周初请失业金人数",
+          "watch_fields": [
+            "初请失业金人数",
+            "续请失业金人数"
+          ]
+        }
+      ],
+      "falsification_catalysts": [
+        {
+          "name": "FOMC利率决议",
+          "name_en": "FOMC Rate Decision",
+          "country": "US",
+          "catalyst_type": "fomc",
+          "expected_date": "2026-07-30",
+          "days_until": 17,
+          "importance": "high",
+          "description": "美联储联邦公开市场委员会利率决议",
+          "watch_fields": [
+            "联邦基金利率目标区间",
+            "声明措辞变化",
+            "点阵图(如有)"
+          ]
+        },
+        {
+          "name": "中国PMI",
+          "name_en": "CN PMI",
+          "country": "CN",
+          "catalyst_type": "pmi",
+          "expected_date": "2026-07-31",
+          "days_until": 18,
+          "importance": "high",
+          "description": "中国官方制造业PMI",
+          "watch_fields": [
+            "制造业PMI",
+            "非制造业PMI"
+          ]
+        },
+        {
+          "name": "美国ISM PMI",
+          "name_en": "US ISM PMI",
+          "country": "US",
+          "catalyst_type": "pmi",
+          "expected_date": "2026-08-03",
+          "days_until": 21,
+          "importance": "high",
+          "description": "美国ISM制造业PMI",
+          "watch_fields": [
+            "制造业PMI",
+            "新订单指数"
+          ]
+        },
+        {
+          "name": "美国非农",
+          "name_en": "US NFP",
+          "country": "US",
+          "catalyst_type": "nfp",
+          "expected_date": "2026-08-07",
+          "days_until": 25,
+          "importance": "high",
+          "description": "美国非农就业报告",
+          "watch_fields": [
+            "非农就业人数",
+            "失业率",
+            "平均时薪"
+          ]
+        },
+        {
+          "name": "中国CPI",
+          "name_en": "CN CPI",
+          "country": "CN",
+          "catalyst_type": "cpi",
+          "expected_date": "2026-08-10",
+          "days_until": 28,
+          "importance": "high",
+          "description": "中国消费者物价指数",
+          "watch_fields": [
+            "CPI同比",
+            "CPI环比"
+          ]
+        },
+        {
+          "name": "美国CPI",
+          "name_en": "US CPI",
+          "country": "US",
+          "catalyst_type": "cpi",
+          "expected_date": "2026-08-12",
+          "days_until": 30,
+          "importance": "high",
+          "description": "美国消费者物价指数",
+          "watch_fields": [
+            "CPI同比",
+            "核心CPI同比"
+          ]
+        },
+        {
+          "name": "中国M2/社融",
+          "name_en": "CN M2/Social Financing",
+          "country": "CN",
+          "catalyst_type": "m2",
+          "expected_date": "2026-07-13",
+          "days_until": 0,
+          "importance": "high",
+          "description": "中国货币供应量与社会融资规模",
+          "watch_fields": [
+            "M2同比",
+            "社融增量",
+            "新增人民币贷款"
+          ]
+        },
+        {
+          "name": "中国GDP",
+          "name_en": "CN GDP",
+          "country": "CN",
+          "catalyst_type": "gdp",
+          "expected_date": "2026-07-17",
+          "days_until": 4,
+          "importance": "high",
+          "description": "中国季度GDP",
+          "watch_fields": [
+            "GDP同比",
+            "季度环比"
+          ]
+        },
+        {
+          "name": "中国LPR",
+          "name_en": "CN LPR",
+          "country": "CN",
+          "catalyst_type": "lpr",
+          "expected_date": "2026-07-20",
+          "days_until": 7,
+          "importance": "high",
+          "description": "贷款市场报价利率",
+          "watch_fields": [
+            "1年期LPR",
+            "5年期LPR"
+          ]
+        },
+        {
+          "name": "中国M2/社融",
+          "name_en": "CN M2/Social Financing",
+          "country": "CN",
+          "catalyst_type": "m2",
+          "expected_date": "2026-08-12",
+          "days_until": 30,
+          "importance": "high",
+          "description": "中国货币供应量与社会融资规模",
+          "watch_fields": [
+            "M2同比",
+            "社融增量",
+            "新增人民币贷款"
+          ]
+        }
+      ],
+      "falsification_text": "证伪窗口：\n下次FOMC利率决议在7月30日（17天后），关注联邦基金利率目标区间、声明措辞变化\n下次中国PMI在7月31日（18天后），关注制造业PMI、非制造业PMI\n下次美国ISM PMI在8月3日（21天后），关注制造业PMI、新订单指数",
+      "next_high_impact": {
+        "name": "中国M2/社融",
+        "name_en": "CN M2/Social Financing",
+        "country": "CN",
+        "catalyst_type": "m2",
+        "expected_date": "2026-07-13",
+        "days_until": 0,
+        "importance": "high",
+        "description": "中国货币供应量与社会融资规模",
+        "watch_fields": [
+          "M2同比",
+          "社融增量",
+          "新增人民币贷款"
+        ]
+      },
+      "q4_falsification": "CPI 低于预期 / 非农就业走弱 / ISM PMI 跌破荣枯线\n\n证伪窗口：\nFOMC利率决议(7月30日,17天后):关注联邦基金利率目标区间、声明措辞变化\n中国PMI(7月31日,18天后):关注制造业PMI、非制造业PMI\n美国ISM PMI(8月3日,21天后):关注制造业PMI、新订单指数",
+      "q1_narrative": "市场在交易「战争→油价→通胀→加息」链，而非避险",
+      "q2_decomposition": [
+        {
+          "step": "地缘事件 / 供给冲击",
+          "type": "event",
+          "type_label": "事件",
+          "verifiable": true,
+          "verifiable_label": "✅ 可验证",
+          "confidence": 0.95,
+          "confidence_label": "95%",
+          "supported": null
+        },
+        {
+          "step": "油价上涨",
+          "type": "data",
+          "type_label": "市场数据",
+          "verifiable": true,
+          "verifiable_label": "✅ 可验证",
+          "confidence": 0.95,
+          "confidence_label": "95%",
+          "supported": true
+        },
+        {
+          "step": "通胀预期上升",
+          "type": "inference",
+          "type_label": "推断",
+          "verifiable": false,
+          "verifiable_label": "❌ 不可验证",
+          "confidence": 0.8,
+          "confidence_label": "80%",
+          "supported": null
+        },
+        {
+          "step": "加息预期增强",
+          "type": "inference",
+          "type_label": "推断",
+          "verifiable": true,
+          "verifiable_label": "✅ 可验证",
+          "confidence": 0.6,
+          "confidence_label": "60%",
+          "supported": null
+        },
+        {
+          "step": "实际利率上升",
+          "type": "inference",
+          "type_label": "推断",
+          "verifiable": true,
+          "verifiable_label": "✅ 可验证",
+          "confidence": 0.85,
+          "confidence_label": "85%",
+          "supported": null
+        },
+        {
+          "step": "黄金 / BTC / 成长股下跌",
+          "type": "data",
+          "type_label": "市场数据",
+          "verifiable": true,
+          "verifiable_label": "✅ 可验证",
+          "confidence": 0.9,
+          "confidence_label": "90%",
+          "supported": true
+        }
+      ],
+      "q3_consensus": "形成中：叙事正在被市场验证，部分资产已确认方向。此时入场性价比较高，但需等待更多确认。",
+      "q5_capital_flow": "美元下跌 → 黄金反弹 → BTC 反弹 → 纳指反弹 → 整个逻辑链反转",
+      "gaps": [],
+      "regime": "避险主导"
+    }
+  },
+  "decision": {
+    "can_buy": "NO",
+    "reasons": [
+      "产业「AI算力、人形机器人」已被资金验证",
+      "15 个板块确认龙头",
+      "外围「避险主导」",
+      "情绪「退潮」"
+    ],
+    "position_pct": "<30%（或空仓）",
+    "hard_no": [
+      "全球避险主导",
+      "综合风险高(85)"
+    ],
+    "bull": 2,
+    "bear": 4,
+    "learning_note": null
+  },
+  "confidence": {
+    "overall": 58,
+    "base": 83,
+    "penalty": 0.7
+  },
+  "conflicts": [
+    {
+      "rule": "主线拥挤 ↔ 激进",
+      "severity": "HIGH",
+      "layers": [
+        "L4",
+        "L7"
+      ],
+      "desc": "L4 主线中高潮+退潮占比 90%，已拥挤/退潮，不宜追高。"
+    },
+    {
+      "rule": "情绪退潮 ↔ 买入",
+      "severity": "HIGH",
+      "layers": [
+        "sentiment"
+      ],
+      "desc": "情绪验证为「退潮」，亏钱效应扩散，不宜买入。"
+    },
+    {
+      "rule": "产业未验证 ↔ 强买入",
+      "severity": "MEDIUM",
+      "layers": [
+        "L3",
+        "L7"
+      ],
+      "desc": "L3 主导产业均未被资金板块验证（潜伏），交易上应等确认再介入。"
+    }
+  ],
+  "learning_feedback": {
+    "applied": false,
+    "status": "样本积累中(0/5)",
+    "conf_delta": 0,
+    "pos_scale": 1.0,
+    "sector_bias": {},
+    "count": 0,
+    "notes": [
+      "交易样本 0 笔，达到 5 笔后自动启用历史胜率反哺（板块偏置 + 仓位缩放）。"
+    ]
+  },
+  "chain": [
+    "L0",
+    "L1",
+    "L2",
+    "L4",
+    "L3",
+    "L5",
+    "sentiment",
+    "fundamental",
+    "L6",
+    "L7",
+    "L8"
+  ],
+  "results": {
+    "L1": {
+      "layer": "L1",
+      "title": "全球宏观",
+      "score": 88,
+      "stage": "bearish",
+      "narrative": "【外围：避险主导】美股走弱 / VIX 抬升 / 人民币贬值等多重避险信号，注意外资流出与高位股回撤，防御与贵金属占优。",
+      "raw": {
+        "status": "已接入",
+        "data": {
+          "us_indices": [
+            {
+              "name": "道琼斯",
+              "price": 52549.83,
+              "chg": -0.17
+            },
+            {
+              "name": "纳斯达克",
+              "price": 26071.05,
+              "chg": -0.8
+            }
+          ],
+          "vix": 21.67,
+          "hsi": {
+            "name": "恒生指数",
+            "price": 24213.72,
+            "chg": 0.16
+          },
+          "dxy": {
+            "key": "dxy",
+            "name": "美元指数",
+            "cat": "forex",
+            "price": 98.2347,
+            "change_pct": null,
+            "time": "2026-07-13"
+          },
+          "gold": {
+            "key": "gold",
+            "name": "COMEX黄金",
+            "cat": "commodity",
+            "price": 4022.63,
+            "change_pct": -2.2138,
+            "time": "23:29:28"
+          },
+          "oil": {
+            "key": "oil",
+            "name": "NYMEX原油",
+            "cat": "commodity",
+            "price": 74.625,
+            "change_pct": 4.5022,
+            "time": "23:29:28"
+          },
+          "copper": {
+            "key": "copper",
+            "name": "COMEX铜",
+            "cat": "commodity",
+            "price": 632.9,
+            "change_pct": 0.7482,
+            "time": "23:29:28"
+          },
+          "btc": {
+            "key": "btc",
+            "name": "CME比特币",
+            "cat": "crypto",
+            "price": 62818.6,
+            "change_pct": -1.9761,
+            "time": "23:29:27"
+          },
+          "ust10y": 4.56,
+          "cnh": {
+            "price": 6.7813,
+            "change_pct": 0.001
+          },
+          "north": {
+            "net": 0.0,
+            "disclosed": false
+          },
+          "south": {
+            "net": 90.38
+          },
+          "regime": "避险主导",
+          "regime_note": "美股走弱 / VIX 抬升 / 人民币贬值等多重避险信号，注意外资流出与高位股回撤，防御与贵金属占优。"
+        },
+        "read": "【外围环境：避险主导】美股走弱 / VIX 抬升 / 人民币贬值等多重避险信号，注意外资流出与高位股回撤，防御与贵金属占优。 美股：道琼斯-0.17%、纳斯达克-0.8% VIX 21.67（中性） 美债10Y 4.56% 恒生+0.16% 美元指数 98.2347 离岸人民币 USDCNH 6.7813（贬值+0.001%） 全球资金流向（沪深港通）：北向未披露；南向净流入90.38亿 黄金 -2.2138% 铜 +0.7482% 原油 +4.5022% 比特币 -1.9761%",
+        "gaps": []
+      },
+      "signal": {
+        "direction": "bearish",
+        "regime": "避险主导",
+        "key": "避险主导"
+      },
+      "confidence": 88,
+      "risk_note": "外围避险信号（VIX/人民币/北向）偏强时注意外资流出与高位回撤。",
+      "upstream": "（源头：美股/VIX/美元/商品/BTC/美债/人民币/沪深港通）",
+      "gaps": [],
+      "output": "【外围：避险主导】美股走弱 / VIX 抬升 / 人民币贬值等多重避险信号，注意外资流出与高位股回撤，防御与贵金属占优。",
+      "direction": "bearish"
+    },
+    "L2": {
+      "layer": "L2",
+      "title": "中国宏观",
+      "score": 88,
+      "stage": "neutral_bullish",
+      "narrative": "【货币信用：宽货币+紧信用】【货币信用：宽货币+紧信用】『放水找方向』：流动性充裕但实体需求弱，主题/成长活跃、顺周期偏弱。 制造业PMI 49.4（收缩<50）。 M2 同比 18.88%。 社融增量 6245.0 亿元。 5Y LPR 3.5%。",
+      "raw": {
+        "status": "已接入",
+        "data": {
+          "pmi": {
+            "date": "2025-08-31",
+            "value": 49.4,
+            "expand": false
+          },
+          "m2": {
+            "date": "2008年01月份",
+            "value": 18.88
+          },
+          "shibor_social": {
+            "date": "202604",
+            "value": 6245.0
+          },
+          "lpr1y": {
+            "date": "2026-06-22",
+            "value": 3.0
+          },
+          "lpr5y": {
+            "date": "2026-06-22",
+            "value": 3.5
+          },
+          "regime": "宽货币+紧信用"
+        },
+        "read": "【货币信用：宽货币+紧信用】『放水找方向』：流动性充裕但实体需求弱，主题/成长活跃、顺周期偏弱。 制造业PMI 49.4（收缩<50）。 M2 同比 18.88%。 社融增量 6245.0 亿元。 5Y LPR 3.5%。",
+        "gaps": []
+      },
+      "signal": {
+        "direction": "neutral_bullish",
+        "regime": "宽货币+紧信用"
+      },
+      "confidence": 88,
+      "risk_note": "",
+      "upstream": "（源头：PMI/M2/社融/LPR/CPI）",
+      "gaps": [],
+      "output": "【货币信用：宽货币+紧信用】【货币信用：宽货币+紧信用】『放水找方向』：流动性充裕但实体需求弱，主题/成长活跃、顺周期偏弱。 制造业PMI 49.4（收缩<50）。 M2 同比 18.88%。 社融增量 6245.0 亿元。 5Y LPR 3.5%。",
+      "direction": "neutral_bullish"
+    },
+    "L4": {
+      "layer": "L4",
+      "title": "资金共识",
+      "score": 90,
+      "stage": "neutral",
+      "narrative": "识别 15 条主线，阶段分布：{'一致性': 2, '资金流入': 5, '赚钱效应': 1, '退潮': 81, '讨论': 1}。",
+      "raw": {
+        "status": "已接入(量化+规则树)",
+        "trade_date": "2026-07-10",
+        "sector_count": 90,
+        "stage_distribution": {
+          "一致性": 2,
+          "资金流入": 5,
+          "赚钱效应": 1,
+          "退潮": 81,
+          "讨论": 1
+        },
+        "main_lines": [
+          {
+            "sector": "中药",
+            "stage": "一致性",
+            "stage_score": 75,
+            "consensus_strength": 89.4,
+            "risk": false,
+            "fund_accel": 3.0,
+            "net_now": 6.33,
+            "net_5d": 0.75,
+            "net_10d": 7.31,
+            "chg_pct": 2.88,
+            "amount_today": 122.075323,
+            "amount_ma20": 92.17746792,
+            "vol_trend": 1.324,
+            "close_vs_high25": 0.9708,
+            "reason": "净流入+6.3亿(强度P97.8) ｜ 5日累计+0.8亿 ｜ 成交额/20日均=1.32x ｜ 板块+2.9% ｜ 价处25日高97%"
+          },
+          {
+            "sector": "养殖业",
+            "stage": "资金流入",
+            "stage_score": 35,
+            "consensus_strength": 76.7,
+            "risk": false,
+            "fund_accel": 1.022,
+            "net_now": 2.13,
+            "net_5d": 10.42,
+            "net_10d": 4.67,
+            "chg_pct": -0.92,
+            "amount_today": 85.490975,
+            "amount_ma20": 72.93870192,
+            "vol_trend": 1.172,
+            "close_vs_high25": 0.9786,
+            "reason": "净流入+2.1亿(强度P95.6) ｜ 5日累计+10.4亿 ｜ 成交额/20日均=1.17x ｜ 板块-0.9% ｜ 价处25日高98%"
+          },
+          {
+            "sector": "医药商业",
+            "stage": "一致性",
+            "stage_score": 75,
+            "consensus_strength": 76.2,
+            "risk": false,
+            "fund_accel": 2.778,
+            "net_now": 1.05,
+            "net_5d": 1.89,
+            "net_10d": 0.77,
+            "chg_pct": 0.5,
+            "amount_today": 39.760797,
+            "amount_ma20": 33.4973542,
+            "vol_trend": 1.187,
+            "close_vs_high25": 0.95,
+            "reason": "净流入+1.1亿(强度P93.3) ｜ 5日累计+1.9亿 ｜ 成交额/20日均=1.19x ｜ 板块+0.5% ｜ 价处25日高95%"
+          },
+          {
+            "sector": "油气开采及服务",
+            "stage": "赚钱效应",
+            "stage_score": 55,
+            "consensus_strength": 76.0,
+            "risk": true,
+            "fund_accel": 0.0,
+            "net_now": -0.3,
+            "net_5d": 0.75,
+            "net_10d": 0.17,
+            "chg_pct": 0.71,
+            "amount_today": 90.016068,
+            "amount_ma20": 65.41784211999999,
+            "vol_trend": 1.376,
+            "close_vs_high25": 0.9028,
+            "reason": "净流入-0.3亿(强度P87.8) ｜ 5日累计+0.8亿 ｜ 成交额/20日均=1.38x ｜ 板块+0.7% ｜ 价处25日高90% ｜ ⚠ 当日净流出(分歧/兑现，未确认退潮)"
+          },
+          {
+            "sector": "白酒",
+            "stage": "资金流入",
+            "stage_score": 35,
+            "consensus_strength": 72.4,
+            "risk": false,
+            "fund_accel": 0.286,
+            "net_now": 0.53,
+            "net_5d": 9.26,
+            "net_10d": 9.31,
+            "chg_pct": -1.52,
+            "amount_today": 173.82125,
+            "amount_ma20": 130.3292108,
+            "vol_trend": 1.334,
+            "close_vs_high25": 0.9078,
+            "reason": "净流入+0.5亿(强度P92.2) ｜ 5日累计+9.3亿 ｜ 成交额/20日均=1.33x ｜ 板块-1.5% ｜ 价处25日高91%"
+          },
+          {
+            "sector": "银行",
+            "stage": "资金流入",
+            "stage_score": 35,
+            "consensus_strength": 70.4,
+            "risk": false,
+            "fund_accel": 3.0,
+            "net_now": 40.32,
+            "net_5d": 40.04,
+            "net_10d": 4.61,
+            "chg_pct": 2.07,
+            "amount_today": 260.09928,
+            "amount_ma20": 291.7711152,
+            "vol_trend": 0.891,
+            "close_vs_high25": 0.9368,
+            "reason": "净流入+40.3亿(强度P98.9) ｜ 5日累计+40.0亿 ｜ 成交额/20日均=0.89x ｜ 板块+2.1% ｜ 价处25日高94%"
+          },
+          {
+            "sector": "公路铁路运输",
+            "stage": "退潮",
+            "stage_score": 80,
+            "consensus_strength": 60,
+            "risk": true,
+            "fund_accel": 0.0,
+            "net_now": -0.97,
+            "net_5d": 0.37,
+            "net_10d": 1.55,
+            "chg_pct": -0.4,
+            "amount_today": 31.880927,
+            "amount_ma20": 34.01000184,
+            "vol_trend": 0.937,
+            "close_vs_high25": 0.939,
+            "reason": "净流入-1.0亿(强度P85.6) ｜ 5日累计+0.4亿 ｜ 成交额/20日均=0.94x ｜ 板块-0.4% ｜ 价处25日高94% ｜ ⚠ 资金撤离(当日/5日净流出)"
+          },
+          {
+            "sector": "饮料制造",
+            "stage": "退潮",
+            "stage_score": 80,
+            "consensus_strength": 60,
+            "risk": true,
+            "fund_accel": 0.0,
+            "net_now": -0.11,
+            "net_5d": 3.34,
+            "net_10d": 3.38,
+            "chg_pct": -1.09,
+            "amount_today": 79.236396,
+            "amount_ma20": 78.892426,
+            "vol_trend": 1.004,
+            "close_vs_high25": 0.9098,
+            "reason": "净流入-0.1亿(强度P90.0) ｜ 5日累计+3.3亿 ｜ 成交额/20日均=1.00x ｜ 板块-1.1% ｜ 价处25日高91% ｜ ⚠ 资金撤离(当日/5日净流出)"
+          },
+          {
+            "sector": "生物制品",
+            "stage": "退潮",
+            "stage_score": 80,
+            "consensus_strength": 60,
+            "risk": true,
+            "fund_accel": 0.0,
+            "net_now": -7.48,
+            "net_5d": -0.52,
+            "net_10d": 15.0,
+            "chg_pct": -1.36,
+            "amount_today": 175.96569,
+            "amount_ma20": 127.20699064,
+            "vol_trend": 1.383,
+            "close_vs_high25": 0.9748,
+            "reason": "净流入-7.5亿(强度P50.0) ｜ 5日累计-0.5亿 ｜ 成交额/20日均=1.38x ｜ 板块-1.4% ｜ 价处25日高97% ｜ ⚠ 资金撤离(当日/5日净流出)"
+          },
+          {
+            "sector": "医疗服务",
+            "stage": "退潮",
+            "stage_score": 80,
+            "consensus_strength": 60,
+            "risk": true,
+            "fund_accel": 0.0,
+            "net_now": -9.6,
+            "net_5d": 4.38,
+            "net_10d": 18.96,
+            "chg_pct": -1.55,
+            "amount_today": 373.42974,
+            "amount_ma20": 241.40108659999999,
+            "vol_trend": 1.547,
+            "close_vs_high25": 0.9994,
+            "reason": "净流入-9.6亿(强度P43.3) ｜ 5日累计+4.4亿 ｜ 成交额/20日均=1.55x ｜ 板块-1.6% ｜ 价处25日高100% ｜ ⚠ 资金撤离(当日/5日净流出)"
+          },
+          {
+            "sector": "物流",
+            "stage": "退潮",
+            "stage_score": 80,
+            "consensus_strength": 60,
+            "risk": true,
+            "fund_accel": 0.0,
+            "net_now": -1.74,
+            "net_5d": 1.19,
+            "net_10d": 0.04,
+            "chg_pct": -1.93,
+            "amount_today": 63.614231,
+            "amount_ma20": 60.42977935999999,
+            "vol_trend": 1.053,
+            "close_vs_high25": 0.9594,
+            "reason": "净流入-1.7亿(强度P81.1) ｜ 5日累计+1.2亿 ｜ 成交额/20日均=1.05x ｜ 板块-1.9% ｜ 价处25日高96% ｜ ⚠ 资金撤离(当日/5日净流出)"
+          },
+          {
+            "sector": "黑色家电",
+            "stage": "退潮",
+            "stage_score": 80,
+            "consensus_strength": 60,
+            "risk": true,
+            "fund_accel": 0.0,
+            "net_now": -2.14,
+            "net_5d": -3.32,
+            "net_10d": -0.04,
+            "chg_pct": -3.09,
+            "amount_today": 44.313691,
+            "amount_ma20": 35.652977639999996,
+            "vol_trend": 1.243,
+            "close_vs_high25": 0.9519,
+            "reason": "净流入-2.1亿(强度P77.8) ｜ 5日累计-3.3亿 ｜ 成交额/20日均=1.24x ｜ 板块-3.1% ｜ 价处25日高95% ｜ ⚠ 资金撤离(当日/5日净流出)"
+          },
+          {
+            "sector": "厨卫电器",
+            "stage": "退潮",
+            "stage_score": 80,
+            "consensus_strength": 60,
+            "risk": true,
+            "fund_accel": 0.0,
+            "net_now": -0.26,
+            "net_5d": 0.11,
+            "net_10d": 0.27,
+            "chg_pct": -3.38,
+            "amount_today": 8.5739822,
+            "amount_ma20": 7.730967484000001,
+            "vol_trend": 1.109,
+            "close_vs_high25": 0.9434,
+            "reason": "净流入-0.3亿(强度P88.9) ｜ 5日累计+0.1亿 ｜ 成交额/20日均=1.11x ｜ 板块-3.4% ｜ 价处25日高94% ｜ ⚠ 资金撤离(当日/5日净流出)"
+          },
+          {
+            "sector": "纺织制造",
+            "stage": "退潮",
+            "stage_score": 80,
+            "consensus_strength": 60,
+            "risk": true,
+            "fund_accel": 0.0,
+            "net_now": -1.75,
+            "net_5d": -2.6,
+            "net_10d": -1.5,
+            "chg_pct": -3.48,
+            "amount_today": 41.783549,
+            "amount_ma20": 37.154136,
+            "vol_trend": 1.125,
+            "close_vs_high25": 0.963,
+            "reason": "净流入-1.8亿(强度P80.0) ｜ 5日累计-2.6亿 ｜ 成交额/20日均=1.12x ｜ 板块-3.5% ｜ 价处25日高96% ｜ ⚠ 资金撤离(当日/5日净流出)"
+          },
+          {
+            "sector": "小家电",
+            "stage": "退潮",
+            "stage_score": 80,
+            "consensus_strength": 60.0,
+            "risk": true,
+            "fund_accel": 0.0,
+            "net_now": -0.8,
+            "net_5d": -1.16,
+            "net_10d": 0.53,
+            "chg_pct": -3.54,
+            "amount_today": 29.926785,
+            "amount_ma20": 26.12177736,
+            "vol_trend": 1.146,
+            "close_vs_high25": 0.9083,
+            "reason": "净流入-0.8亿(强度P86.7) ｜ 5日累计-1.2亿 ｜ 成交额/20日均=1.15x ｜ 板块-3.5% ｜ 价处25日高91% ｜ ⚠ 资金撤离(当日/5日净流出)"
+          }
+        ],
+        "early_watch": [
+          {
+            "sector": "银行",
+            "stage": "资金流入",
+            "stage_score": 35,
+            "consensus_strength": 70.4,
+            "risk": false,
+            "fund_accel": 3.0,
+            "net_now": 40.32,
+            "net_5d": 40.04,
+            "net_10d": 4.61,
+            "chg_pct": 2.07,
+            "amount_today": 260.09928,
+            "amount_ma20": 291.7711152,
+            "vol_trend": 0.891,
+            "close_vs_high25": 0.9368,
+            "reason": "净流入+40.3亿(强度P98.9) ｜ 5日累计+40.0亿 ｜ 成交额/20日均=0.89x ｜ 板块+2.1% ｜ 价处25日高94%"
+          },
+          {
+            "sector": "食品加工制造",
+            "stage": "资金流入",
+            "stage_score": 35,
+            "consensus_strength": 59.4,
+            "risk": false,
+            "fund_accel": 3.0,
+            "net_now": 1.9,
+            "net_5d": 0.78,
+            "net_10d": -0.49,
+            "chg_pct": -0.74,
+            "amount_today": 84.124203,
+            "amount_ma20": 102.98478544,
+            "vol_trend": 0.817,
+            "close_vs_high25": 0.9254,
+            "reason": "净流入+1.9亿(强度P94.4) ｜ 5日累计+0.8亿 ｜ 成交额/20日均=0.82x ｜ 板块-0.7% ｜ 价处25日高93%"
+          },
+          {
+            "sector": "石油加工贸易",
+            "stage": "资金流入",
+            "stage_score": 35,
+            "consensus_strength": 57.3,
+            "risk": false,
+            "fund_accel": 3.0,
+            "net_now": 3.4,
+            "net_5d": 2.97,
+            "net_10d": -0.55,
+            "chg_pct": -2.65,
+            "amount_today": 73.206949,
+            "amount_ma20": 79.14997328,
+            "vol_trend": 0.925,
+            "close_vs_high25": 0.8971,
+            "reason": "净流入+3.4亿(强度P96.7) ｜ 5日累计+3.0亿 ｜ 成交额/20日均=0.92x ｜ 板块-2.6% ｜ 价处25日高90%"
+          },
+          {
+            "sector": "养殖业",
+            "stage": "资金流入",
+            "stage_score": 35,
+            "consensus_strength": 76.7,
+            "risk": false,
+            "fund_accel": 1.022,
+            "net_now": 2.13,
+            "net_5d": 10.42,
+            "net_10d": 4.67,
+            "chg_pct": -0.92,
+            "amount_today": 85.490975,
+            "amount_ma20": 72.93870192,
+            "vol_trend": 1.172,
+            "close_vs_high25": 0.9786,
+            "reason": "净流入+2.1亿(强度P95.6) ｜ 5日累计+10.4亿 ｜ 成交额/20日均=1.17x ｜ 板块-0.9% ｜ 价处25日高98%"
+          },
+          {
+            "sector": "白酒",
+            "stage": "资金流入",
+            "stage_score": 35,
+            "consensus_strength": 72.4,
+            "risk": false,
+            "fund_accel": 0.286,
+            "net_now": 0.53,
+            "net_5d": 9.26,
+            "net_10d": 9.31,
+            "chg_pct": -1.52,
+            "amount_today": 173.82125,
+            "amount_ma20": 130.3292108,
+            "vol_trend": 1.334,
+            "close_vs_high25": 0.9078,
+            "reason": "净流入+0.5亿(强度P92.2) ｜ 5日累计+9.3亿 ｜ 成交额/20日均=1.33x ｜ 板块-1.5% ｜ 价处25日高91%"
+          },
+          {
+            "sector": "煤炭开采加工",
+            "stage": "讨论",
+            "stage_score": 15,
+            "consensus_strength": 44.7,
+            "risk": false,
+            "fund_accel": -0.0,
+            "net_now": -0.0,
+            "net_5d": 10.97,
+            "net_10d": 2.11,
+            "chg_pct": -0.87,
+            "amount_today": 115.264509,
+            "amount_ma20": 164.85111764,
+            "vol_trend": 0.699,
+            "close_vs_high25": 0.7959,
+            "reason": "净流入-0.0亿(强度P91.1) ｜ 5日累计+11.0亿 ｜ 成交额/20日均=0.70x ｜ 板块-0.9% ｜ 价处25日高80%"
+          }
+        ]
+      },
+      "signal": {
+        "direction": "neutral",
+        "main_count": 15,
+        "late_ratio": 0.9,
+        "dist": {
+          "一致性": 2,
+          "资金流入": 5,
+          "赚钱效应": 1,
+          "退潮": 81,
+          "讨论": 1
+        }
+      },
+      "confidence": 90,
+      "risk_note": "主线处高潮/退潮占比高→拥挤，宜去弱留强。",
+      "upstream": "（源头：板块资金净流入 + 成交额，量化+规则树）",
+      "gaps": [],
+      "output": "识别 15 条主线，阶段分布：{'一致性': 2, '资金流入': 5, '赚钱效应': 1, '退潮': 81, '讨论': 1}。",
+      "direction": "neutral"
+    },
+    "L3": {
+      "layer": "L3",
+      "title": "产业趋势",
+      "score": 60,
+      "stage": "neutral",
+      "narrative": "未来6月最值得研究产业 Top3：AI算力、人形机器人、半导体设备材料。（均未被资金验证，潜伏）",
+      "raw": {
+        "status": "AI主导(产业≠板块)",
+        "top_industries": [
+          {
+            "name": "AI算力",
+            "driver": "技术革命",
+            "score": 5.0,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "大模型训练+推理需求爆发，算力是确定性最高的『卖水人』环节",
+            "catalyst": "海外大厂capex上修、国产大模型迭代、推理需求放量",
+            "verify": "光模块/CPO订单与业绩、算力租赁价格、北美云厂capex指引",
+            "risk": "海外算力需求证伪、国产替代不及预期、估值透支"
+          },
+          {
+            "name": "人形机器人",
+            "driver": "技术革命",
+            "score": 4.5,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "特斯拉Optimus带动量产预期，0→1的产业趋势",
+            "catalyst": "量产时间表、灵巧手/丝杠/减速器定点、厂商发布会",
+            "verify": "特斯拉产量指引、国产零部件定点落地、样机迭代",
+            "risk": "量产节奏低于预期、纯主题炒作缺业绩"
+          },
+          {
+            "name": "半导体设备材料",
+            "driver": "国产替代",
+            "score": 4.5,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "制裁倒逼自主可控，设备/材料国产化率快速提升",
+            "catalyst": "晶圆厂扩产招标、设备验证通过、大基金三期投向",
+            "verify": "国产设备中标率、晶圆厂capex、材料验证进度",
+            "risk": "下游扩产放缓、验证周期长"
+          }
+        ],
+        "all_ranked": [
+          {
+            "name": "AI算力",
+            "driver": "技术革命",
+            "score": 5.0,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "大模型训练+推理需求爆发，算力是确定性最高的『卖水人』环节",
+            "catalyst": "海外大厂capex上修、国产大模型迭代、推理需求放量",
+            "verify": "光模块/CPO订单与业绩、算力租赁价格、北美云厂capex指引",
+            "risk": "海外算力需求证伪、国产替代不及预期、估值透支"
+          },
+          {
+            "name": "人形机器人",
+            "driver": "技术革命",
+            "score": 4.5,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "特斯拉Optimus带动量产预期，0→1的产业趋势",
+            "catalyst": "量产时间表、灵巧手/丝杠/减速器定点、厂商发布会",
+            "verify": "特斯拉产量指引、国产零部件定点落地、样机迭代",
+            "risk": "量产节奏低于预期、纯主题炒作缺业绩"
+          },
+          {
+            "name": "半导体设备材料",
+            "driver": "国产替代",
+            "score": 4.5,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "制裁倒逼自主可控，设备/材料国产化率快速提升",
+            "catalyst": "晶圆厂扩产招标、设备验证通过、大基金三期投向",
+            "verify": "国产设备中标率、晶圆厂capex、材料验证进度",
+            "risk": "下游扩产放缓、验证周期长"
+          },
+          {
+            "name": "国产算力芯片",
+            "driver": "国产替代",
+            "score": 4.0,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "英伟达受限，国产GPU/AI芯片承接内需",
+            "catalyst": "国产大模型适配、云厂采购、先进封装突破",
+            "verify": "国产芯片出货、采购订单、Chiplet进展",
+            "risk": "制程受限、生态不成熟"
+          },
+          {
+            "name": "存储涨价",
+            "driver": "周期涨价",
+            "score": 4.0,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "AI需求+原厂减产，存储进入涨价周期",
+            "catalyst": "原厂涨价函、合约价上行、HBM放量",
+            "verify": "DRAM/NAND合约价、原厂稼动率、模组厂业绩",
+            "risk": "涨价证伪、需求走弱"
+          },
+          {
+            "name": "智能驾驶",
+            "driver": "技术革命",
+            "score": 3.5,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "端到端大模型上车，智驾渗透率快速提升",
+            "catalyst": "车企智驾发布、L3政策放开、激光雷达降本",
+            "verify": "带智驾车型销量、智驾渗透率、政策落地",
+            "risk": "价格战侵蚀利润、事故舆情"
+          },
+          {
+            "name": "低空经济",
+            "driver": "政策驱动",
+            "score": 3.5,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "顶层政策定调万亿赛道，eVTOL+无人机基建",
+            "catalyst": "空域改革、适航认证、地方招标",
+            "verify": "适航进展、地方订单、试点城市",
+            "risk": "商业化早、纯主题"
+          },
+          {
+            "name": "固态电池",
+            "driver": "技术革命",
+            "score": 3.0,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "能量密度与安全跃升，下一代电池技术路线",
+            "catalyst": "装车时间表、中试线投产、材料体系突破",
+            "verify": "量产时间表、龙头电池厂进展",
+            "risk": "商业化尚远、技术路线不确定"
+          },
+          {
+            "name": "信创工业软件",
+            "driver": "国产替代",
+            "score": 3.0,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "党政+关基国产化，EDA/工业软件自主可控",
+            "catalyst": "国产化率考核、订单招标、鸿蒙生态",
+            "verify": "党政信创招标、EDA国产化率、软件业绩",
+            "risk": "订单节奏慢、盈利兑现弱"
+          },
+          {
+            "name": "有色贵金属",
+            "driver": "周期涨价",
+            "score": 3.0,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "降息+避险+供给约束，金铜价格中枢上移",
+            "catalyst": "美联储降息、地缘避险、供给扰动",
+            "verify": "COMEX金价、LME铜价、库存变化",
+            "risk": "美元反弹、需求走弱"
+          },
+          {
+            "name": "数据要素",
+            "driver": "政策驱动",
+            "score": 2.5,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "数据入表+确权，数字经济新生产要素",
+            "catalyst": "数据入表落地、交易所扩容、地方政策",
+            "verify": "数据交易额、入表企业数",
+            "risk": "变现模式不清、订单小"
+          },
+          {
+            "name": "军工国防",
+            "driver": "政策驱动",
+            "score": 2.5,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "十四五收官+地缘紧张，订单进入兑现期",
+            "catalyst": "订单落地、大飞机、地缘事件",
+            "verify": "军品订单、交付节奏",
+            "risk": "订单节奏不稳、估值高"
+          },
+          {
+            "name": "化工涨价",
+            "driver": "周期涨价",
+            "score": 2.0,
+            "verify_score": 0,
+            "phase": "潜伏",
+            "matched_boards": [],
+            "confirmed": false,
+            "logic": "供需错配带来部分化工品价格弹性",
+            "catalyst": "开工率、库存、龙头提价",
+            "verify": "产品价差、库存周期",
+            "risk": "需求疲软、产能过剩"
+          }
+        ],
+        "read": "未来6个月最值得研究产业 Top3（产业≠板块：产业看6个月，板块只做验证）： 1.【AI算力·技术革命】阶段：潜伏｜尚未被资金验证(潜伏)。催化：海外大厂capex上修、国产大模型迭代、推理需求放量；验证：光模块/CPO订单与业绩、算力租赁价格、北美云厂capex指引；风险：海外算力需求证伪、国产替代不及预期、估值透支。 2.【人形机器人·技术革命】阶段：潜伏｜尚未被资金验证(潜伏)。催化：量产时间表、灵巧手/丝杠/减速器定点、厂商发布会；验证：特斯拉产量指引、国产零部件定点落地、样机迭代；风险：量产节奏低于预期、纯主题炒作缺业绩。 3.【半导体设备材料·国产替代】阶段：潜伏｜尚未被资金验证(潜伏)。催化：晶圆厂扩产招标、设备验证通过、大基金三期投向；验证：国产设备中标率、晶圆厂capex、材料验证进度；风险：下游扩产放缓、验证周期长。 整体研判：存在处于早期/潜伏的产业，可提前研究、等资金确认再介入。",
+        "gaps": [
+          "Top产业暂未被资金板块验证（结构性看多、交易上需等确认）"
+        ]
+      },
+      "signal": {
+        "direction": "neutral",
+        "confirmed": false,
+        "top": [
+          "AI算力",
+          "人形机器人",
+          "半导体设备材料"
+        ],
+        "phases": [
+          "潜伏",
+          "潜伏",
+          "潜伏"
+        ]
+      },
+      "confidence": 60,
+      "risk_note": "",
+      "upstream": "接 L4：识别 15 条主线，阶段分布 {'一致性': 2, '资金流入': 5, '赚钱效应': 1, '退潮': 81, '讨论': 1}",
+      "gaps": [
+        "Top产业暂未被资金板块验证（结构性看多、交易上需等确认）"
+      ],
+      "output": "未来6月最值得研究产业 Top3：AI算力、人形机器人、半导体设备材料。（均未被资金验证，潜伏）",
+      "direction": "neutral"
+    },
+    "L5": {
+      "layer": "L5",
+      "title": "龙头体系",
+      "score": 85,
+      "stage": "bullish",
+      "narrative": "四龙头体系覆盖 15 个主线板块。",
+      "raw": {
+        "status": "已接入(四龙头+板块净额本地聚合)",
+        "net_date": "2026-07-13",
+        "leaders": {
+          "中药": {
+            "em_name": "中药Ⅱ",
+            "member_count": 66,
+            "sector_net_main": 8.3,
+            "产业龙头": {
+              "code": "002317",
+              "name": "众生药业",
+              "amount_yi": 26.1,
+              "change_pct": 6.973595125253906,
+              "volume_ratio": 1.563167360649749,
+              "net_main": -0.8,
+              "is_new_high": 0
+            },
+            "资金龙头": {
+              "code": "002603",
+              "name": "以岭药业",
+              "amount_yi": 9.5,
+              "change_pct": 6.189555125725343,
+              "volume_ratio": 3.312321116988011,
+              "net_main": 1.1,
+              "is_new_high": 0
+            },
+            "技术龙头": {
+              "code": "300534",
+              "name": "陇神戎发",
+              "amount_yi": 4.6,
+              "change_pct": 19.999999999999996,
+              "volume_ratio": 5.256527561632987,
+              "net_main": -0.2,
+              "is_new_high": 1
+            },
+            "情绪龙头": {
+              "code": "300534",
+              "name": "陇神戎发",
+              "amount_yi": 4.6,
+              "change_pct": 19.999999999999996,
+              "volume_ratio": 5.256527561632987,
+              "net_main": -0.2,
+              "is_new_high": 1
+            }
+          },
+          "养殖业": {
+            "em_name": "养殖业",
+            "member_count": 22,
+            "sector_net_main": 1.7,
+            "产业龙头": {
+              "code": "002714",
+              "name": "牧原股份",
+              "amount_yi": 32.3,
+              "change_pct": 1.074986890403773,
+              "volume_ratio": 1.0358108359150757,
+              "net_main": 1.1,
+              "is_new_high": 0
+            },
+            "资金龙头": {
+              "code": "002714",
+              "name": "牧原股份",
+              "amount_yi": 32.3,
+              "change_pct": 1.074986890403773,
+              "volume_ratio": 1.0358108359150757,
+              "net_main": 1.1,
+              "is_new_high": 0
+            },
+            "技术龙头": {
+              "code": "002746",
+              "name": "仙坛股份",
+              "amount_yi": 2.1,
+              "change_pct": 6.57894736842104,
+              "volume_ratio": 3.58821814696069,
+              "net_main": 0.1,
+              "is_new_high": 0
+            },
+            "情绪龙头": {
+              "code": "002746",
+              "name": "仙坛股份",
+              "amount_yi": 2.1,
+              "change_pct": 6.57894736842104,
+              "volume_ratio": 3.58821814696069,
+              "net_main": 0.1,
+              "is_new_high": 0
+            }
+          },
+          "医药商业": {
+            "em_name": "医药商业",
+            "member_count": 32,
+            "sector_net_main": 2.1,
+            "产业龙头": {
+              "code": "000078",
+              "name": "ST海王",
+              "amount_yi": 4.9,
+              "change_pct": 10.052910052910068,
+              "volume_ratio": 1.1542678654236875,
+              "net_main": 0.5,
+              "is_new_high": 0
+            },
+            "资金龙头": {
+              "code": "600998",
+              "name": "九州通",
+              "amount_yi": 2.4,
+              "change_pct": 0.9980039920159722,
+              "volume_ratio": 1.24815721435792,
+              "net_main": 0.5,
+              "is_new_high": 0
+            },
+            "技术龙头": {
+              "code": "000078",
+              "name": "ST海王",
+              "amount_yi": 4.9,
+              "change_pct": 10.052910052910068,
+              "volume_ratio": 1.1542678654236875,
+              "net_main": 0.5,
+              "is_new_high": 0
+            },
+            "情绪龙头": {
+              "code": "000078",
+              "name": "ST海王",
+              "amount_yi": 4.9,
+              "change_pct": 10.052910052910068,
+              "volume_ratio": 1.1542678654236875,
+              "net_main": 0.5,
+              "is_new_high": 0
+            }
+          },
+          "油气开采及服务": {
+            "em_name": "油气开采Ⅱ",
+            "member_count": 5,
+            "sector_net_main": -0.2,
+            "产业龙头": {
+              "code": "600938",
+              "name": "XD中国海",
+              "amount_yi": 18.3,
+              "change_pct": 2.380106571936058,
+              "volume_ratio": 1.0173913943247792,
+              "net_main": null,
+              "is_new_high": 0
+            },
+            "资金龙头": {
+              "code": "600777",
+              "name": "新潮能源",
+              "amount_yi": 2.2,
+              "change_pct": 4.8309178743961345,
+              "volume_ratio": 1.6229454036539446,
+              "net_main": 0.3,
+              "is_new_high": 0
+            },
+            "技术龙头": {
+              "code": "600759",
+              "name": "ST洲际",
+              "amount_yi": 10.0,
+              "change_pct": 6.349206349206349,
+              "volume_ratio": 1.0764001442137057,
+              "net_main": -0.5,
+              "is_new_high": 0
+            },
+            "情绪龙头": {
+              "code": "600759",
+              "name": "ST洲际",
+              "amount_yi": 10.0,
+              "change_pct": 6.349206349206349,
+              "volume_ratio": 1.0764001442137057,
+              "net_main": -0.5,
+              "is_new_high": 0
+            }
+          },
+          "白酒": {
+            "em_name": "白酒",
+            "member_count": 46,
+            "sector_net_main": -2.8,
+            "产业龙头": {
+              "code": "600519",
+              "name": "贵州茅台",
+              "amount_yi": 50.6,
+              "change_pct": 0.49876346495376644,
+              "volume_ratio": 1.1634682578287365,
+              "net_main": 3.1,
+              "is_new_high": 0
+            },
+            "资金龙头": {
+              "code": "600519",
+              "name": "贵州茅台",
+              "amount_yi": 50.6,
+              "change_pct": 0.49876346495376644,
+              "volume_ratio": 1.1634682578287365,
+              "net_main": 3.1,
+              "is_new_high": 0
+            },
+            "技术龙头": {
+              "code": "600771",
+              "name": "广誉远",
+              "amount_yi": 3.0,
+              "change_pct": 5.7624736472241755,
+              "volume_ratio": 2.3227987651897575,
+              "net_main": 0.2,
+              "is_new_high": 0
+            },
+            "情绪龙头": {
+              "code": "600771",
+              "name": "广誉远",
+              "amount_yi": 3.0,
+              "change_pct": 5.7624736472241755,
+              "volume_ratio": 2.3227987651897575,
+              "net_main": 0.2,
+              "is_new_high": 0
+            }
+          },
+          "银行": {
+            "em_name": "银行",
+            "member_count": 42,
+            "sector_net_main": 38.7,
+            "产业龙头": {
+              "code": "601398",
+              "name": "工商银行",
+              "amount_yi": 48.6,
+              "change_pct": 2.7285129604365688,
+              "volume_ratio": 1.5623881766053034,
+              "net_main": 8.9,
+              "is_new_high": 0
+            },
+            "资金龙头": {
+              "code": "601398",
+              "name": "工商银行",
+              "amount_yi": 48.6,
+              "change_pct": 2.7285129604365688,
+              "volume_ratio": 1.5623881766053034,
+              "net_main": 8.9,
+              "is_new_high": 0
+            },
+            "技术龙头": {
+              "code": "002966",
+              "name": "苏州银行",
+              "amount_yi": 9.7,
+              "change_pct": 6.1475409836065475,
+              "volume_ratio": 3.1293807294639806,
+              "net_main": 1.2,
+              "is_new_high": 0
+            },
+            "情绪龙头": {
+              "code": "002966",
+              "name": "苏州银行",
+              "amount_yi": 9.7,
+              "change_pct": 6.1475409836065475,
+              "volume_ratio": 3.1293807294639806,
+              "net_main": 1.2,
+              "is_new_high": 0
+            }
+          },
+          "公路铁路运输": {
+            "em_name": "铁路公路",
+            "member_count": 36,
+            "sector_net_main": 0.8,
+            "产业龙头": {
+              "code": "601816",
+              "name": "京沪高铁",
+              "amount_yi": 5.9,
+              "change_pct": 0.42918454935620964,
+              "volume_ratio": 0.9062526033825353,
+              "net_main": 0.4,
+              "is_new_high": 0
+            },
+            "资金龙头": {
+              "code": "601816",
+              "name": "京沪高铁",
+              "amount_yi": 5.9,
+              "change_pct": 0.42918454935620964,
+              "volume_ratio": 0.9062526033825353,
+              "net_main": 0.4,
+              "is_new_high": 0
+            },
+            "技术龙头": {
+              "code": "601107",
+              "name": "四川成渝",
+              "amount_yi": 0.6,
+              "change_pct": 2.6974951830443183,
+              "volume_ratio": 1.0051724468173646,
+              "net_main": 0.1,
+              "is_new_high": 0
+            },
+            "情绪龙头": {
+              "code": "601107",
+              "name": "四川成渝",
+              "amount_yi": 0.6,
+              "change_pct": 2.6974951830443183,
+              "volume_ratio": 1.0051724468173646,
+              "net_main": 0.1,
+              "is_new_high": 0
+            }
+          },
+          "饮料制造": {
+            "em_name": "饮料乳品",
+            "member_count": 27,
+            "sector_net_main": -0.2,
+            "产业龙头": {
+              "code": "600887",
+              "name": "伊利股份",
+              "amount_yi": 14.8,
+              "change_pct": 0.602893890675249,
+              "volume_ratio": 1.1220849230327743,
+              "net_main": 0.1,
+              "is_new_high": 0
+            },
+            "资金龙头": {
+              "code": "000848",
+              "name": "承德露露",
+              "amount_yi": 1.3,
+              "change_pct": 2.0176544766708826,
+              "volume_ratio": 1.4905906455863027,
+              "net_main": 0.2,
+              "is_new_high": 0
+            },
+            "技术龙头": {
+              "code": "600882",
+              "name": "妙可蓝多",
+              "amount_yi": 3.0,
+              "change_pct": 3.1991744066047545,
+              "volume_ratio": 0.9858056976545394,
+              "net_main": 0.2,
+              "is_new_high": 0
+            },
+            "情绪龙头": {
+              "code": "600882",
+              "name": "妙可蓝多",
+              "amount_yi": 3.0,
+              "change_pct": 3.1991744066047545,
+              "volume_ratio": 0.9858056976545394,
+              "net_main": 0.2,
+              "is_new_high": 0
+            }
+          },
+          "生物制品": {
+            "em_name": "生物制品",
+            "member_count": 57,
+            "sector_net_main": -5.1,
+            "产业龙头": {
+              "code": "300142",
+              "name": "沃森生物",
+              "amount_yi": 12.9,
+              "change_pct": 0.45662100456620447,
+              "volume_ratio": 1.2620637158919055,
+              "net_main": -0.2,
+              "is_new_high": 0
+            },
+            "资金龙头": {
+              "code": "300009",
+              "name": "安科生物",
+              "amount_yi": 3.6,
+              "change_pct": 4.009720534629402,
+              "volume_ratio": 2.017561069943589,
+              "net_main": 0.7,
+              "is_new_high": 0
+            },
+            "技术龙头": {
+              "code": "002581",
+              "name": "*ST未名",
+              "amount_yi": 0.3,
+              "change_pct": 10.000000000000009,
+              "volume_ratio": 1.3009182415839338,
+              "net_main": -0.0,
+              "is_new_high": 0
+            },
+            "情绪龙头": {
+              "code": "002581",
+              "name": "*ST未名",
+              "amount_yi": 0.3,
+              "change_pct": 10.000000000000009,
+              "volume_ratio": 1.3009182415839338,
+              "net_main": -0.0,
+              "is_new_high": 0
+            }
+          },
+          "医疗服务": {
+            "em_name": "医疗服务",
+            "member_count": 54,
+            "sector_net_main": -6.8,
+            "产业龙头": {
+              "code": "603259",
+              "name": "药明康德",
+              "amount_yi": 67.1,
+              "change_pct": -2.481751824817524,
+              "volume_ratio": 0.8232865315484178,
+              "net_main": null,
+              "is_new_high": 0
+            },
+            "资金龙头": {
+              "code": "301520",
+              "name": "万邦医药",
+              "amount_yi": 9.1,
+              "change_pct": 20.008853474988932,
+              "volume_ratio": 1.2572328251696545,
+              "net_main": 0.8,
+              "is_new_high": 1
+            },
+            "技术龙头": {
+              "code": "301520",
+              "name": "万邦医药",
+              "amount_yi": 9.1,
+              "change_pct": 20.008853474988932,
+              "volume_ratio": 1.2572328251696545,
+              "net_main": 0.8,
+              "is_new_high": 1
+            },
+            "情绪龙头": {
+              "code": "301520",
+              "name": "万邦医药",
+              "amount_yi": 9.1,
+              "change_pct": 20.008853474988932,
+              "volume_ratio": 1.2572328251696545,
+              "net_main": 0.8,
+              "is_new_high": 1
+            }
+          },
+          "物流": {
+            "em_name": "物流",
+            "member_count": 47,
+            "sector_net_main": -0.4,
+            "产业龙头": {
+              "code": "300873",
+              "name": "海晨股份",
+              "amount_yi": 7.4,
+              "change_pct": -8.85521885521885,
+              "volume_ratio": 0.9923196040140865,
+              "net_main": 0.0,
+              "is_new_high": 0
+            },
+            "资金龙头": {
+              "code": "600704",
+              "name": "XD物产中",
+              "amount_yi": 2.1,
+              "change_pct": 0.8350730688935215,
+              "volume_ratio": 0.9984994263002299,
+              "net_main": 0.3,
+              "is_new_high": 0
+            },
+            "技术龙头": {
+              "code": "601598",
+              "name": "中国外运",
+              "amount_yi": 0.6,
+              "change_pct": 1.5094339622641506,
+              "volume_ratio": 0.9401794118821841,
+              "net_main": 0.0,
+              "is_new_high": 0
+            },
+            "情绪龙头": {
+              "code": "601598",
+              "name": "中国外运",
+              "amount_yi": 0.6,
+              "change_pct": 1.5094339622641506,
+              "volume_ratio": 0.9401794118821841,
+              "net_main": 0.0,
+              "is_new_high": 0
+            }
+          },
+          "黑色家电": {
+            "em_name": "黑色家电",
+            "member_count": 9,
+            "sector_net_main": -3.5,
+            "产业龙头": {
+              "code": "600839",
+              "name": "四川长虹",
+              "amount_yi": 25.9,
+              "change_pct": 8.052708638360162,
+              "volume_ratio": 4.204715797204806,
+              "net_main": -2.8,
+              "is_new_high": 0
+            },
+            "资金龙头": {
+              "code": "000810",
+              "name": "创维数字",
+              "amount_yi": 6.0,
+              "change_pct": -9.968847352024913,
+              "volume_ratio": 1.4340268488230372,
+              "net_main": 1.5,
+              "is_new_high": 0
+            },
+            "技术龙头": {
+              "code": "600839",
+              "name": "四川长虹",
+              "amount_yi": 25.9,
+              "change_pct": 8.052708638360162,
+              "volume_ratio": 4.204715797204806,
+              "net_main": -2.8,
+              "is_new_high": 0
+            },
+            "情绪龙头": {
+              "code": "600839",
+              "name": "四川长虹",
+              "amount_yi": 25.9,
+              "change_pct": 8.052708638360162,
+              "volume_ratio": 4.204715797204806,
+              "net_main": -2.8,
+              "is_new_high": 0
+            }
+          },
+          "厨卫电器": {
+            "em_name": "厨卫电器",
+            "member_count": 8,
+            "sector_net_main": -0.4,
+            "产业龙头": {
+              "code": "300911",
+              "name": "亿田智能",
+              "amount_yi": 2.4,
+              "change_pct": -5.132823052678981,
+              "volume_ratio": 1.2898689217551138,
+              "net_main": -0.1,
+              "is_new_high": 0
+            },
+            "资金龙头": {
+              "code": "002508",
+              "name": "老板电器",
+              "amount_yi": 0.6,
+              "change_pct": -0.46204620462045876,
+              "volume_ratio": 0.797724300791265,
+              "net_main": 0.0,
+              "is_new_high": 0
+            },
+            "技术龙头": {
+              "code": "002035",
+              "name": "华帝股份",
+              "amount_yi": 0.4,
+              "change_pct": -0.21691973969633072,
+              "volume_ratio": 1.1608813713371695,
+              "net_main": -0.0,
+              "is_new_high": 0
+            },
+            "情绪龙头": {
+              "code": "002035",
+              "name": "华帝股份",
+              "amount_yi": 0.4,
+              "change_pct": -0.21691973969633072,
+              "volume_ratio": 1.1608813713371695,
+              "net_main": -0.0,
+              "is_new_high": 0
+            }
+          },
+          "纺织制造": {
+            "em_name": "纺织制造",
+            "member_count": 33,
+            "sector_net_main": -1.6,
+            "产业龙头": {
+              "code": "002674",
+              "name": "兴业科技",
+              "amount_yi": 15.0,
+              "change_pct": 7.012987012987004,
+              "volume_ratio": 1.4519355679322015,
+              "net_main": 0.2,
+              "is_new_high": 0
+            },
+            "资金龙头": {
+              "code": "002003",
+              "name": "伟星股份",
+              "amount_yi": 1.5,
+              "change_pct": 3.68608799048753,
+              "volume_ratio": 1.5908896235474879,
+              "net_main": 0.3,
+              "is_new_high": 0
+            },
+            "技术龙头": {
+              "code": "002674",
+              "name": "兴业科技",
+              "amount_yi": 15.0,
+              "change_pct": 7.012987012987004,
+              "volume_ratio": 1.4519355679322015,
+              "net_main": 0.2,
+              "is_new_high": 0
+            },
+            "情绪龙头": {
+              "code": "002674",
+              "name": "兴业科技",
+              "amount_yi": 15.0,
+              "change_pct": 7.012987012987004,
+              "volume_ratio": 1.4519355679322015,
+              "net_main": 0.2,
+              "is_new_high": 0
+            }
+          },
+          "小家电": {
+            "em_name": "小家电",
+            "member_count": 23,
+            "sector_net_main": -0.3,
+            "产业龙头": {
+              "code": "688169",
+              "name": "石头科技",
+              "amount_yi": 5.7,
+              "change_pct": -0.9198160367926422,
+              "volume_ratio": 0.9307366727031077,
+              "net_main": -0.1,
+              "is_new_high": 0
+            },
+            "资金龙头": {
+              "code": "002705",
+              "name": "新宝股份",
+              "amount_yi": 0.6,
+              "change_pct": -0.08904719501335867,
+              "volume_ratio": 0.7983968654145527,
+              "net_main": 0.0,
+              "is_new_high": 0
+            },
+            "技术龙头": {
+              "code": "002032",
+              "name": "苏泊尔",
+              "amount_yi": 0.6,
+              "change_pct": 0.4946996466431042,
+              "volume_ratio": 0.9162739194160999,
+              "net_main": 0.0,
+              "is_new_high": 0
+            },
+            "情绪龙头": {
+              "code": "002032",
+              "name": "苏泊尔",
+              "amount_yi": 0.6,
+              "change_pct": 0.4946996466431042,
+              "volume_ratio": 0.9162739194160999,
+              "net_main": 0.0,
+              "is_new_high": 0
+            }
+          }
+        }
+      },
+      "signal": {
+        "direction": "bullish",
+        "leader_count": 15
+      },
+      "confidence": 85,
+      "risk_note": "断板/龙头切换是共识破裂的先行信号。",
+      "upstream": "接 L4 主线板块：中药、养殖业、医药商业、油气开采及服务、白酒",
+      "gaps": [],
+      "output": "四龙头体系覆盖 15 个主线板块。",
+      "direction": "bullish"
+    },
+    "sentiment": {
+      "layer": "sentiment",
+      "title": "情绪验证",
+      "score": 85,
+      "stage": "bearish",
+      "narrative": "【情绪：退潮】上涨1162/下跌7243（占比14%）｜涨停53/跌停564｜连板高度0板｜量能比0.455（缩量） 涨停家数较前日(141)骤降62%，情绪退潮，高位股与连板梯队风险骤增，回避追高。",
+      "raw": {
+        "status": "已接入",
+        "date": "2026-07-13",
+        "state": "退潮",
+        "state_en": "cooling",
+        "score": -4,
+        "up": 1162,
+        "down": 7243,
+        "total": 8561,
+        "up_ratio": 0.1383,
+        "zt": 53,
+        "dt": 564,
+        "board_height": 0,
+        "vol_ratio": 0.455,
+        "cooling": true,
+        "zt_prev": 141,
+        "verdict": "上涨1162/下跌7243（占比14%）｜涨停53/跌停564｜连板高度0板｜量能比0.455（缩量） 涨停家数较前日(141)骤降62%，情绪退潮，高位股与连板梯队风险骤增，回避追高。",
+        "read": "【情绪验证：退潮】上涨1162/下跌7243（占比14%）｜涨停53/跌停564｜连板高度0板｜量能比0.455（缩量） 涨停家数较前日(141)骤降62%，情绪退潮，高位股与连板梯队风险骤增，回避追高。",
+        "gaps": []
+      },
+      "signal": {
+        "direction": "bearish",
+        "state": "退潮",
+        "score": -4
+      },
+      "confidence": 85,
+      "risk_note": "情绪退潮/冰点→亏钱效应扩散，回避追高。",
+      "upstream": "（源头：2026-07-13 市场宽度/涨跌家数/涨停跌停/连板高度/量能比）",
+      "gaps": [],
+      "output": "【情绪：退潮】上涨1162/下跌7243（占比14%）｜涨停53/跌停564｜连板高度0板｜量能比0.455（缩量） 涨停家数较前日(141)骤降62%，情绪退潮，高位股与连板梯队风险骤增，回避追高。",
+      "direction": "bearish"
+    },
+    "fundamental": {
+      "layer": "fundamental",
+      "title": "基本面验证",
+      "score": 80,
+      "stage": "neutral",
+      "narrative": "板块级基本面验证（业绩 vs 估值）：验证主线基本面中性，方向主要靠资金+情绪确认。\n（业绩增速取自 20260331 报告期；PE 为板块成分股中位市盈率，绝对高低仅作粗略参考，深度估值分位请用 Macrotrends/Koyfin 人工核对。）",
+      "raw": {
+        "status": "已接入(板块级)",
+        "period": "20260331",
+        "sectors": [
+          {
+            "sector": "中药",
+            "n_stocks": 66,
+            "rev_yoy_med": -5.2,
+            "np_yoy_med": 4.87,
+            "pe_med": 24.98,
+            "verdict": "混合/中性",
+            "note": "业绩温和，估值中性，需结合资金/情绪综合看。"
+          },
+          {
+            "sector": "养殖业",
+            "n_stocks": 22,
+            "rev_yoy_med": 8.18,
+            "np_yoy_med": -125.0,
+            "pe_med": 35.03,
+            "verdict": "业绩承压",
+            "note": "净利润负增，低位观察，等业绩拐点。"
+          },
+          {
+            "sector": "医药商业",
+            "n_stocks": 32,
+            "rev_yoy_med": -0.46,
+            "np_yoy_med": 5.42,
+            "pe_med": 21.79,
+            "verdict": "混合/中性",
+            "note": "业绩温和，估值中性，需结合资金/情绪综合看。"
+          },
+          {
+            "sector": "油气开采及服务",
+            "n_stocks": 5,
+            "rev_yoy_med": 0.28,
+            "np_yoy_med": 7.1,
+            "pe_med": 32.8,
+            "verdict": "混合/中性",
+            "note": "业绩温和，估值中性，需结合资金/情绪综合看。"
+          },
+          {
+            "sector": "白酒",
+            "n_stocks": 46,
+            "rev_yoy_med": -2.99,
+            "np_yoy_med": -2.0,
+            "pe_med": 25.54,
+            "verdict": "业绩承压",
+            "note": "净利润负增，低位观察，等业绩拐点。"
+          }
+        ],
+        "read": "板块级基本面验证（业绩 vs 估值）：验证主线基本面中性，方向主要靠资金+情绪确认。\n（业绩增速取自 20260331 报告期；PE 为板块成分股中位市盈率，绝对高低仅作粗略参考，深度估值分位请用 Macrotrends/Koyfin 人工核对。）",
+        "gaps": []
+      },
+      "signal": {
+        "direction": "neutral",
+        "driven": 0,
+        "overvalued": 0,
+        "sectors": [
+          "中药",
+          "养殖业",
+          "医药商业",
+          "油气开采及服务",
+          "白酒"
+        ]
+      },
+      "confidence": 80,
+      "risk_note": "",
+      "upstream": "接 L4 主线焦点（非退潮）：中药、养殖业、医药商业、油气开采及服务、白酒",
+      "gaps": [],
+      "output": "板块级基本面验证（业绩 vs 估值）：验证主线基本面中性，方向主要靠资金+情绪确认。\n（业绩增速取自 20260331 报告期；PE 为板块成分股中位市盈率，绝对高低仅作粗略参考，深度估值分位请用 Macrotrends/Koyfin 人工核对。）",
+      "direction": "neutral"
+    },
+    "L6": {
+      "layer": "L6",
+      "title": "交易执行",
+      "score": 70,
+      "stage": "human",
+      "narrative": "价格行为（买点/卖点/图形）100% 由你人工看图表定；系统不输出突破候选、不替你定买卖。候选范围见上方板块成分股圈定。",
+      "raw": {
+        "status": "你人工（系统不越界）",
+        "note": "价格行为（买点/卖点/图形）由你人工看图表定，系统不输出突破候选、不替你定买卖。候选范围见上方「每日方向·验证简报」的板块成分股圈定。",
+        "candidates": [],
+        "risk_map": {}
+      },
+      "signal": {
+        "direction": "human",
+        "note": "边界声明"
+      },
+      "confidence": 70,
+      "risk_note": "系统不越界：买点/卖点/图形归用户人工。",
+      "upstream": "接 L4 主线（15个）+ L5 龙头代码（37只）",
+      "gaps": [],
+      "output": "价格行为（买点/卖点/图形）100% 由你人工看图表定；系统不输出突破候选、不替你定买卖。候选范围见上方板块成分股圈定。",
+      "direction": "human"
+    },
+    "L7": {
+      "layer": "L7",
+      "title": "风险控制",
+      "score": 88,
+      "stage": "bearish",
+      "narrative": "三维风险综合 85（市场87/行业90/个股76.1），仓位护栏 <30%（或空仓）。",
+      "raw": {
+        "status": "已接入(市场+行业+个股三维)",
+        "risk_market": 87,
+        "up_ratio": 13.0,
+        "risk_industry": 90,
+        "risk_stock": 76.1,
+        "worst_stock": {
+          "code": "300534",
+          "ann_vol": 77.9,
+          "max_drawdown_20d": 8.9,
+          "volume_ratio": 5.26,
+          "near_high": 1.0,
+          "chase": true,
+          "is_leader": false,
+          "score": 76.1,
+          "flags": [
+            "高波动",
+            "异常放量",
+            "追高",
+            "补涨(非龙头)"
+          ]
+        },
+        "composite": 85,
+        "position": "<30%（或空仓）"
+      },
+      "signal": {
+        "direction": "bearish",
+        "composite": 85,
+        "position": "<30%（或空仓）",
+        "risk_level": "高"
+      },
+      "confidence": 88,
+      "risk_note": "综合风险高，最险个股 300534。",
+      "upstream": "接 L4 主线（行业风险维度）+ L6 边界声明",
+      "gaps": [],
+      "output": "三维风险综合 85（市场87/行业90/个股76.1），仓位护栏 <30%（或空仓）。",
+      "direction": "bearish"
+    },
+    "L8": {
+      "layer": "L8",
+      "title": "学习进化",
+      "score": 35,
+      "stage": "neutral",
+      "narrative": "⑧ 学习进化尚未启动：你完成任何一笔交易（买/卖/观察）后，运行 `python trade_log_cli.py add -i` 记录（板块/买入逻辑/计划止损/结果/盈亏%），满 5 笔后系统按月统计胜率与可复用模式，并【反哺】总指挥的置信度与仓位护栏。",
+      "raw": {
+        "status": "待录入",
+        "count": 0,
+        "read": "⑧ 学习进化尚未启动：你完成任何一笔交易（买/卖/观察）后，运行 `python trade_log_cli.py add -i` 记录（板块/买入逻辑/计划止损/结果/盈亏%），满 5 笔后系统按月统计胜率与可复用模式，并【反哺】总指挥的置信度与仓位护栏。",
+        "gaps": [
+          "无交易记录"
+        ]
+      },
+      "signal": {
+        "direction": "neutral",
+        "count": 0
+      },
+      "confidence": 35,
+      "risk_note": "样本少，迭代建议暂不可靠；记录首笔交易后启动。",
+      "upstream": "（源头：trade_journal 交易日志）",
+      "gaps": [
+        "无交易记录"
+      ],
+      "output": "⑧ 学习进化尚未启动：你完成任何一笔交易（买/卖/观察）后，运行 `python trade_log_cli.py add -i` 记录（板块/买入逻辑/计划止损/结果/盈亏%），满 5 笔后系统按月统计胜率与可复用模式，并【反哺】总指挥的置信度与仓位护栏。",
+      "direction": "neutral"
+    },
+    "L0": {
+      "layer": "L0",
+      "title": "市场叙事",
+      "raw": {
+        "headline": "【全球】市场在交易「战争→油价→通胀→加息」链，而非避险　【A 股】中药、养殖业。",
+        "body": "全球叙事→A 股影响：全球加息预期 → 外资流出压力 → A 股成长股承压、防御/资源板块相对占优。　资金先攻中药、扩散至养殖业、医药商业；龙头已确认，情绪退潮，但上涨偏资金/情绪驱动、业绩未完全跟上，多数主线处高潮/退潮区、宜去弱留强",
+        "theme": "中药、养殖业",
+        "confirmed_industries": [],
+        "global_narrative": {
+          "headline": "市场在交易「战争→油价→通胀→加息」链，而非避险",
+          "headline_detail": "市场在交易「战争→油价→通胀→加息」链，而非避险\n跨资产信号：原油 📈+4.50% · 黄金 📉-2.21% · BTC 📉-1.98%\n真正的驱动变量是「美国实际利率（10Y TIPS），而非战争本身」，而非表面事件。",
+          "narrative_id": "inflation_fear",
+          "narrative_name": "通胀恐慌",
+          "narrative_name_en": "Inflation Fear",
+          "match_score": 1.0,
+          "match_count": 3,
+          "match_total": 3,
+          "mismatches": [],
+          "alternatives": [],
+          "moves": {
+            "oil": "up",
+            "gold": "down",
+            "btc": "down",
+            "equity": "flat",
+            "copper": "flat"
+          },
+          "raw_changes": {
+            "oil": 4.5,
+            "gold": -2.21,
+            "btc": -1.98,
+            "equity": -0.49,
+            "copper": 0.75
+          },
+          "decomposition": [
+            {
+              "step": "地缘事件 / 供给冲击",
+              "type": "event",
+              "type_label": "事件",
+              "verifiable": true,
+              "verifiable_label": "✅ 可验证",
+              "confidence": 0.95,
+              "confidence_label": "95%",
+              "supported": null
+            },
+            {
+              "step": "油价上涨",
+              "type": "data",
+              "type_label": "市场数据",
+              "verifiable": true,
+              "verifiable_label": "✅ 可验证",
+              "confidence": 0.95,
+              "confidence_label": "95%",
+              "supported": true
+            },
+            {
+              "step": "通胀预期上升",
+              "type": "inference",
+              "type_label": "推断",
+              "verifiable": false,
+              "verifiable_label": "❌ 不可验证",
+              "confidence": 0.8,
+              "confidence_label": "80%",
+              "supported": null
+            },
+            {
+              "step": "加息预期增强",
+              "type": "inference",
+              "type_label": "推断",
+              "verifiable": true,
+              "verifiable_label": "✅ 可验证",
+              "confidence": 0.6,
+              "confidence_label": "60%",
+              "supported": null
+            },
+            {
+              "step": "实际利率上升",
+              "type": "inference",
+              "type_label": "推断",
+              "verifiable": true,
+              "verifiable_label": "✅ 可验证",
+              "confidence": 0.85,
+              "confidence_label": "85%",
+              "supported": null
+            },
+            {
+              "step": "黄金 / BTC / 成长股下跌",
+              "type": "data",
+              "type_label": "市场数据",
+              "verifiable": true,
+              "verifiable_label": "✅ 可验证",
+              "confidence": 0.9,
+              "confidence_label": "90%",
+              "supported": true
+            }
+          ],
+          "causal_chain": [
+            "地缘事件 / 供给冲击",
+            "油价上涨",
+            "通胀预期上升",
+            "加息预期增强",
+            "实际利率上升",
+            "黄金 / BTC / 成长股下跌"
+          ],
+          "confidence_chain": [
+            {
+              "step": "地缘事件 / 供给冲击",
+              "confidence": 0.95
+            },
+            {
+              "step": "油价上涨",
+              "confidence": 0.95
+            },
+            {
+              "step": "通胀预期上升",
+              "confidence": 0.8
+            },
+            {
+              "step": "加息预期增强",
+              "confidence": 0.6
+            },
+            {
+              "step": "实际利率上升",
+              "confidence": 0.85
+            },
+            {
+              "step": "黄金 / BTC / 成长股下跌",
+              "confidence": 0.9
+            }
+          ],
+          "weakest_link": "通胀预期 → 加息预期",
+          "weakest_reason": "若就业恶化或经济快速衰退，即使油价上涨，Fed 也可能按兵不动。需同时关注就业、PMI、失业率，而非只看油。",
+          "true_driver": "美国实际利率（10Y TIPS），而非战争本身",
+          "counterfactual": {
+            "condition": "CPI 低于预期 / 非农就业走弱 / ISM PMI 跌破荣枯线",
+            "flow": "美元下跌 → 黄金反弹 → BTC 反弹 → 纳指反弹 → 整个逻辑链反转"
+          },
+          "consensus_stage": "形成中",
+          "consensus_note": "叙事正在被市场验证，部分资产已确认方向。此时入场性价比较高，但需等待更多确认。",
+          "a_share_impact": "全球加息预期 → 外资流出压力 → A 股成长股承压、防御/资源板块相对占优",
+          "upcoming_catalysts": [
+            {
+              "name": "中国M2/社融",
+              "name_en": "CN M2/Social Financing",
+              "country": "CN",
+              "catalyst_type": "m2",
+              "expected_date": "2026-07-13",
+              "days_until": 0,
+              "importance": "high",
+              "description": "中国货币供应量与社会融资规模",
+              "watch_fields": [
+                "M2同比",
+                "社融增量",
+                "新增人民币贷款"
+              ]
+            },
+            {
+              "name": "美国初请失业金",
+              "name_en": "US Jobless Claims",
+              "country": "US",
+              "catalyst_type": "jobless",
+              "expected_date": "2026-07-16",
+              "days_until": 3,
+              "importance": "medium",
+              "description": "美国当周初请失业金人数",
+              "watch_fields": [
+                "初请失业金人数",
+                "续请失业金人数"
+              ]
+            },
+            {
+              "name": "中国GDP",
+              "name_en": "CN GDP",
+              "country": "CN",
+              "catalyst_type": "gdp",
+              "expected_date": "2026-07-17",
+              "days_until": 4,
+              "importance": "high",
+              "description": "中国季度GDP",
+              "watch_fields": [
+                "GDP同比",
+                "季度环比"
+              ]
+            },
+            {
+              "name": "中国LPR",
+              "name_en": "CN LPR",
+              "country": "CN",
+              "catalyst_type": "lpr",
+              "expected_date": "2026-07-20",
+              "days_until": 7,
+              "importance": "high",
+              "description": "贷款市场报价利率",
+              "watch_fields": [
+                "1年期LPR",
+                "5年期LPR"
+              ]
+            },
+            {
+              "name": "美国初请失业金",
+              "name_en": "US Jobless Claims",
+              "country": "US",
+              "catalyst_type": "jobless",
+              "expected_date": "2026-07-23",
+              "days_until": 10,
+              "importance": "medium",
+              "description": "美国当周初请失业金人数",
+              "watch_fields": [
+                "初请失业金人数",
+                "续请失业金人数"
+              ]
+            }
+          ],
+          "falsification_catalysts": [
+            {
+              "name": "FOMC利率决议",
+              "name_en": "FOMC Rate Decision",
+              "country": "US",
+              "catalyst_type": "fomc",
+              "expected_date": "2026-07-30",
+              "days_until": 17,
+              "importance": "high",
+              "description": "美联储联邦公开市场委员会利率决议",
+              "watch_fields": [
+                "联邦基金利率目标区间",
+                "声明措辞变化",
+                "点阵图(如有)"
+              ]
+            },
+            {
+              "name": "中国PMI",
+              "name_en": "CN PMI",
+              "country": "CN",
+              "catalyst_type": "pmi",
+              "expected_date": "2026-07-31",
+              "days_until": 18,
+              "importance": "high",
+              "description": "中国官方制造业PMI",
+              "watch_fields": [
+                "制造业PMI",
+                "非制造业PMI"
+              ]
+            },
+            {
+              "name": "美国ISM PMI",
+              "name_en": "US ISM PMI",
+              "country": "US",
+              "catalyst_type": "pmi",
+              "expected_date": "2026-08-03",
+              "days_until": 21,
+              "importance": "high",
+              "description": "美国ISM制造业PMI",
+              "watch_fields": [
+                "制造业PMI",
+                "新订单指数"
+              ]
+            },
+            {
+              "name": "美国非农",
+              "name_en": "US NFP",
+              "country": "US",
+              "catalyst_type": "nfp",
+              "expected_date": "2026-08-07",
+              "days_until": 25,
+              "importance": "high",
+              "description": "美国非农就业报告",
+              "watch_fields": [
+                "非农就业人数",
+                "失业率",
+                "平均时薪"
+              ]
+            },
+            {
+              "name": "中国CPI",
+              "name_en": "CN CPI",
+              "country": "CN",
+              "catalyst_type": "cpi",
+              "expected_date": "2026-08-10",
+              "days_until": 28,
+              "importance": "high",
+              "description": "中国消费者物价指数",
+              "watch_fields": [
+                "CPI同比",
+                "CPI环比"
+              ]
+            },
+            {
+              "name": "美国CPI",
+              "name_en": "US CPI",
+              "country": "US",
+              "catalyst_type": "cpi",
+              "expected_date": "2026-08-12",
+              "days_until": 30,
+              "importance": "high",
+              "description": "美国消费者物价指数",
+              "watch_fields": [
+                "CPI同比",
+                "核心CPI同比"
+              ]
+            },
+            {
+              "name": "中国M2/社融",
+              "name_en": "CN M2/Social Financing",
+              "country": "CN",
+              "catalyst_type": "m2",
+              "expected_date": "2026-07-13",
+              "days_until": 0,
+              "importance": "high",
+              "description": "中国货币供应量与社会融资规模",
+              "watch_fields": [
+                "M2同比",
+                "社融增量",
+                "新增人民币贷款"
+              ]
+            },
+            {
+              "name": "中国GDP",
+              "name_en": "CN GDP",
+              "country": "CN",
+              "catalyst_type": "gdp",
+              "expected_date": "2026-07-17",
+              "days_until": 4,
+              "importance": "high",
+              "description": "中国季度GDP",
+              "watch_fields": [
+                "GDP同比",
+                "季度环比"
+              ]
+            },
+            {
+              "name": "中国LPR",
+              "name_en": "CN LPR",
+              "country": "CN",
+              "catalyst_type": "lpr",
+              "expected_date": "2026-07-20",
+              "days_until": 7,
+              "importance": "high",
+              "description": "贷款市场报价利率",
+              "watch_fields": [
+                "1年期LPR",
+                "5年期LPR"
+              ]
+            },
+            {
+              "name": "中国M2/社融",
+              "name_en": "CN M2/Social Financing",
+              "country": "CN",
+              "catalyst_type": "m2",
+              "expected_date": "2026-08-12",
+              "days_until": 30,
+              "importance": "high",
+              "description": "中国货币供应量与社会融资规模",
+              "watch_fields": [
+                "M2同比",
+                "社融增量",
+                "新增人民币贷款"
+              ]
+            }
+          ],
+          "falsification_text": "证伪窗口：\n下次FOMC利率决议在7月30日（17天后），关注联邦基金利率目标区间、声明措辞变化\n下次中国PMI在7月31日（18天后），关注制造业PMI、非制造业PMI\n下次美国ISM PMI在8月3日（21天后），关注制造业PMI、新订单指数",
+          "next_high_impact": {
+            "name": "中国M2/社融",
+            "name_en": "CN M2/Social Financing",
+            "country": "CN",
+            "catalyst_type": "m2",
+            "expected_date": "2026-07-13",
+            "days_until": 0,
+            "importance": "high",
+            "description": "中国货币供应量与社会融资规模",
+            "watch_fields": [
+              "M2同比",
+              "社融增量",
+              "新增人民币贷款"
+            ]
+          },
+          "q4_falsification": "CPI 低于预期 / 非农就业走弱 / ISM PMI 跌破荣枯线\n\n证伪窗口：\nFOMC利率决议(7月30日,17天后):关注联邦基金利率目标区间、声明措辞变化\n中国PMI(7月31日,18天后):关注制造业PMI、非制造业PMI\n美国ISM PMI(8月3日,21天后):关注制造业PMI、新订单指数",
+          "q1_narrative": "市场在交易「战争→油价→通胀→加息」链，而非避险",
+          "q2_decomposition": [
+            {
+              "step": "地缘事件 / 供给冲击",
+              "type": "event",
+              "type_label": "事件",
+              "verifiable": true,
+              "verifiable_label": "✅ 可验证",
+              "confidence": 0.95,
+              "confidence_label": "95%",
+              "supported": null
+            },
+            {
+              "step": "油价上涨",
+              "type": "data",
+              "type_label": "市场数据",
+              "verifiable": true,
+              "verifiable_label": "✅ 可验证",
+              "confidence": 0.95,
+              "confidence_label": "95%",
+              "supported": true
+            },
+            {
+              "step": "通胀预期上升",
+              "type": "inference",
+              "type_label": "推断",
+              "verifiable": false,
+              "verifiable_label": "❌ 不可验证",
+              "confidence": 0.8,
+              "confidence_label": "80%",
+              "supported": null
+            },
+            {
+              "step": "加息预期增强",
+              "type": "inference",
+              "type_label": "推断",
+              "verifiable": true,
+              "verifiable_label": "✅ 可验证",
+              "confidence": 0.6,
+              "confidence_label": "60%",
+              "supported": null
+            },
+            {
+              "step": "实际利率上升",
+              "type": "inference",
+              "type_label": "推断",
+              "verifiable": true,
+              "verifiable_label": "✅ 可验证",
+              "confidence": 0.85,
+              "confidence_label": "85%",
+              "supported": null
+            },
+            {
+              "step": "黄金 / BTC / 成长股下跌",
+              "type": "data",
+              "type_label": "市场数据",
+              "verifiable": true,
+              "verifiable_label": "✅ 可验证",
+              "confidence": 0.9,
+              "confidence_label": "90%",
+              "supported": true
+            }
+          ],
+          "q3_consensus": "形成中：叙事正在被市场验证，部分资产已确认方向。此时入场性价比较高，但需等待更多确认。",
+          "q5_capital_flow": "美元下跌 → 黄金反弹 → BTC 反弹 → 纳指反弹 → 整个逻辑链反转",
+          "gaps": [],
+          "regime": "避险主导"
+        }
+      },
+      "signal": {},
+      "output": "【全球】市场在交易「战争→油价→通胀→加息」链，而非避险　【A 股】中药、养殖业。 全球叙事→A 股影响：全球加息预期 → 外资流出压力 → A 股成长股承压、防御/资源板块相对占优。　资金先攻中药、扩散至养殖业、医药商业；龙头已确认，情绪退潮，但上涨偏资金/情绪驱动、业绩未完全跟上，多数主线处高潮/退潮区、宜去弱留强",
+      "confidence": 90,
+      "risk_note": "",
+      "upstream": "",
+      "gaps": []
+    }
+  }
+}

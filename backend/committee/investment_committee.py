@@ -277,7 +277,10 @@ def decide(results, conflicts=None, confidence=None, feedback=None):
     if not reasons:
         reasons.append("各层信号中性、缺乏共振")
 
-    # ── 4) L8 学习反哺（历史胜率 → 仓位护栏 / 方向偏置提示，守边界不生成买卖点）──
+    # ── 4) L8 学习反哺（历史胜率 → 仅观察/记录；pos_scale 已冻结，不进入生产仓位）──
+    # v0.2 PRD §8.6 + Phase 1C 红线：pos_scale 不得自动影响生产 position_pct。
+    # 生产仓位只来自既有 IC + Risk Budget cap（l7.raw.position）。pos_scale 仍计算、仍记录，
+    # 但仅供人工复核（研究用），绝不再改写 position。
     learning_note = None
     pos0 = (l7.get("raw") or {}).get("position", "30-50%")
     position = pos0
@@ -288,8 +291,11 @@ def decide(results, conflicts=None, confidence=None, feedback=None):
                 from learning_feedback import _scale_position
                 new_pos = _scale_position(pos0, scale)
                 if new_pos != pos0:
-                    learning_note = f"历史胜率反哺：仓位护栏 {pos0} → {new_pos}"
-                    position = new_pos
+                    # 仅记录供人工复核（研究用），绝不改生产仓位
+                    learning_note = (
+                        f"[pos_scale 已冻结·仅记录] 历史胜率反哺本应将仓位护栏 "
+                        f"{pos0} → {new_pos}（pos_scale={scale}），未应用"
+                    )
             except Exception:
                 pass
         sb = feedback.get("sector_bias", {}) or {}

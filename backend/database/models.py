@@ -282,7 +282,133 @@ def init_db():
         )
     """)
 
+    # =========================================================================
+    # v0.2 Decision Ledger / Evidence / Snapshot / Version（PRD §4 新增 7 张表）
+    # 规则：只增表，不改现有表。以下表结构严格对应 PRD_v0.2_Final_v1.0.md §4。
+    # =========================================================================
+
+    # 4.1 data_snapshot（Snapshot Manifest，P0 仅记录来源+日期+哈希，不复制全库）
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS data_snapshot (
+            snapshot_id     TEXT PRIMARY KEY,
+            captured_at     TEXT,
+            manifest        TEXT,
+            created_at      REAL
+        )
+    """)
+
+    # 4.2 decision_run（一次系统运行）
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS decision_run (
+            run_id          TEXT PRIMARY KEY,
+            trade_date      TEXT,
+            triggered_by    TEXT,
+            market_snapshot TEXT,
+            versions_json   TEXT,
+            snapshot_id     TEXT,
+            shadow_mode     INTEGER DEFAULT 1,
+            created_at      REAL
+        )
+    """)
+
+    # 4.3 decision_item（本次运行产生的每一个判断，含否决）
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS decision_item (
+            item_id              TEXT PRIMARY KEY,
+            run_id              TEXT,
+            parent_item_id      TEXT,
+            item_type           TEXT,
+            asset               TEXT,
+            layer               TEXT,
+            decision            TEXT,
+            decision_basis      TEXT,
+            direction           TEXT,
+            score               REAL,
+            evidence_ref        TEXT,
+            risk_state          TEXT,
+            veto                TEXT,
+            confidence          TEXT,
+            position_limit_min  REAL,
+            position_limit_max  REAL,
+            position_limit_label TEXT,
+            invalidation        TEXT,
+            human_decision      TEXT,
+            created_at          REAL
+        )
+    """)
+
+    # 4.4 evidence（结构化证据）
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS evidence (
+            evidence_id      TEXT PRIMARY KEY,
+            item_id          TEXT,
+            layer            TEXT,
+            metric           TEXT,
+            value            TEXT,
+            unit             TEXT,
+            source           TEXT,
+            observed_at      TEXT,
+            as_of_date       TEXT,
+            confidence       TEXT,
+            independence_flag INTEGER DEFAULT 1,
+            raw_reference    TEXT,
+            created_at       REAL
+        )
+    """)
+
+    # 4.5 decision_version（六维版本，按 run 记录）
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS decision_version (
+            run_id                   TEXT PRIMARY KEY,
+            data_snapshot_version    TEXT,
+            indicator_version        TEXT,
+            strategy_version         TEXT,
+            risk_version             TEXT,
+            decision_engine_version  TEXT,
+            prompt_version           TEXT
+        )
+    """)
+
+    # 4.6 outcome_attribution（四层 Outcome + 错误标志，P0 仅建表，回填在 P1+）
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS outcome_attribution (
+            id                   INTEGER PRIMARY KEY,
+            item_id              TEXT,
+            research_outcome     TEXT,
+            decision_outcome     TEXT,
+            execution_outcome    TEXT,
+            financial_outcome    TEXT,
+            information_error    INTEGER DEFAULT 0,
+            interpretation_error INTEGER DEFAULT 0,
+            decision_error       INTEGER DEFAULT 0,
+            execution_error      INTEGER DEFAULT 0,
+            luck                 INTEGER DEFAULT 0,
+            notes                TEXT
+        )
+    """)
+
+    # 4.7 shadow_run（Shadow Mode 对照记录，P0 仅建表，写入在 Phase 1C/1D）
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS shadow_run (
+            run_id           TEXT PRIMARY KEY,
+            prod_can_buy     TEXT,
+            prod_direction   TEXT,
+            prod_position    TEXT,
+            shadow_can_buy   TEXT,
+            shadow_direction TEXT,
+            shadow_position  TEXT,
+            shadow_veto      TEXT,
+            diff             TEXT,
+            created_at       REAL
+        )
+    """)
+
     # 创建索引
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_decision_item_run ON decision_item(run_id)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_decision_item_parent ON decision_item(parent_item_id)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_evidence_item ON evidence(item_id)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_decision_run_date ON decision_run(trade_date)")
+    conn.execute("CREATE INDEX IF NOT EXISTS idx_outcome_item ON outcome_attribution(item_id)")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_sector_daily_name ON sector_daily(sector_name, date)")
 
     conn.execute("CREATE INDEX IF NOT EXISTS idx_global_market_symbol ON global_market_daily(symbol, date)")

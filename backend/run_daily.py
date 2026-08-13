@@ -42,6 +42,7 @@ STEPS = [
     ("step1b_技术回填", "tech_fill.py", 0),                # 本地回填 high_20d/ma/量比：确保 latest_date() 推进到最新交易日（防日期卡死）
     ("step2_八层决策树", "decision_tree.py", 0),
     ("step2b_决策简报(总指挥)", "run_brain_report.py", 0),  # brain 推理链+L0叙事+决策结论
+    ("step2b2_Ledger记录", "write_decision_ledger.py", 0), # v0.2 Phase 1B/1C：Decision Ledger 独立步骤（读既有 brain_report，run_id 幂等，不重复写）
     ("step2c_关系规律", "relationship_engine.py", 0),     # Relationship&Observation Engine：自动相关性+规律库
     ("step2d_CRO裁定", "cro_agent.py", 0),                # CRO 总裁定词：编排各引擎，每日三问（交易/边际/规律）
     ("step2e_为什么引擎", "narrative_engine.py", 0),      # Narrative Engine：板块「为什么」因果链（实时新闻+产业链逻辑）

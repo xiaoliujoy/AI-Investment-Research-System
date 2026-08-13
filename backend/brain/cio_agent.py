@@ -2278,6 +2278,20 @@ def produce() -> InvestmentDecisionMemo:
     except Exception:
         pass
 
+    # ── v0.2 Phase 1B：Decision Ledger / Evidence / Snapshot / Version 落库 ──
+    # 纯记录，不改任何生产裁决；任何失败都吞掉，绝不中断 memo 生产 / 日报 HTML。
+    try:
+        from write_decision_ledger import write_ledger_from_brain
+        _ledger_summary = write_ledger_from_brain(brain)
+        try:
+            setattr(memo, "ledger_run_id", _ledger_summary.get("run_id"))
+        except Exception:
+            pass
+    except Exception as _le:  # noqa
+        # Ledger 写入失败不应影响主流程；仅打印供排查。
+        import traceback as _tb
+        _tb.print_exc()
+
     return memo
 
 
