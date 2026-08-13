@@ -344,7 +344,7 @@ def _extract_hot_list(line, code2name, name2code):
 
 # ── 地雷阵专项解析（治「停复牌/异动公告」被压行导致真地雷漏检、摘帽被误判）──
 _LANDMINE_STRONG = ["减持", "被搜查", "立案", "处罚", "诉讼", "退市", "暴雷", "逮捕",
-                    "反垄断", "问询", "监管", "违规", "警示", "套现"]
+                    "反垄断", "问询", "监管", "违规", "警示", "套现", "取保候审"]
 _LANDMINE_BLOCK_RE = re.compile(r"地雷阵[:：]?\s*(.*?)(?:五[、.．]|六[、.．]|动态更新|\Z)", re.S)
 _ENTRY_RE = re.compile(
     r"([\u4e00-\u9fa5A-Za-z·]{2,8})[：:](.*?)(?=[\u4e00-\u9fa5A-Za-z·]{2,8}[：:]|\Z)", re.S)
@@ -375,6 +375,7 @@ def _extract_landmines(announce_raw, code2name, name2code):
     if not mb:
         return risk
     block = mb.group(1)
+    seen = set()
     # 1) 优先：已知股票名 + ： 作为条目边界
     names_sorted = sorted(name2code.keys(), key=len, reverse=True)
     positions = []
@@ -396,17 +397,24 @@ def _extract_landmines(announce_raw, code2name, name2code):
                 continue
             if not any(k in desc for k in _LANDMINE_STRONG):
                 continue
-            risk.append({"stock": name2code.get(nm, nm), "type": _classify_landmine(desc),
-                         "detail": (nm + "：" + desc)[:80]})
-        return risk
-    # 2) 回退：块内无已知股票名时，按「名称：描述 + 强风险词」抽取
+            key = name2code.get(nm, nm)
+            if key in seen:
+                continue
+            seen.add(key)
+            risk.append({"stock": key, "type": _classify_landmine(desc),
+                         "detail": (nm + "：" + desc.splitlines()[0])[:80]})
+    # 2) 回退：块内即便有已知名，也要用 _ENTRY_RE 兜底未知名标的（去重后合并）
     for name, desc in _ENTRY_RE.findall(block):
         if name in _SECTION_LABELS:
             continue
         if not any(k in desc for k in _LANDMINE_STRONG):
             continue
-        risk.append({"stock": name2code.get(name, name), "type": _classify_landmine(desc),
-                     "detail": (name + "：" + desc)[:80]})
+        key = name2code.get(name, name)
+        if key in seen:
+            continue
+        seen.add(key)
+        risk.append({"stock": key, "type": _classify_landmine(desc),
+                     "detail": (name + "：" + desc.splitlines()[0])[:80]})
     return risk
 
 

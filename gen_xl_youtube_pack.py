@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-XLJR YouTube 频道视觉包装生成器
+XL YouTube 频道视觉包装生成器
 ================================
 基于已校准的玻璃+原木品牌底图与 XL 母标，生成：
   1. 频道头图 (2560x1440)
@@ -303,7 +303,7 @@ def make_channel_banner(base_path: Path = VISUAL_LIB / "C04-02_wood-glass-data-w
                                          center_x=CENTER_X, y=start_y)
 
     # 品牌名 实测文字宽度后水平居中（与 logo 墨迹同处中轴 CENTER_X）
-    txt = "Xiao Liu Joy Research"
+    txt = "Joy Research"
     tb = draw.textbbox((0, 0), txt, font=fonts["name"])
     tw = tb[2] - tb[0]
     draw.text((CENTER_X - tw // 2, start_y + logo_h + gap), txt,
@@ -449,7 +449,7 @@ def build_all():
 
 
 def main():
-    parser = argparse.ArgumentParser(description="XLJR YouTube 视觉包装生成器")
+    parser = argparse.ArgumentParser(description="XL YouTube 视觉包装生成器")
     parser.add_argument("--cover", action="store_true", help="生成演示封面（默认全量）")
     parser.add_argument("--chart", type=Path, default=None, help="真实图表截图路径")
     parser.add_argument("--title", type=str, default="标题\n副标题", help="封面标题，用 \\n 分行")

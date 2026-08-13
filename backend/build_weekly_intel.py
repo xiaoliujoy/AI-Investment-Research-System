@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-build_weekly_intel.py — Xiao Liu Joy Research · 周度认知更新 Weekly Intelligence Update v0.1
+build_weekly_intel.py — Joy Research · 周度认知更新 Weekly Intelligence Update v0.1
 （ colloquial: 周报 / Weekly Report ；内部规范名：周度认知更新 / Weekly Intelligence Update ）
 
 定位（重要，冻结安全）：
@@ -284,7 +284,7 @@ def export():
     c.close()
     if not rows:
         print("暂无周度认知更新可导出"); return
-    L = ["# Xiao Liu Joy Research · Weekly Intelligence Report\n"]
+    L = ["# Joy Research · Weekly Intelligence Report\n"]
     for r in rows:
         d = dict(zip(cols, r))
         top = json.loads(d["top_sectors"] or "[]")

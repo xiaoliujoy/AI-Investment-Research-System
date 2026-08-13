@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>XLJR Video Cover — 我的交易笔记</title>
+<title>XL Video Cover — 我的交易笔记</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   body{
@@ -70,7 +70,7 @@
 </div>
 
 <div class="info-bar">
-  <span><span class="spec-tag">16:9</span> Xiao Liu Joy Research &mdash; 固定品牌模板</span>
+  <span><span class="spec-tag">16:9</span> Joy Research &mdash; 固定品牌模板</span>
   <span id="sizeInfo">1920 &times; 1080 px</span>
 </div>
 
@@ -80,8 +80,8 @@
 
 <script>
 // ================================================================
-// XLJR VIDEO COVER TEMPLATE SYSTEM
-// Series: 我的交易笔记 | Brand: Xiao Liu Joy Research
+// XL VIDEO COVER TEMPLATE SYSTEM
+// Series: 我的交易笔记 | Brand: Joy Research
 // Ratio: 16:9 | Base resolution: 1920 x 1080
 // ================================================================
 
@@ -260,7 +260,7 @@ function _footer(t) {
   t.lineWidth   = 1;
   t.beginPath(); t.moveTo(80, y); t.lineTo(W - 80, y); t.stroke();
 
-  // Left: 刘晓的喜悦研究
+  // Left: 喜悦研究
   t.fillStyle = C.muted;
   t.font      = F.brandCN;
   t.fillText('\u5218\u6653\u7684\u559C\u60A6\u7814\u7A76', 80, y + 38);
@@ -290,7 +290,7 @@ function doExport(scale) {
   // Trigger download
   const a      = document.createElement('a');
   const cnRaw  = document.getElementById('titleCN').value.trim().replace(/[\\/:*?"<>|]/g, '_') || 'template';
-  a.download   = `XLJR_${cnRaw}_${sw}x${sh}.png`;
+  a.download   = `XL_${cnRaw}_${sw}x${sh}.png`;
   a.href       = expCV.toDataURL('image/png');
   a.click();
 

@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Xiao Liu Joy Research — 内容资产互联 单一来源模块
+Joy Research — 内容资产互联 单一来源模块
 ================================================
 SOP v1.0 的工程落地。所有平台的固定入口与固定文案只写在这里，
 任何内容生产脚本/流程直接 import 本模块，禁止在单篇内容里手抄改写。
 
-对应规范文档： docs/XLJR_内容互联SOP_v1.0.md
+对应规范文档： docs/XL_内容互联SOP_v1.0.md
 
 用法（作为库）：
     from brand_assets import A_WECHAT_FOOTER, B_VIDEO_DESCRIPTION, assemble
@@ -31,25 +31,25 @@ PLATFORMS = {
         "url": None,  # 公众号以名称作为入口，无直接 URL
     },
     "youtube": {
-        "name": "Xiao Liu Joy Research YouTube",
+        "name": "Joy Research YouTube",
         "label": "YouTube",
         "positioning": "完整视频研究档案：我的交易笔记 / 市场观察 / 投资研究 / AI 投资系统",
         "url": "https://www.youtube.com/@xiaoliujoy",
     },
     "bilibili": {
-        "name": "Xiao Liu Joy Research Bilibili",
+        "name": "Joy Research Bilibili",
         "label": "Bilibili",
         "positioning": "中文视频研究社区，同步 YouTube 长视频",
         "url": "https://space.bilibili.com/47330019",
     },
     "github": {
-        "name": "Xiao Liu Joy Research GitHub",
+        "name": "Joy Research GitHub",
         "label": "GitHub",
         "positioning": "研究系统、代码、工具、方法论开源；研究能力证明中心",
         "url": "https://github.com/xiaoliujoy/",
     },
     "x": {
-        "name": "Xiao Liu Joy Research X",
+        "name": "Joy Research X",
         "label": "X (Twitter)",
         "positioning": "全球市场观点、研究碎片、英文传播入口",
         "url": "https://x.com/xiaoliujoy",
@@ -70,7 +70,7 @@ VIDEO_TAGS = ["#投资研究", "#交易笔记", "#AI投资", "#长期主义"]
 # ---------------------------------------------------------------------------
 A_WECHAT_FOOTER = """---
 
-📌 Xiao Liu Joy Research
+📌 Joy Research
 
 视频研究：
 《我的交易笔记》
@@ -95,7 +95,7 @@ X：
 # ---------------------------------------------------------------------------
 B_VIDEO_DESCRIPTION = """《我的交易笔记》
 
-这是 Xiao Liu Joy Research 的长期投资研究记录。
+这是 Joy Research 的长期投资研究记录。
 
 我会公开记录：
 
@@ -108,7 +108,7 @@ B_VIDEO_DESCRIPTION = """《我的交易笔记》
 
 关于《我的交易笔记》
 
-《我的交易笔记》是 Xiao Liu Joy Research 的长期记录系列。
+《我的交易笔记》是 Joy Research 的长期记录系列。
 
 我会持续记录自己对市场环境、资产走势和交易机会的观察，公开我的判断、交易计划，以及事后复盘。
 
@@ -128,7 +128,7 @@ B_VIDEO_DESCRIPTION = """《我的交易笔记》
 我的交易笔记：记录我如何判断市场
 AI 研究系统：记录我如何用系统和 AI 提升研究能力
 
-这三个项目共同构成 Xiao Liu Joy Research 的长期研究记录。
+这三个项目共同构成 Joy Research 的长期研究记录。
 
 📖 每日市场观察
 
@@ -171,7 +171,7 @@ B_VIDEO_OUTRO = """如果你希望看到更加高频的市场记录，可以关�
 # ---------------------------------------------------------------------------
 # 4. C 类：GitHub README 固定区块
 # ---------------------------------------------------------------------------
-C_GITHUB_README = """## Xiao Liu Joy Research
+C_GITHUB_README = """## Joy Research
 
 AI-enhanced investment research system.
 
@@ -302,7 +302,7 @@ def _main():
     import argparse
     import sys
 
-    parser = argparse.ArgumentParser(description="XLJR 内容资产互联 · 固定文案输出")
+    parser = argparse.ArgumentParser(description="XL 内容资产互联 · 固定文案输出")
     parser.add_argument("--block", choices=["A", "B", "B-desc", "B-outro", "C", "D"],
                         help="输出哪类固定文案")
     parser.add_argument("--topic", default="Gold update:", help="D 类主题行")

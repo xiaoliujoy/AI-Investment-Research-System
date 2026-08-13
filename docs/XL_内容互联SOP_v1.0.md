@@ -1,4 +1,4 @@
-# Xiao Liu Joy Research 内容资产互联 SOP v1.0
+# Joy Research 内容资产互联 SOP v1.0
 
 > 生效日：2026-08-11 ｜ 版本：v1.0 ｜ 评审节奏：执行 90 天后升级 v2.0
 >
@@ -14,7 +14,7 @@
 
 ## 一、品牌统一入口
 
-- 统一品牌名：**Xiao Liu Joy Research**
+- 统一品牌名：**Joy Research**
 - 定位：**AI 增强型投资研究记录**
 - 记录：市场观察、交易计划、研究系统构建与投资者成长过程。
 - 红线（全平台）：禁"AI预测/躲过暴跌/收益%"；金融内容必带"不构成投资建议/不荐股"声明。
@@ -26,10 +26,10 @@
 | 平台 | 名称 / 频道 | 定位 | 入口 |
 |---|---|---|---|
 | 微信公众号 | xiaoliu_research | 每日市场观察、投资研究日志、文字版研究档案 | 名称：xiaoliu_research |
-| YouTube | Xiao Liu Joy Research YouTube | 完整视频研究档案：我的交易笔记 / 市场观察 / 投资研究 / AI 投资系统 | https://www.youtube.com/@xiaoliujoy |
-| Bilibili | Xiao Liu Joy Research Bilibili | 中文视频研究社区，同步 YouTube 长视频 | https://space.bilibili.com/47330019 |
-| GitHub | Xiao Liu Joy Research GitHub | 研究系统、代码、工具、方法论开源；研究能力证明中心 | https://github.com/xiaoliujoy/ |
-| X (Twitter) | Xiao Liu Joy Research X | 全球市场观点、研究碎片、英文传播入口 | https://x.com/xiaoliujoy |
+| YouTube | Joy Research YouTube | 完整视频研究档案：我的交易笔记 / 市场观察 / 投资研究 / AI 投资系统 | https://www.youtube.com/@xiaoliujoy |
+| Bilibili | Joy Research Bilibili | 中文视频研究社区，同步 YouTube 长视频 | https://space.bilibili.com/47330019 |
+| GitHub | Joy Research GitHub | 研究系统、代码、工具、方法论开源；研究能力证明中心 | https://github.com/xiaoliujoy/ |
+| X (Twitter) | Joy Research X | 全球市场观点、研究碎片、英文传播入口 | https://x.com/xiaoliujoy |
 
 ---
 
@@ -46,7 +46,7 @@
 - 视频简介固定模板：`brand_assets.py` → `B_VIDEO_DESCRIPTION`
 - 视频口播结尾固定：`brand_assets.py` → `B_VIDEO_OUTRO`
 - 标签固定：`#投资研究 #交易笔记 #AI投资 #长期主义`
-- 封面 / 标题统一：沿用 `gen_xljr_youtube_pack.py` 的玻璃+原木品牌模板
+- 封面 / 标题统一：沿用 `gen_xl_youtube_pack.py` 的玻璃+原木品牌模板
 
 ### C 类：GitHub README SOP
 

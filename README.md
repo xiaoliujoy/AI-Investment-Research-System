@@ -1,4 +1,4 @@
-﻿# Xiao Liu Research Lab
+﻿# Research Lab
 
 ## AI-Augmented Investment Research System
 
@@ -21,7 +21,7 @@ AI-Investment-Research-System        (v0.1 · research framework, today)
             ↓
 Investment-Research-OS               (v1.0 · integrated research operating system)
             ↓
-Xiao Liu Investment Intelligence Platform   (future ecosystem)
+Investment Intelligence Platform   (future ecosystem)
 ```
 
 ---
@@ -336,7 +336,7 @@ Contributions and discussion are welcome — see `CONTRIBUTING.md`.
 
 ## About / 关于
 
-**Xiao Liu Research Lab** — a finance professional exploring how AI can augment — not replace — an investor's research, cognition, and decision-making.
+**Research Lab** — a finance professional exploring how AI can augment — not replace — an investor's research, cognition, and decision-making.
 
 - Research > Prediction
 - Systems > Opinions

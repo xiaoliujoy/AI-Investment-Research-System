@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""生成 Xiao Liu Joy Research Episode 001 小红书配图（数据卡/清单/金句等）。
+"""生成 Joy Research Episode 001 小红书配图（数据卡/清单/金句等）。
 用代码绘制而非 AI 生图，确保中文与数字 100% 准确、风格统一、零 credit 消耗。
 """
 from PIL import Image, ImageDraw, ImageFont
@@ -93,7 +93,7 @@ for ln in lines:
 d.text((80, y + 40), "热点不断 ≠ 机会不断", font=load(42), fill=GRAY)
 d.text((80, y + 100), "新闻很多 ≠ 钱好赚", font=load(42), fill=GRAY)
 d.text((80, y + 160), "下跌 ≠ 机会", font=load(42), fill=GRAY)
-footer_bar(d, "刘晓  ·  Xiao Liu Joy Research")
+footer_bar(d, "刘晓  ·  Joy Research")
 img.save(os.path.join(OUT, "xhs_card5.png"))
 
 # 6 三日报证据卡
@@ -117,7 +117,7 @@ d.text((80, 380), "收藏 + 关注", font=load(130, True), fill=WHITE)
 d.text((80, 580), "下期拆我的五步判断框架", font=load(50, True), fill=GREEN)
 d.text((80, 680), "一个金融从业者，如何用AI", font=load(40), fill=GRAY)
 d.text((80, 736), "提升投资研究与决策能力。", font=load(40), fill=GRAY)
-footer_bar(d, "Xiao Liu Joy Research  ·  Episode 001")
+footer_bar(d, "Joy Research  ·  Episode 001")
 img.save(os.path.join(OUT, "xhs_card7.png"))
 
 print("OK, 7 cards generated in", OUT)

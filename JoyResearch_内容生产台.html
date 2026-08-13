@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>Xiao Liu Joy Research · 内容生产台</title>
+<title>Joy Research · 内容生产台</title>
 <style>
   :root{
     --green:#2E7D52; --green-d:#1f5c3b; --green-l:#e8f3ec;
@@ -666,7 +666,7 @@ function copySop(id){
 document.getElementById('btnExport').onclick=()=>{
   const blob=new Blob([JSON.stringify({ideas,assets,dist},null,2)],{type:'application/json'});
   const a=document.createElement('a');a.href=URL.createObjectURL(blob);
-  a.download='XLJR_content_'+todayStr()+'.json';a.click();toast('已导出备份');
+  a.download='XL_content_'+todayStr()+'.json';a.click();toast('已导出备份');
 };
 document.getElementById('btnImport').onclick=()=>document.getElementById('fileInput').click();
 document.getElementById('fileInput').onchange=e=>{
