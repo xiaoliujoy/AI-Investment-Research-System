@@ -146,6 +146,16 @@ def align(name, sdict):
 # 2026-08-05 concept「芯片概念」352.52亿 被名称匹配到 sector_daily「AI芯片」15.41亿（22.9x）。
 MAG_RATIO_LIMIT = 3.0
 
+# 错配阈值：偏离超过该倍数时，名称匹配本身就是假的（不是同一个东西），
+# 必须判为「错配 mismatch」而非「方向分歧 divergent」，并从 aligned 中剔除。
+# 理由：方向一致性只有在两源量级可比时才有意义；量级差两个数量级以上说明对齐无效，
+# 让它产出 divergent 会重演 08-05 的污染模式——把"没有对应板块"污染成"两源结论分歧"。
+# 典型案例：2026-08-13 concept「算力租赁」+46.44亿 被子串匹配到行业板块「租赁」-0.07亿（663x），
+# 本地实际并无「算力租赁」板块（最近的「算力概念」概念范围不同），正解是判未对齐。
+# 阈值取 20x 的依据：3~20x 区间是同一主题下的口径/成分差异（如 08-12 半导体 3.3x），
+# 方向一致仍有弱参考价值；>20x 的历史案例全部为名称错配。
+MISMATCH_RATIO_LIMIT = 20.0
+
 
 def mag_ratio(w_yi, s_yi):
     """返回两源净流入绝对值的偏离倍数；任一为 0/None 时返回 None（不可判）。"""
@@ -160,6 +170,11 @@ def mag_ratio(w_yi, s_yi):
 def mag_ok(ratio):
     """None(不可判) 视作不通过强证据，但单列出来，不算分歧。"""
     return ratio is not None and ratio <= MAG_RATIO_LIMIT
+
+
+def is_mismatch(ratio):
+    """量级偏离到不可能是同一板块 -> 名称对齐无效，按未对齐处理，不产生分歧结论。"""
+    return ratio is not None and ratio > MISMATCH_RATIO_LIMIT
 
 
 def build_cross_check(conn, data, sdict):
@@ -191,12 +206,21 @@ def build_cross_check(conn, data, sdict):
     aligned = []
     divergent = []
     suspect_alignment = []
+    mismatched = []
     for w in wtop:
         sname = align(w["name"], sdict)
         if sname:
             snet = sdict[sname]["net"]
             same = (w["net_yi"] >= 0) == (snet is not None and snet >= 0)
             ratio = mag_ratio(w["net_yi"], snet)
+            # 极端量级偏离 = 名称错配，按未对齐处理：不进 aligned、不产生 divergent。
+            if is_mismatch(ratio):
+                mismatched.append({
+                    "w_name": w["name"], "s_name": sname,
+                    "w_net_yi": w["net_yi"], "s_net_yi": snet,
+                    "mag_ratio": round(ratio, 2),
+                })
+                continue
             ok = mag_ok(ratio)
             aligned.append({
                 "w_name": w["name"], "s_name": sname,
@@ -221,7 +245,7 @@ def build_cross_check(conn, data, sdict):
         note = f"sector_daily 当日({date})无数据，无法交叉验证；westock 侧已入库，待 daily_collect 补数后重跑。"
     elif not aligned:
         consistency = "unaligned"
-        note = "sector_daily 有数据但 westock concept.top 板块名全部未对齐（命名口径差异），非方向分歧。"
+        note = "sector_daily 有数据但 westock concept.top 板块名全部未对齐（命名口径差异或量级错配），非方向分歧。"
     elif all(a["same_dir"] for a in aligned):
         consistency = "consistent"
     else:
@@ -237,8 +261,15 @@ def build_cross_check(conn, data, sdict):
         # 强证据 = 方向一致 且 量级偏离 <= MAG_RATIO_LIMIT 倍
         "strong_evidence_count": sum(1 for a in strong if a["same_dir"]),
         "suspect_alignment": suspect_alignment,
+        "mismatched": mismatched,
         "mag_ratio_limit": MAG_RATIO_LIMIT,
+        "mismatch_ratio_limit": MISMATCH_RATIO_LIMIT,
     }
+    if mismatched:
+        mnames = "、".join(f"{m['w_name']}↔{m['s_name']}({m['mag_ratio']}x)" for m in mismatched)
+        mwarn = (f"量级偏离>{MISMATCH_RATIO_LIMIT:g}x 判为名称错配 {len(mismatched)} 项：{mnames}；"
+                 f"已按未对齐剔除，不计入方向分歧。")
+        note = f"{note} {mwarn}" if note else mwarn
     if suspect_alignment:
         names = "、".join(f"{s['w_name']}↔{s['s_name']}({s['mag_ratio']}x)" for s in suspect_alignment)
         warn = f"量级偏离>{MAG_RATIO_LIMIT}x 的对齐 {len(suspect_alignment)} 项：{names}；名称匹配上但口径/成分不同，方向一致性不作为强证据。"
@@ -269,6 +300,7 @@ def compare_report(data, sdict):
     lines = []
     matched = []
     unmatched = []
+    mismatched = []
     for src in ("plate", "concept"):
         for rk in ("top", "bottom"):
             for b in data.get(src, {}).get(rk, []):
@@ -279,6 +311,11 @@ def compare_report(data, sdict):
                     sv = sdict[sname]
                     same = (w_net_yi >= 0) == (sv["net"] is not None and sv["net"] >= 0)
                     ratio = mag_ratio(w_net_yi, sv["net"])
+                    # 极端偏离 = 名称错配，归入未对齐，不得计入一致率分母也不算分歧
+                    if is_mismatch(ratio):
+                        mismatched.append((src, rk, wname, sname, w_net_yi, sv["net"], ratio))
+                        unmatched.append((src, rk, wname, w_net_yi))
+                        continue
                     matched.append((src, rk, wname, sname, w_net_yi, sv["net"], same, ratio))
                 else:
                     unmatched.append((src, rk, wname, w_net_yi))
@@ -317,6 +354,11 @@ def compare_report(data, sdict):
                 + "、".join(f"{m[2]}↔{m[3]}" for m in suspects)
                 + "。名称匹配上但两源口径/成分不同，**方向一致不算交叉验证通过**。"
             )
+    if mismatched:
+        lines.append(
+            f"\n> ⛔ 名称错配（量级偏离>{MISMATCH_RATIO_LIMIT:g}x，已按未对齐剔除，不算分歧）共 {len(mismatched)} 项："
+            + "、".join(f"{m[2]}↔{m[3]}({m[6]:.0f}x：{m[4]:.2f}亿 vs {m[5]}亿)" for m in mismatched)
+        )
     if unmatched:
         lines.append("\n## 未对齐")
         for src, rk, wn, wn_yi in unmatched:

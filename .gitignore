@@ -142,3 +142,21 @@ archive/*_backup.json
 
 # 个人 IP 内容创作产物：交易笔记口播稿（品牌内容，不随代码仓库发布；md/txt 均排除）
 content/交易笔记_*
+
+# 运行/个人日志（含个人动态 IP，不公开）
+archive/*.log
+
+# 品牌内容选题文档（含真实名 刘晓，仓库已匿名化，不随仓发布）
+archive/视频选题_*
+
+# 盘中 WatchList 归档快照（运行产物，非源码）
+archive/intraday_watch/
+
+# 个人开发会话状态（非源码）
+archive/SESSION_STATE.json
+
+# 交易状态机：docstring/常量含真实交易亏损统计（-$632.26 / 13/34 / 223+34 等），属个人隐私
+backend/os_layers/trading_state_machine.py
+
+# 个人交易教练 UI（私人复盘工具，含 MT5 盈亏校准，不公开）
+backend/os_layers/trading_coach_v02.html

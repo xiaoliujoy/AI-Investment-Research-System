@@ -27,6 +27,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 HERE = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 HTML_PATH = os.path.join(HERE, "discipline_ui.html")
+COACH_HTML_PATH = os.path.join(HERE, "trading_coach_v02.html")
 CSV_PATH = os.path.join(PROJECT_ROOT, "mt5_raw", "trade_path.csv")
 EI_PATH = os.path.join(PROJECT_ROOT, "mt5_raw", "execution_intelligence.json")
 
@@ -45,15 +46,36 @@ try:
 except ImportError:  # pragma: no cover - 仓库未包含该私有模块
     TC = None
 
+# 装载交易状态机（Trading State Machine v1.0 + 盈利保护）
+# 状态层硬闸门：状态直接 gate 开仓，是「两个交易者」洞察的工程化卡点。
+try:
+    _tsm_spec = importlib.util.spec_from_file_location(
+        "trading_state_machine", os.path.join(HERE, "trading_state_machine.py"))
+    TSM = importlib.util.module_from_spec(_tsm_spec)
+    _tsm_spec.loader.exec_module(TSM)
+except Exception:  # pragma: no cover
+    TSM = None
+
 _NO_TC = {"decision": "ALLOW", "violations": [], "warnings": [],
           "note": "trading_constitution 未配置，事前闸门已跳过"}
 
+# 会话（状态机的运行时载体，持久化到 mt5_raw/trading_session.json）
+SESSION = TSM.load_session() if TSM else None
+
 
 def _gate(proposal):
-    """交易宪法闸门；私有模块缺失时降级为 ALLOW，不阻断录入。"""
-    if TC is None:
-        return dict(_NO_TC)
-    return TC.pre_trade_gate(proposal)
+    """合并交易宪法闸门 + 交易状态机状态检查。
+
+    - TC 缺失 → 仅状态检查；
+    - TSM 缺失 → 仅宪法检查；
+    - 两者都在 → merge_gate 合并，任一 BLOCK 即拒绝。
+    私有模块缺失时降级为放行，不阻断录入。
+    """
+    const = TC.pre_trade_gate(proposal) if TC else dict(_NO_TC)
+    if TSM is None or SESSION is None:
+        return const
+    state_res = TSM.pre_trade_check(proposal, SESSION)
+    return TSM.merge_gate(const, state_res)
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -113,6 +135,25 @@ class Handler(BaseHTTPRequestHandler):
             self._send(200, {"version": TC.CONSTITUTION_VERSION,
                              "text": TC.CONSTITUTION_TEXT})
             return
+        if path == "/api/session":
+            # 交易状态机快照：当前状态 / 当日盈亏 / 峰值 / 泄漏率 / 执行分 / 危险事件
+            if TSM is None or SESSION is None:
+                self._send(200, {"available": False,
+                                 "note": "trading_state_machine 未加载"})
+                return
+            out = TSM.snapshot(SESSION)
+            out["available"] = True
+            out["state_machine_version"] = TSM.VERSION
+            self._send(200, out)
+            return
+        if path in ("/coach", "/coach/"):
+            # Trading Coach v0.2 状态机仪表盘（独立页面，不改动原 discipline_ui）
+            if os.path.exists(COACH_HTML_PATH):
+                with open(COACH_HTML_PATH, encoding="utf-8") as f:
+                    self._send(200, text=f.read())
+            else:
+                self._send(404, text="<h1>trading_coach_v02.html 未找到</h1>")
+            return
         self._send(404, {"error": "not found"})
 
     def do_POST(self):
@@ -127,6 +168,7 @@ class Handler(BaseHTTPRequestHandler):
         try:
             if path == "/api/gate":
                 # 纯校验，不落库：返回 ALLOW/BLOCK/WARN + 触发的宪法条款 + 证据
+                # 合并交易宪法 + 交易状态机（盈利保护 / 危险触发）
                 proposal = {
                     "market_type": data.get("market", ""),
                     "symbol": data.get("symbol", ""),
@@ -141,6 +183,9 @@ class Handler(BaseHTTPRequestHandler):
                     "entry_stage": data.get("entry_stage", ""),
                     "fomo_self_check": data.get("fomo_self_check", ""),
                     "cycle_aligned": data.get("cycle_aligned", ""),
+                    "lot": data.get("lot"),
+                    "stop_loss": data.get("stop_loss"),
+                    "has_plan": data.get("has_plan", False),
                     "quick": data.get("quick", False),
                 }
                 self._send(200, _gate(proposal))
@@ -167,7 +212,7 @@ class Handler(BaseHTTPRequestHandler):
                 gate = _gate(proposal)
                 if gate["decision"] == "BLOCK":
                     self._send(200, {"ok": False, "blocked": True, "gate": gate,
-                                     "msg": "违反交易宪法，计划未记录。见 violations。"})
+                                     "msg": "违反交易宪法或交易状态机，计划未记录。见 violations。"})
                     return
                 tid = ENG.record_plan(
                     proposal["market_type"],
@@ -189,7 +234,12 @@ class Handler(BaseHTTPRequestHandler):
                     planned_attribution=data.get("planned_attribution", ""),
                 )
                 ENG.record_constitution_check(tid, gate)
-                self._send(200, {"ok": True, "id": tid, "gate": gate})
+                # 状态机：记录一份确认型计划 → OBSERVE 升 NORMAL（出现交易机会）
+                if TSM is not None and SESSION is not None:
+                    TSM.mark_planned(SESSION)
+                    TSM.save_session(SESSION)
+                self._send(200, {"ok": True, "id": tid, "gate": gate,
+                                "state": SESSION.state if SESSION else None})
 
             elif path == "/api/trade":
                 ENG.record_checkin(
@@ -226,6 +276,51 @@ class Handler(BaseHTTPRequestHandler):
                     data.get("tags", ""),
                 )
                 self._send(200, {"ok": True, "id": rid})
+
+            elif path == "/api/session/update":
+                # 交易状态机会话更新（手动驱动，因 MT5 无实时连接）
+                # action:
+                #   start  —— 重置当日会话（清零盈亏/计数，回 OBSERVE）
+                #   pnl    —— 绝对校准：把当日盈亏设为 daily_pnl（非累加，避免双计）
+                #   trade  —— 累加登记一笔已平仓结果（驱动 PROFIT/DAMAGED/DANGER）
+                if TSM is None or SESSION is None:
+                    self._send(200, {"ok": False, "note": "trading_state_machine 未加载"})
+                    return
+                action = (data.get("action") or "").strip().lower()
+                if action == "start":
+                    TSM.start_session(SESSION)
+                    TSM.save_session(SESSION)
+                    self._send(200, {"ok": True, "state": SESSION.state})
+                    return
+                if action == "pnl":
+                    val = float(data.get("daily_pnl", 0) or 0)
+                    SESSION.daily_pnl = val
+                    SESSION.final_pnl = val
+                    if val > SESSION.peak_pnl:
+                        SESSION.peak_pnl = val
+                    TSM.evaluate_state(SESSION)
+                    TSM.save_session(SESSION)
+                    self._send(200, {"ok": True, "state": SESSION.state,
+                                    "daily_pnl": round(SESSION.daily_pnl, 2),
+                                    "peak_pnl": round(SESSION.peak_pnl, 2)})
+                    return
+                if action == "trade":
+                    danger = TSM.register_trade_result(
+                        SESSION,
+                        pnl=float(data.get("pnl", 0) or 0),
+                        lot=float(data.get("lot", 0) or 0),
+                        direction=data.get("direction", ""),
+                        hold_min=data.get("hold_min"),
+                        had_sl=bool(data.get("had_sl", False)),
+                        was_reversal=bool(data.get("was_reversal", False)),
+                        opened_new=bool(data.get("opened_new", True)),
+                    )
+                    TSM.save_session(SESSION)
+                    self._send(200, {"ok": True, "danger": danger,
+                                    "state": SESSION.state,
+                                    "daily_pnl": round(SESSION.daily_pnl, 2)})
+                    return
+                self._send(200, {"ok": False, "msg": "未知 action: %s" % action})
 
             else:
                 self._send(404, {"error": "not found"})
