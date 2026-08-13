@@ -1,4 +1,4 @@
-﻿# Research Lab
+﻿# Joy Research Lab
 
 ## AI-Augmented Investment Research System
 
@@ -336,7 +336,7 @@ Contributions and discussion are welcome — see `CONTRIBUTING.md`.
 
 ## About / 关于
 
-**Research Lab** — a finance professional exploring how AI can augment — not replace — an investor's research, cognition, and decision-making.
+**Joy Research Lab** — a finance professional exploring how AI can augment — not replace — an investor's research, cognition, and decision-making.
 
 - Research > Prediction
 - Systems > Opinions
