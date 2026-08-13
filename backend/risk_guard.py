@@ -131,3 +131,25 @@ def assess(results: dict, brain: dict = None) -> dict:
 def assess_brain(brain: dict) -> dict:
     """便捷入口：直接吃完整 brain_report 字典。"""
     return assess((brain or {}).get("results", {}), brain=brain)
+
+
+# ===========================================================================
+# Phase 1D Shadow Mode 开关（PRD §7）
+# ---------------------------------------------------------------------------
+# RISK_GUARD_ENABLED = 0（默认）：Risk Guard 仅 Shadow 记录（shadow_run），
+#   绝不改写生产 can_buy / position / verdict / memo。生产裁决仍由既有 IC 决定。
+# RISK_GUARD_ENABLED = 1：Risk Guard 接管前置 gate（veto 实际生效）。
+#   此状态只有在 Shadow 并行 10–20 交易日、人工确认新系统未意外改变大量结果后，
+#   由人工置 1（PRD §7：「最后才允许接管」）。Phase 1D 默认 0，绝不自动开启。
+# ===========================================================================
+RISK_GUARD_ENABLED = 0
+
+
+def is_enabled() -> bool:
+    """Risk Guard 是否已接管生产裁决（前置 gate 生效）。Phase 1D 默认 False。"""
+    return RISK_GUARD_ENABLED == 1
+
+
+def is_shadow() -> bool:
+    """是否处于 Shadow 并行记录阶段（默认 True）。"""
+    return not is_enabled()

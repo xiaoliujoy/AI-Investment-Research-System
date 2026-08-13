@@ -148,6 +148,7 @@ def write_ledger_from_brain(brain: dict, triggered_by: str = "scheduled") -> dic
         raise ValueError("brain 必须是 dict（brain_report.json 的反序列化结果）")
 
     e = _extract(brain)
+    results = brain.get("results") or {}
     trade_date = e["trade_date"]
     generated_at = e["generated_at"]
     now = time.time()
@@ -206,7 +207,8 @@ def write_ledger_from_brain(brain: dict, triggered_by: str = "scheduled") -> dic
                (run_id, trade_date, triggered_by, market_snapshot, versions_json, snapshot_id, shadow_mode, created_at)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
             (run_id, trade_date, triggered_by, market_snapshot,
-             json.dumps(versions, ensure_ascii=False), snapshot_id, 1, now),
+             json.dumps(versions, ensure_ascii=False), snapshot_id,
+             0 if risk_guard.is_enabled() else 1, now),
         )
 
         # ---- 4.5 decision_version ----
@@ -292,6 +294,35 @@ def write_ledger_from_brain(brain: dict, triggered_by: str = "scheduled") -> dic
         conn.execute(
             "UPDATE decision_item SET evidence_ref = ? WHERE item_id = ?",
             (json.dumps(evidence_ids, ensure_ascii=False), ic_item_id),
+        )
+
+        # ---- 4.7 shadow_run（Shadow Mode 对照记录，PRD §6/§7）----
+        # risk_guard 只读适配器，与既有 IC comp>=70 逻辑完全等价：
+        #   shadow 仅在 EXTREME（comp>=70）给出否决，其余镜像生产裁决。
+        # 生产 verdict / position / memo 一律不被本写入改变（shadow_mode=1 时
+        # Risk Guard 只记录 shadow_veto，绝不接管）。
+        rg = risk_guard.assess(results, brain=brain)
+        shadow_veto_bool = bool(rg.get("veto"))
+        prod_can_buy = e["can_buy"]
+        prod_direction = e["direction"]
+        prod_position = e["position_pct"]
+        # Risk Guard 不改方向；仅在否决时使用其仓位护栏口径，否则镜像生产仓位。
+        shadow_can_buy = "NO" if shadow_veto_bool else (prod_can_buy if prod_can_buy is not None else "YES")
+        shadow_direction = prod_direction
+        shadow_position = rg.get("position_limit_label") if shadow_veto_bool else prod_position
+        verdict_match = (str(prod_can_buy) == str(shadow_can_buy)) and (str(prod_direction) == str(shadow_direction))
+        diff = "MATCH" if verdict_match else json.dumps(
+            {"prod_can_buy": prod_can_buy, "shadow_can_buy": shadow_can_buy,
+             "prod_direction": prod_direction, "shadow_direction": shadow_direction},
+            ensure_ascii=False)
+        conn.execute(
+            """INSERT INTO shadow_run
+               (run_id, prod_can_buy, prod_direction, prod_position,
+                shadow_can_buy, shadow_direction, shadow_position, shadow_veto, diff, created_at)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+            (run_id, prod_can_buy, prod_direction, prod_position,
+             shadow_can_buy, shadow_direction, shadow_position,
+             "True" if shadow_veto_bool else "False", diff, now),
         )
 
         conn.commit()
