@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-刘晓每日系统 v1.0  —— Daily OS
+每日系统 v1.0  —— Daily OS
 零依赖本地服务：纯 Python 标准库 (http.server + sqlite3)
 运行: python app.py  (可选端口: python app.py 8777)
 打开: http://127.0.0.1:8777
@@ -361,7 +361,7 @@ class Handler(BaseHTTPRequestHandler):
 def run():
     init_db()
     server = HTTPServer(("127.0.0.1", PORT), Handler)
-    print(f"刘晓每日系统 v1.0  已启动")
+    print(f"每日系统 v1.0  已启动")
     print(f"打开: http://127.0.0.1:{PORT}")
     print(f"数据库: {DB_PATH}")
     print("按 Ctrl+C 停止")

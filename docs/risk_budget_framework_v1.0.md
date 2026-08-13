@@ -1,7 +1,7 @@
 # Risk Budget Framework v1.1（设计文档 · Phase 1.9B · 已实现）
 
 > 状态：v1.1（已按用户 2026-08-04 拍板实现：30% 战略底 + 非线性防御曲线 + Crisis Protocol + Risk Temperature 命名）
-> 作者：AI 研投系统 / 刘晓
+> 作者：AI 研投系统 / 喜悦研究
 > 日期：2026-08-04（v1.0 设计）→ 2026-08-04（v1.1 拍板实现）
 > 关联：Phase 1.9A（Regime Backtest Dashboard，已完成）· Phase 1.9C（Score Predictive Validation，已完成）· Phase 1.9B（Risk Budget Engine，已实现）
 

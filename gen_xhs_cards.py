@@ -93,7 +93,7 @@ for ln in lines:
 d.text((80, y + 40), "热点不断 ≠ 机会不断", font=load(42), fill=GRAY)
 d.text((80, y + 100), "新闻很多 ≠ 钱好赚", font=load(42), fill=GRAY)
 d.text((80, y + 160), "下跌 ≠ 机会", font=load(42), fill=GRAY)
-footer_bar(d, "刘晓  ·  Joy Research")
+footer_bar(d, "喜悦研究  ·  Joy Research")
 img.save(os.path.join(OUT, "xhs_card5.png"))
 
 # 6 三日报证据卡
