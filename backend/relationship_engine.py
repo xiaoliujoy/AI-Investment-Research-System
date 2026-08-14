@@ -232,6 +232,15 @@ def _confidence(corr: float, n: int):
     return round(base * (0.5 + 0.5 * abs(corr)), 2)
 
 
+def _fmt_corr(x):
+    """相关系数安全格式化：None 显示破折号，避免 NoneType 格式化崩溃。
+
+    背景：跨市场对齐样本在 20~39 个交易日时，corr_prior40 为 None，
+    直接 {x:+.2f} 会抛 TypeError，导致整条流水线 FAIL。
+    """
+    return f"{x:+.2f}" if isinstance(x, (int, float)) else "—"
+
+
 # ═══════════════════════════════════════════════════════
 #  AUTO 关系对（A 股内部，本地有历史）
 # ═══════════════════════════════════════════════════════
@@ -373,8 +382,8 @@ def _merge_hypotheses(auto_results, cross_results=None):
                     o["updated"] = today
                     o.setdefault("evidence", []).append(
                         f"实测：{cr['sample']} 个对齐交易日，近60日相关 "
-                        f"{cr['corr_overall']:+.2f}（近20日 {cr['corr_recent20']:+.2f}，"
-                        f"前40日 {cr['corr_prior40']:+.2f}），状态{cr['regime']}")
+                        f"{cr['corr_overall']:+.2f}（近20日 {_fmt_corr(cr['corr_recent20'])}，"
+                        f"前40日 {_fmt_corr(cr['corr_prior40'])}），状态{cr['regime']}")
                     break
 
     _save_obs(obs)
@@ -409,7 +418,7 @@ def run() -> dict:
                 "corr": r["corr_overall"],
                 "confidence": r["confidence"],
                 "note": (f"近60日相关 {r['corr_overall']:+.2f}，近20日"
-                         f"{r['corr_recent20']:+.2f}（前40日 {r['corr_prior40']:+.2f}），"
+                         f"{_fmt_corr(r['corr_recent20'])}（前40日 {_fmt_corr(r['corr_prior40'])}），"
                          f"关系{r['regime']}。"),
             })
     # 其他跨市场关系（如纳指↔科创50）作为补充发现（KOSPI 由下方 OBS 置顶处理）
@@ -424,9 +433,9 @@ def run() -> dict:
             "regime": c["regime"],
             "corr": c["corr_overall"],
             "confidence": c["confidence"],
-            "note": (f"近60日相关 {c['corr_overall']:+.2f}（近20日"
-                     f"{c['corr_recent20']:+.2f}，前40日 {c['corr_prior40']:+.2f}），"
-                     f"状态{c['regime']}。样本 {c['sample']} 个对齐交易日。"),
+                "note": (f"近60日相关 {c['corr_overall']:+.2f}（近20日"
+                         f"{_fmt_corr(c['corr_recent20'])}，前40日 {_fmt_corr(c['corr_prior40'])}），"
+                         f"状态{c['regime']}。样本 {c['sample']} 个对齐交易日。"),
         })
 
     # 用户重点假设（KOSPI↔科创50）：已回填 KOSPI 则展示验证数字，否则仍置顶提醒待验证

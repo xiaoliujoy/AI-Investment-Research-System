@@ -436,7 +436,18 @@ def init_db():
     conn.execute("CREATE INDEX IF NOT EXISTS idx_limit_up_height ON limit_up_daily(date, board_height)")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_watchlist_status ON watchlist(status)")
     conn.execute("CREATE INDEX IF NOT EXISTS idx_signals_date ON trade_signals(date)")
-    
+
+    # =========================================================================
+    # OMI - Options Market Intelligence（期权观察层 v0.1，Observation Only）
+    # 只增表 + seed，绝不修改/触碰现有评分相关表。详见 backend/omi/。
+    # =========================================================================
+    try:
+        from omi.storage import init_omi_db
+        init_omi_db()
+    except Exception:
+        # OMI 初始化失败不应阻断主库初始化
+        pass
+
     conn.commit()
     conn.close()
 

@@ -27,6 +27,15 @@ from typing import Optional
 
 import sqlite3
 
+# ---- proxy cleanup (must run before any requests/akshare import) ----
+# Windows getproxies() reads registry proxy (127.0.0.1:7890 dead proxy).
+# akshare/requests check os.environ at call time, so clearing here prevents ProxyError.
+for _k in list(os.environ.keys()):
+    if "proxy" in _k.lower():
+        del os.environ[_k]
+os.environ.pop("http_proxy", None)
+os.environ.pop("https_proxy", None)
+
 BACK = Path(__file__).resolve().parent.parent.parent
 DB_PATH = BACK / "database" / "vibe_research.db"
 CACHE_DIR = BACK / "output" / ".gold_cache"
@@ -69,6 +78,11 @@ class GoldFactors:
     central_bank_buying: Optional[float]  # tons, monthly
     geopolitical_risk: float    # 0-10 proxy score
     breakeven_inflation: Optional[float]
+    a_gold_etf_price: float = 0.0       # A股518880黄金ETF华安(CNY)
+    a_gold_etf_change: float = 0.0
+    gold_price_streak: int = 0        # XAU consecutive up(+) / down(-) days
+    a_gold_etf_streak: int = 0        # 518880 consecutive up(+) / down(-) days
+    flow_streak_days: int = 0         # combined: max(abs) of the two
     factors: dict = field(default_factory=dict)
     gaps: list = field(default_factory=list)
     raw_data: dict = field(default_factory=dict)
@@ -194,21 +208,39 @@ def _fetch_db_global(symbol: str) -> Optional[dict]:
     return None
 
 
-def _fetch_518880_from_tdx() -> Optional[dict]:
-    """Fetch 黄金ETF华安(518880) as GLD proxy from tdx connector.
+def _fetch_akshare_us_gld() -> Optional[dict]:
+    """Fetch GLD ETF (US-listed, USD) via akshare stock_us_spot_em.
 
-    Used when thsdk GLD data overflows or is unavailable.
-    Returns dict with price, volume, change_pct, prev_close.
+    Returns dict with price, volume, change_pct. None if unavailable.
     """
     try:
-        import subprocess, json as _json
-        cmd = [
-            "C:\\Users\\JOY\\.workbuddy\\binaries\\node\\versions\\22.22.2\\node.exe",
-            "-e",
-            "console.log(JSON.stringify({ok:false}))"
-        ]
-        # tdx connector is MCP, not directly callable from Python.
-        # Instead, read from stock_daily table in DB.
+        import akshare as ak
+        df = ak.stock_us_spot_em(symbol="GLD")
+        if df is not None and len(df) > 0:
+            row = df.iloc[0]
+            price = float(row.get("最新价", 0))
+            if price > 0:
+                change = float(row.get("涨跌幅", 0))
+                volume = int(float(row.get("成交量", 0) or 0))
+                return {
+                    "price": price,
+                    "volume": volume,
+                    "change_pct": change,
+                    "source": "akshare_us_gld",
+                }
+    except Exception:
+        pass
+    return None
+
+
+def _fetch_a_gold_etf_518880() -> Optional[dict]:
+    """Fetch A股黄金ETF华安(518880) from local DB.
+
+    This is a China-listed CNY-denominated gold ETF (~8 yuan).
+    It tracks Au99.99 spot gold, NOT the US-listed GLD.
+    Used as auxiliary A-share gold sentiment proxy, NOT as GLD substitute.
+    """
+    try:
         con = sqlite3.connect(str(DB_PATH))
         con.row_factory = sqlite3.Row
         row = con.execute(
@@ -232,11 +264,52 @@ def _fetch_518880_from_tdx() -> Optional[dict]:
                 "change_pct": round(change_pct, 2),
                 "prev_close": round(prev_close, 4),
                 "date": str(latest["date"]),
-                "source": "stock_daily(518880)",
+                "source": "stock_daily(518880_A股黄金ETF)",
             }
     except Exception:
         pass
     return None
+
+
+def _calc_flow_streak(table: str, symbol_col: str, symbol_val: str,
+                      lookback: int = 20) -> int:
+    """Count consecutive up(+) / down(-) days from DB history.
+
+    Reads the most recent `lookback` rows and counts how many consecutive
+    days at the tail have change_pct > 0 (inflow) or < 0 (outflow).
+
+    Returns:
+        Positive int = consecutive inflow days
+        Negative int = consecutive outflow days
+        0 = no data or latest day flat
+    """
+    try:
+        con = sqlite3.connect(str(DB_PATH))
+        con.row_factory = sqlite3.Row
+        rows = con.execute(
+            f"SELECT date, change_pct FROM {table} "
+            f"WHERE {symbol_col}=? AND change_pct IS NOT NULL "
+            f"ORDER BY date DESC LIMIT ?",
+            (symbol_val, lookback)
+        ).fetchall()
+        con.close()
+        if not rows:
+            return 0
+        # Latest day determines direction
+        latest_chg = float(rows[0]["change_pct"])
+        if latest_chg == 0:
+            return 0
+        direction = 1 if latest_chg > 0 else -1
+        streak = 0
+        for r in rows:
+            chg = float(r["change_pct"])
+            if (direction > 0 and chg > 0) or (direction < 0 and chg < 0):
+                streak += direction
+            else:
+                break
+        return streak
+    except Exception:
+        return 0
 
 
 def _fetch_akshare_gold_inventory() -> Optional[dict]:
@@ -376,6 +449,16 @@ def get_all_gold_factors() -> GoldFactors:
                 gold_source = "akshare"
                 raw["gold_akshare"] = df.iloc[0].to_dict()
         except Exception:
+            pass
+    if gold_price == 0:
+        # Fallback: read XAU from global_history (DB may have today's data)
+        xau_fb = _fetch_db_global("XAU")
+        if xau_fb:
+            gold_price = xau_fb["price"]
+            gold_change = xau_fb.get("change_pct", 0.0)
+            gold_source = xau_fb.get("source", "global_history(XAU)")
+            raw["xau_db"] = xau_fb
+        else:
             gaps.append("gold_price_missing")
     
     # DXY
@@ -426,16 +509,25 @@ def get_all_gold_factors() -> GoldFactors:
                 gld_change = ((gld_price - prev_gld) / prev_gld * 100) if prev_gld else 0
                 raw["gld"] = gld_data
     if gld_price == 0:
-        # Fallback: use 518880 (黄金ETF华安) from stock_daily as proxy
-        gld_fb = _fetch_518880_from_tdx()
-        if gld_fb:
-            gld_price = gld_fb["price"]
-            gld_volume = gld_fb.get("volume", 0)
-            gld_change = gld_fb.get("change_pct", 0.0)
-            gld_source = gld_fb.get("source", "518880_proxy")
-            raw["gld"] = gld_fb
+        # Fallback: akshare US-listed GLD ETF (USD-denominated)
+        gld_ak = _fetch_akshare_us_gld()
+        if gld_ak:
+            gld_price = gld_ak["price"]
+            gld_volume = gld_ak.get("volume", 0)
+            gld_change = gld_ak.get("change_pct", 0.0)
+            gld_source = gld_ak.get("source", "akshare_us_gld")
+            raw["gld"] = gld_ak
         else:
             gaps.append("gld_missing")
+    
+    # A股黄金ETF华安(518880) — auxiliary CNY gold sentiment, NOT a GLD substitute
+    a_gold_etf_price = 0.0
+    a_gold_etf_change = 0.0
+    a_gold_etf_data = _fetch_a_gold_etf_518880()
+    if a_gold_etf_data:
+        a_gold_etf_price = a_gold_etf_data["price"]
+        a_gold_etf_change = a_gold_etf_data.get("change_pct", 0.0)
+        raw["a_gold_etf"] = a_gold_etf_data
     
     # Disconnect thsdk
     if ths:
@@ -524,6 +616,16 @@ def get_all_gold_factors() -> GoldFactors:
     # Geopolitical risk
     geo_score, geo_note = _calc_geopolitical_risk()
     
+    # ── Flow streak: consecutive inflow/outflow days from DB history ──
+    gold_price_streak = _calc_flow_streak("global_history", "symbol", "XAU")
+    a_gold_etf_streak = _calc_flow_streak("stock_daily", "code", "518880")
+    flow_streak = gold_price_streak if abs(gold_price_streak) >= abs(a_gold_etf_streak) else a_gold_etf_streak
+    raw["flow_streak"] = {
+        "xau_streak": gold_price_streak,
+        "a_gold_etf_streak": a_gold_etf_streak,
+        "combined": flow_streak,
+    }
+    
     # Build factor dict for scorer
     factors = {
         "tips_yield": {"name": "实际利率(TIPS)", "weight": 5, "value": tips_yield},
@@ -559,6 +661,11 @@ def get_all_gold_factors() -> GoldFactors:
         central_bank_buying=cb_data["monthly_net"],
         geopolitical_risk=round(geo_score, 1),
         breakeven_inflation=round(breakeven, 2) if breakeven else None,
+        a_gold_etf_price=round(a_gold_etf_price, 4) if a_gold_etf_price else 0.0,
+        a_gold_etf_change=round(a_gold_etf_change, 2),
+        gold_price_streak=gold_price_streak,
+        a_gold_etf_streak=a_gold_etf_streak,
+        flow_streak_days=flow_streak,
         factors=factors,
         gaps=gaps,
         raw_data=raw,

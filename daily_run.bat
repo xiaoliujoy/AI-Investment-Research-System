@@ -2,7 +2,7 @@
 chcp 65001 >nul
 echo ============================================
 echo   Investment Research OS - Daily Data Pipeline
-echo   step1 (collect) -> step1b (tech) -> step2 -> step2b (memo)
+echo   step1 (collect) -> step1b (tech) -> step1c (OMI期权观察) -> step2 -> step2b (memo)
 echo ============================================
 echo.
 

@@ -9,6 +9,8 @@
   step2c relationship_engine.py      -> 关系/规律引擎：A股内部自动相关性+状态机，维护"今日新发现/假设"规律库
   step2d cro_agent.py                -> CRO 总裁定词：编排 Flow/Gold/Relationship/Sector 引擎，每日三问（交易/边际/规律）
   step2e narrative_engine.py         -> Narrative Engine：板块「为什么」因果链（实时新闻+产业链逻辑+情绪判定）
+  step1c omi/run_omi.py           -> 期权观察层 OMI v0.1（Observation Only：仅采集/存原始链/算IV/Skew/Rank，
+                                     不参与任何 IC/CIO 评分；失败仅记录，不影响主流水线）
   step3  notify/push_daily.py        -> 推送看板到企业微信/飞书/公众号（未配置渠道则自动跳过）
 
 用法：
@@ -49,6 +51,10 @@ STEPS = [
     ("step2f_资金迁移", "capital_migration.py", 0),       # Capital Migration Engine：板块轮动+跨资产闭环+反证树，落盘每日快照
     ("step3_推送看板", "notify/push_daily.py", 0),        # 企业微信/飞书/公众号；无配置则自动跳过
 ]
+
+# OMI 期权观察层：Observation Only，独立于评分系统，失败不影响主流水线。
+# 不作为 STEPS 成员（避免单步 FAIL 翻转 overall_ok），单独在 STEPS 之后执行并记日志。
+OMI_STEP = ("step1c_期权观测OMI", os.path.join("omi", "run_omi.py"))
 
 
 def run_script(script, retries=0, timeout=900):
@@ -121,6 +127,33 @@ def main():
               f"attempt={r.get('attempt')}", flush=True)
         if r.get("tail"):
             print(r["tail"][-1000:], flush=True)
+
+    # === OMI 期权观察层 (Observation Only) ===
+    # 独立于 IC/CIO 评分：无论成功失败，只记录观测状态，绝不翻转 overall_ok。
+    # --only decision / --skip-step1 时不跑（那是快速复用缓存数据场景，不该触发外部采集）。
+    if not (args.only == "decision" or args.skip_step1):
+        try:
+            _omi_name, _omi_script = OMI_STEP
+            print(f"\n========== {_omi_name} ({_omi_script}) [Observation Only] ==========",
+                  flush=True)
+            _omi = run_script(_omi_script, retries=0)
+            _omi["step"] = _omi_name
+            log["omi"] = _omi
+            print(f"[{'OK' if _omi['ok'] else 'FAIL'}] {_omi_name} "
+                  f"rc={_omi.get('returncode')} #(Observation Only, 不影响主流水线)", flush=True)
+            if _omi.get("tail"):
+                print(_omi["tail"][-800:], flush=True)
+            # 提取 "OMI 汇总 ok=N stale=N other=N total=N" 行，供一眼扫过
+            _summary = None
+            for _ln in (_omi.get("tail") or "").splitlines():
+                if _ln.startswith("[OMI] 汇总"):
+                    _summary = _ln.strip()
+                    break
+            if _summary:
+                log["omi"]["summary"] = _summary
+                print(f"\n📊 {_summary}  (Observation Only，未进入评分)", flush=True)
+        except Exception as e:  # noqa
+            log["omi"] = {"ok": False, "error": repr(e)}
 
     # --memo-only：写出本地备忘录 HTML（push_daily --dry-run，不推送）
     if args.memo_only:

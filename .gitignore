@@ -160,3 +160,9 @@ backend/os_layers/trading_state_machine.py
 
 # 个人交易教练 UI（私人复盘工具，含 MT5 盈亏校准，不公开）
 backend/os_layers/trading_coach_v02.html
+
+# 每日下载的第三方数据快照（TheMarketMemo / 交易猫 等 xlsx，运行产物，非源码，不公开）
+backend/imports/
+
+# 根目录一次性临时脚本（_tmp_ 前缀 scratch，非源码，不公开）
+_tmp_*.py

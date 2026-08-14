@@ -143,25 +143,55 @@ def _score_fed(fed_rate: float, fed_direction: str) -> FactorResult:
     )
 
 
-def _score_gld_etf(gld_price: float, gld_volume: int, gld_change: float, inv_change: float) -> FactorResult:
+def _score_gld_etf(gld_price: float, gld_volume: int, gld_change: float,
+                   inv_change: float, flow_streak: int = 0) -> FactorResult:
     """Score gold ETF flow.
-    
+
     ETF inflows = bullish (investors buying gold).
     ETF outflows = bearish (investors selling gold).
-    
-    Use GLD volume + price change to infer flow direction.
+
+    Uses GLD volume + price change + consecutive flow streak (from DB history).
+    flow_streak: positive = consecutive inflow days, negative = outflow days.
     """
     weight = 4
     if gld_price == 0:
+        # Even if GLD real-time is missing, flow_streak from XAU/518880 history
+        # can still provide signal
+        if flow_streak != 0:
+            streak_note = f"连续{'流入' if flow_streak > 0 else '流出'}{abs(flow_streak)}天"
+            if flow_streak >= 5:
+                return FactorResult(
+                    name="黄金ETF(GLD)", weight=weight, direction="bullish",
+                    score=70, value="GLD实时缺失", source="streak_only",
+                    note=f"GLD实时数据缺失，但XAU/518880历史{streak_note}"
+                )
+            elif flow_streak >= 3:
+                return FactorResult(
+                    name="黄金ETF(GLD)", weight=weight, direction="neutral_bullish",
+                    score=60, value="GLD实时缺失", source="streak_only",
+                    note=f"GLD实时数据缺失，但XAU/518880历史{streak_note}"
+                )
+            elif flow_streak <= -5:
+                return FactorResult(
+                    name="黄金ETF(GLD)", weight=weight, direction="bearish",
+                    score=30, value="GLD实时缺失", source="streak_only",
+                    note=f"GLD实时数据缺失，但XAU/518880历史{streak_note}"
+                )
+            elif flow_streak <= -3:
+                return FactorResult(
+                    name="黄金ETF(GLD)", weight=weight, direction="neutral_bearish",
+                    score=40, value="GLD实时缺失", source="streak_only",
+                    note=f"GLD实时数据缺失，但XAU/518880历史{streak_note}"
+                )
         return FactorResult(
             name="黄金ETF(GLD)", weight=weight, direction="neutral",
             score=50, value="数据缺失", source="missing"
         )
-    
+
     # Volume signal
     vol_m = gld_volume / 1_000_000
     vol_signal = "high" if vol_m > 8 else ("moderate" if vol_m > 4 else "low")
-    
+
     # Direction from price change + inventory
     if gld_change > 0.5 and (inv_change > 0 or vol_signal == "high"):
         direction, score = "bullish", 78
@@ -173,13 +203,28 @@ def _score_gld_etf(gld_price: float, gld_volume: int, gld_change: float, inv_cha
         direction, score = "neutral_bearish", 35
     else:
         direction, score = "bearish", 22
-    
+
+    # Flow streak adjustment (time-series dimension)
+    streak_note = ""
+    if flow_streak >= 5:
+        score = min(score + 10, 95)
+        streak_note = f"，连续流入{flow_streak}天↑"
+    elif flow_streak >= 3:
+        score = min(score + 5, 90)
+        streak_note = f"，连续流入{flow_streak}天↑"
+    elif flow_streak <= -5:
+        score = max(score - 10, 5)
+        streak_note = f"，连续流出{abs(flow_streak)}天↓"
+    elif flow_streak <= -3:
+        score = max(score - 5, 10)
+        streak_note = f"，连续流出{abs(flow_streak)}天↓"
+
     value_str = f"${gld_price:.2f} ({gld_change:+.2f}%) 量{vol_m:.1f}M"
-    
+
     return FactorResult(
         name="黄金ETF(GLD)", weight=weight, direction=direction,
         score=score, value=value_str, source="thsdk",
-        note=f"GLD {gld_change:+.2f}%，成交量{vol_m:.1f}M，库存变动{inv_change:+.1f}t"
+        note=f"GLD {gld_change:+.2f}%，成交量{vol_m:.1f}M，库存变动{inv_change:+.1f}t{streak_note}"
     )
 
 
@@ -346,7 +391,8 @@ def score_drive_factors(gf: GoldFactors) -> DriveScore:
     
     # 4. GLD ETF ★4
     inv_change = gf.factors.get("gold_inventory", {}).get("value", 0)
-    f_gld = _score_gld_etf(gf.gld_price, gf.gld_volume, gf.gld_change_pct, inv_change)
+    f_gld = _score_gld_etf(gf.gld_price, gf.gld_volume, gf.gld_change_pct,
+                           inv_change, gf.flow_streak_days)
     factors.append(f_gld)
     if f_gld.source != "missing":
         covered += 1
