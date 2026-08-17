@@ -154,6 +154,34 @@ E2 本身是事后标签，需防止：某 Archetype 与**任何**交易结果�
 
 ---
 
+## 7.1 Permutation Null Control（全流程选择偏差诊断）
+
+`Y_neg`（§7）解决的是**特异性**（Archetype 是否只预测 E2、而非预测一切后市）。但它不能回答更深的问题：
+
+> 检验机制本身，在 null（随机标签）下是否自己制造显著性？
+
+若某个 Archetype 的漂亮 Fisher / Chi-square 只是来自「随机打乱 E2 标签后仍然显著」，那它毫无价值。故增加 Permutation Null，作为**最后一道 null diagnostic**。
+
+### 规格（运行前冻结，与代码一致）
+
+1. **固定 Archetype assignment（X 固定）**：逐笔 Archetype 一旦由 entry_time 前信息生成，permutation 过程中**绝不重新生成**。
+2. **仅 permutation E2 标签（Y 置换）**：对 `is_e2` 列做保边洗牌（保持 True 个数 = 97、False = 113 的边际），不改动 Archetype 与时间切分。
+3. **保留 97/113 边际**：随机洗牌只重排标签，不改变 E2 / non-E2 总数。
+4. **n_permutations=2000**：获得稳定经验 null distribution，非为制造漂亮 p-value。
+5. **seed=20260815**：固定随机种子，未来重新运行可严格复现。
+6. **每次完整计算 A/B/C**：对每个 permutation，重复与真实分析完全相同的 A/B/C Lift 计算（全样本 Lift）。
+7. **primary statistic = max_lift（= max(Lift_A, Lift_B, Lift_C)）**：每次 permutation 取 A/B/C 三者全样本 Lift 的**最大值**——即真实分析会挑出来当「最佳」的那个值，从而把 A/B/C 的**多重比较选择过程**本身包进 null。注意：此处取 `max` 而非 `max(|lift−1|)`，因 H2-A 关心「是否存在某个 Archetype 显著富集 E2」，而非「最远离基线 1 的任意方向」。
+8. **输出 empirical percentile + null distribution summary**：`observed_max_lift / null_mean / null_median / null_p95 / empirical_percentile`。
+9. **仅 diagnostic，不新增 Hard Gate**：不把 95% 当成新的硬 Gate。
+10. **若 permutation evidence 弱，则 PASS → PASS_WITH_CAVEAT**：判读 `empirical_percentile >= 95%` 明显超出 null；`90%~95%` 边界信号；`< 90%` 缺乏明显超出 null 的证据。
+11. **Y_neg 保留**，继续承担特异性控制（§7），两者职责不同、互不替代。
+12. 本控制**不修改 H2-A Contract**，也**不修改既有预登记 Gate**（§4/§5）。
+13. 加入后，H2-A 正式封板，运行前不再追加任何检验。
+
+> Permutation 是诊断，不是确认。它只负责把 `PASS` 降级为 `PASS_WITH_CAVEAT`，绝不让 `FAIL` 复活、也不新增独立通过路径。
+
+---
+
 ## 8. 冻结结构（最终）
 
 ```
@@ -167,9 +195,11 @@ H2-A Pre-Registration
 ├── Frozen Minimum Sample       └── N ≥ 20
 ├── Frozen Economic Threshold   └── Validation Lift ≥ 1.25
 ├── Stability Requirement       └── Train>1 AND Validation>1
-├── Negative Control            └── Y_neg (post-entry 10-bar return dir)
+├── Negative Control            └── Y_neg (post-entry 10-bar return dir, 特异性)
+├── Permutation Null            └── n_permutations=2000, seed=20260815, statistic=max_lift (仅 diagnostic, 不新增 Hard Gate)
 └── Decision
        ├── PASS → H2-B
+       ├── PASS_WITH_CAVEAT → 负对照不特异 / Permutation 未明显超出 null
        └── FAIL → terminate E2-conditioned Exit
 ```
 
@@ -180,4 +210,5 @@ H2-A Pre-Registration
 - **预登记文件修改时间必须早于 H2-A 首次运行时间。** 未来可清晰区分：研究设计 → 实验 → 结果 → 解释。
 - 禁止：结果 → 找解释 → 找变量 → 找策略。
 - 本文件为**设计冻结**；`exit_observation_h2a.py` 待用户批准后另立，且首个运行须校验本文件 mtime < 运行时间。
-- 当前研究状态：RC FROZEN / Exit H1 REPRODUCED / E1-E4 attribution REPRODUCED / E1-E4 identifiability FAILED·LOOK-AHEAD / H2 定义 v0.1 冻结 / **H2-A Pre-Registration v0.1 冻结（未运行）**。
+- **运行前补登记说明**：§7.1 Permutation Null 是在运行前（首跑之前）发现的方法学缺口补登记，非看到数据后追加；登记完成即封板，运行前不再新增任何检验。其参数（`n_permutations=2000` / `seed=20260815` / `max_lift`）由代码第一道 Gate 校验，缺失即 STOP。
+- 当前研究状态：RC FROZEN / Exit H1 REPRODUCED / E1-E4 attribution REPRODUCED / E1-E4 identifiability FAILED·LOOK-AHEAD / H2 定义 v0.1 冻结 / **H2-A Pre-Registration v0.1 冻结（未运行，含 §7.1 Permutation Null）**。

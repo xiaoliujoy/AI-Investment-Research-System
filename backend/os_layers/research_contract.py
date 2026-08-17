@@ -3,6 +3,9 @@ research_contract.py - Strategy Research Contract v0.1（研究语言的最小�
 
 版本状态：v0.1 **FROZEN**（2026-08-14 用户定调冻结，不再扩展字段/加 UI/加 DB）。
           v0.2 仅允许在真实实验跑出字段缺口后，从实验需求反向产生。
+          v0.1.1 补丁（2026-08-15）：增补 EvidenceStatus.OBSERVATION 状态层。
+          原因=EQ 系列观察性研究收口统一用 OBSERVATION 结果状态，原 enum 缺该成员导致
+          from_dict 静默降级 OBSERVATION→CLAIM 并触发 --check 误报。属 bug 修复，非字段扩展。
 
 定位：Observation 层规范定义。只描述实验、不修改生产决策链
       （run_daily / risk_guard / shadow）。不依赖任何生产模块。
@@ -44,6 +47,11 @@ class EvidenceStatus(str, Enum):
     CLAIM = "CLAIM"            # 口头/聊天提出，无项目数据
     LOCATED = "LOCATED"        # 在项目数据/代码里找到对应事实（有路径+字段）
     REPRODUCED = "REPRODUCED"  # 能重跑脚本得到同一数字
+    OBSERVATION = "OBSERVATION"  # 预登记实验已按协议跑出描述性观测（有 source 指向 observation JSON）；
+                                 # 但仅描述数据、不推导交易结论/不做因果升级/不产买卖信号；
+                                 # 尚未经独立交叉验证(VALIDATED)，亦未进 Review Gate(ACCEPTED)。
+                                 # 2026-08-15 增补：EQ 系列观察性研究收口统一用此状态，否则 from_dict
+                                 # 会静默降级为 CLAIM 并触发「CLAIM+source 矛盾」误报。
     VALIDATED = "VALIDATED"    # 独立逻辑交叉验证通过
     ROBUST = "ROBUST"          # 稳健性验证通过（参数×时间×资产×Regime）
     ACCEPTED = "ACCEPTED"      # 经人工 Review Gate，进入研究库

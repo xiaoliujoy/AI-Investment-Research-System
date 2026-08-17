@@ -57,6 +57,29 @@ def learning_feedback():
     任一层达到启用阈值即 applied=True 并干预；互不阻塞（此前 bug：交易样本<5 时提前
     return，把预测级回放合并也挡掉，导致 IC 命中率 33% 从未收紧仓位护栏）。
     """
+    # ── Adaptive Feedback Freeze（Phase 1E / Research Freeze）──
+    # 冻结时：不把「市场结果」反向写为生产参数（pos_scale/conf_delta/权重/sector_bias）。
+    # 仍计算并保留 IC 方向命中率供 provenance 记录，但 applied=False 使所有消费方（orchestrator
+    # 置信度、preflight 降级、committee、os2_report 权重）拿到中性信号，不污染生产决策。
+    from learning_center import ADAPTIVE_FEEDBACK_ENABLED
+    if not ADAPTIVE_FEEDBACK_ENABLED:
+        try:
+            from learning_center import prediction_feedback
+            _pf = prediction_feedback()
+            _pf_acc = _pf.get("accuracy")
+            _pf_n = _pf.get("count", 0)
+        except Exception:
+            _pf_acc, _pf_n = None, 0
+        return {
+            "applied": False,
+            "frozen": True,
+            "status": "自适应反哺已冻结(Record-Only)",
+            "conf_delta": 0, "pos_scale": 1.0, "sector_bias": {},
+            "count": _pf_n,
+            "pred_accuracy": _pf_acc,
+            "notes": [f"Research Freeze：学习信号仅记录（IC 方向命中率 {_pf_acc}%，{_pf_n} 次回放），"
+                      f"不回写 pos_scale/conf_delta/权重。"],
+        }
     try:
         import narrative_layers as ne
         stat = ne.monthly_pattern()

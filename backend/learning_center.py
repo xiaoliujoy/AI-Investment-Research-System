@@ -40,6 +40,13 @@ ARCHIVE_DIR = os.path.join(OUT, "archive")
 MIN_REPLAY = 3
 CAP = 12            # 预测级置信度净调整上限（与 learning_feedback 一致）
 
+# ── Adaptive Feedback Freeze（Phase 1E / Research Freeze）──
+# 自适应反哺（prediction_feedback 的 pos_scale/conf_delta、suggested_weights 的动态权重）
+# 会把「市场结果」反向写入生产决策/参数，违反 Research Freeze（禁止 Outcome→Parameter Change）。
+# 默认关闭：学习信号继续计算并写入 learning_log（record-only），但绝不改变生产决策。
+# 重新启用需人工置 ADAPTIVE_FEEDBACK_ENABLED=1 并经 Release Gate 审查。
+ADAPTIVE_FEEDBACK_ENABLED = os.getenv("ADAPTIVE_FEEDBACK_ENABLED", "0") == "1"
+
 # ── Learning 核心（Slice 8 升级）：维度命中率 → 动态权重 ──
 # 决策分组（与 IC 加权评分一致）：资金/产业/宏观/技术/风险/估值
 _GROUP_OF_LAYER = {
@@ -492,6 +499,12 @@ def suggested_weights(preds=None):
         bucket["hit"] += st["acc"] * st["n"] / 100.0
     group_acc_pct = {g: round(b["hit"] / b["n"] * 100) for g, b in group_acc.items() if b["n"] > 0}
 
+    # ── Adaptive Feedback Freeze（Phase 1E / Research Freeze）──
+    # 冻结时：不据命中率调整任何权重，suggested 退化为基准权重；applied=False 使
+    # os2_report 继续用 DEFAULT_WEIGHTS，Composite 决策不被学习信号污染。
+    if not ADAPTIVE_FEEDBACK_ENABLED:
+        group_acc_pct = {}
+
     base = dict(_BASE_DECISION_WEIGHTS)
     suggested = {}
     total_samples = sum(st["n"] for st in da.values())
@@ -505,6 +518,9 @@ def suggested_weights(preds=None):
     else:
         applied = True
         cap_pct = None       # 正常调整（按命中率缩放，封顶 2.0x）
+
+    if not ADAPTIVE_FEEDBACK_ENABLED:
+        applied = False
 
     for g, w in base.items():
         if g in group_acc_pct and group_acc_pct[g] > 0:
@@ -531,6 +547,11 @@ def suggested_weights(preds=None):
                 f"单组权重相对基准限制 ±{cap_pct}%，防过拟合。")
     else:
         note = (f"已基于 {total_samples} 条带分层方向的回放（≥{MED_WEIGHT_SAMPLES}）自动校准权重")
+    if not ADAPTIVE_FEEDBACK_ENABLED:
+        note = ("[Record-Only] 自适应权重校准已冻结（Research Freeze）："
+                f"基于 {total_samples} 条分层回放本可校准，但按治理要求不回写生产权重，"
+                f"Composite 继续用基准权重。")
+
     return {
         "applied": applied,
         "samples": total_samples,
@@ -554,10 +575,13 @@ def build():
         self_note = (f"预测复盘样本 {st['ic_n']} 条（目标 ≥{MIN_REPLAY}）。"
                      f"系统每日自动回放，样本积累后可输出稳定成败率与模式规律。")
     else:
+        fb_status = ("规律已反哺 IC 置信度调整"
+                     if ADAPTIVE_FEEDBACK_ENABLED
+                     else "规律仅记录（自适应反哺冻结中，不回写生产参数）")
         self_note = (f"已回放 {st['ic_n']} 次预测：IC 方向命中率 "
                      f"{st['ic_acc']}%，情景分支命中率 "
                      f"{st['sc_acc'] if st['sc_acc'] is not None else '—'}%。"
-                     f"规律已反哺 IC 置信度调整。")
+                     f"{fb_status}。")
 
     # ── Slice 8：维度命中率 + 动态权重 ──
     da = dimension_accuracy(preds)
@@ -594,19 +618,30 @@ def build():
 
 # ── 反哺信号（供 learning_feedback 合并）────────────────────
 def prediction_feedback():
-    """把预测回放结果转成置信度/仓位调整信号，供 learning_feedback 合并。"""
+    """把预测回放结果转成置信度/仓位调整信号，供 learning_feedback 合并。
+
+    Record-Only 约束（Phase 1E / Research Freeze）：当 ADAPTIVE_FEEDBACK_ENABLED 关闭时，
+    信号继续计算并暴露 accuracy/n（供 provenance 记录），但 applied=False、conf_delta=0、
+    pos_scale=1.0，绝不回写生产决策/参数（禁止 Outcome→Parameter Change）。
+    """
     preds = _load_preds()
     if not preds:
         preds = _seed_from_archives(preds)
     preds = replay(preds)
     st = _stats(preds)
     n = st["ic_n"]
+    acc = st["ic_acc"]
     if n < MIN_REPLAY:
         return {"applied": False, "source": "prediction", "count": n,
                 "conf_delta": 0, "pos_scale": 1.0,
                 "notes": [f"预测回放样本 {n} 条（≥{MIN_REPLAY} 启用），持续积累中。"],
-                "accuracy": st["ic_acc"]}
-    acc = st["ic_acc"]
+                "accuracy": acc}
+    if not ADAPTIVE_FEEDBACK_ENABLED:
+        return {"applied": False, "source": "prediction", "count": n,
+                "conf_delta": 0, "pos_scale": 1.0,
+                "notes": [f"[Record-Only] 预测回放 {n} 次，IC 方向命中率 {acc}%；"
+                          f"自适应反哺已冻结（Research Freeze），不回写 pos_scale/conf_delta。"],
+                "accuracy": acc}
     conf_delta = max(-CAP, min(CAP, round((acc - 50) / 10 * 3, 1)))
     pos_scale = 1.0
     if acc < 40:

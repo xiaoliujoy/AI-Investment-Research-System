@@ -1,0 +1,698 @@
+{
+  "generated": "2026-08-17",
+  "scope": "2026-08-01~2026-08-17",
+  "rows": [
+    {
+      "date": "2026-08-03",
+      "ic": null,
+      "composite": 55,
+      "verdict": "不交易",
+      "l7": null,
+      "cap_flow": null,
+      "mig": null,
+      "position": null,
+      "bull": null,
+      "bear": null,
+      "real_sec_net": -7.7,
+      "real_stk_flow": -0.1,
+      "data_health": "DEGRADED",
+      "veto_reason": null,
+      "market_ew": 1.264,
+      "up_pct": 74.3,
+      "lim_up": 105,
+      "lim_dn": 30,
+      "theme": null,
+      "cands": null
+    },
+    {
+      "date": "2026-08-04",
+      "ic": "YES",
+      "composite": 63,
+      "verdict": "不交易",
+      "l7": 48,
+      "cap_flow": 55,
+      "mig": 3,
+      "position": "50-80%",
+      "bull": 5,
+      "bear": 1,
+      "real_sec_net": 11.0,
+      "real_stk_flow": 0.1,
+      "data_health": "OK",
+      "veto_reason": "COMPOSITE_SCORE",
+      "market_ew": 1.894,
+      "up_pct": 65.5,
+      "lim_up": 243,
+      "lim_dn": 1,
+      "theme": "文化传媒、影视院线（资金主线）；中长期产业验证方向：文化传媒、影视院线",
+      "cands": [
+        {
+          "tier": "A",
+          "name": "软件开发",
+          "sector": null
+        },
+        {
+          "tier": "A",
+          "name": "文化传媒",
+          "sector": null
+        },
+        {
+          "tier": "A",
+          "name": "教育",
+          "sector": null
+        },
+        {
+          "tier": "A",
+          "name": "通信服务",
+          "sector": null
+        },
+        {
+          "tier": "B",
+          "name": "IT服务",
+          "sector": null
+        }
+      ]
+    },
+    {
+      "date": "2026-08-05",
+      "ic": "YES",
+      "composite": 73,
+      "verdict": "谨慎参与",
+      "l7": 42,
+      "cap_flow": 55,
+      "mig": 3,
+      "position": "50-80%",
+      "bull": 6,
+      "bear": 1,
+      "real_sec_net": 8.6,
+      "real_stk_flow": 0.1,
+      "data_health": "OK",
+      "veto_reason": "DOWNGRADED_TO_CAUTION",
+      "market_ew": 1.741,
+      "up_pct": 65.9,
+      "lim_up": 181,
+      "lim_dn": 3,
+      "theme": "贵金属、软件开发（资金主线）；中长期产业验证方向：贵金属、软件开发",
+      "cands": [
+        {
+          "tier": "A",
+          "name": "消费电子",
+          "sector": null
+        },
+        {
+          "tier": "A",
+          "name": "软件开发",
+          "sector": null
+        },
+        {
+          "tier": "A",
+          "name": "工业金属",
+          "sector": null
+        }
+      ]
+    },
+    {
+      "date": "2026-08-06",
+      "ic": "YES",
+      "composite": 59,
+      "verdict": "不交易",
+      "l7": 63,
+      "cap_flow": 46,
+      "mig": 2,
+      "position": "30-50%",
+      "bull": 3,
+      "bear": 2,
+      "real_sec_net": -6.8,
+      "real_stk_flow": -0.1,
+      "data_health": "OK",
+      "veto_reason": "COMPOSITE_SCORE",
+      "market_ew": 0.54,
+      "up_pct": 50.7,
+      "lim_up": 108,
+      "lim_dn": 6,
+      "theme": "煤炭开采加工、贵金属（资金主线）；中长期产业验证方向：煤炭开采加工、贵金属",
+      "cands": [
+        {
+          "tier": "A",
+          "name": "贵金属",
+          "sector": null
+        },
+        {
+          "tier": "B",
+          "name": "通信设备",
+          "sector": null
+        },
+        {
+          "tier": "C",
+          "name": "燃气",
+          "sector": null
+        }
+      ]
+    },
+    {
+      "date": "2026-08-07",
+      "ic": "YES",
+      "composite": 63,
+      "verdict": "不交易",
+      "l7": 59,
+      "cap_flow": 55,
+      "mig": 3,
+      "position": "30-50%",
+      "bull": 4,
+      "bear": 2,
+      "real_sec_net": 4.2,
+      "real_stk_flow": 0.1,
+      "data_health": "OK",
+      "veto_reason": "COMPOSITE_SCORE",
+      "market_ew": 0.906,
+      "up_pct": 51.2,
+      "lim_up": 145,
+      "lim_dn": 8,
+      "theme": "医疗服务、生物制品（资金主线）；中长期产业验证方向：医疗服务、生物制品",
+      "cands": [
+        {
+          "tier": "A",
+          "name": "工业金属",
+          "sector": null
+        },
+        {
+          "tier": "A",
+          "name": "小金属",
+          "sector": null
+        },
+        {
+          "tier": "A",
+          "name": "化学制药",
+          "sector": null
+        },
+        {
+          "tier": "A",
+          "name": "医疗器械",
+          "sector": null
+        }
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "ic": "YES",
+      "composite": 60,
+      "verdict": "不交易",
+      "l7": 46,
+      "cap_flow": 58,
+      "mig": 3,
+      "position": "50-80%",
+      "bull": 5,
+      "bear": 1,
+      "real_sec_net": -8.4,
+      "real_stk_flow": -0.1,
+      "data_health": "OK",
+      "veto_reason": "COMPOSITE_SCORE",
+      "market_ew": 1.426,
+      "up_pct": 74.5,
+      "lim_up": 126,
+      "lim_dn": 11,
+      "theme": "贵金属、医疗服务（资金主线）；中长期产业验证方向：贵金属、医疗服务",
+      "cands": [
+        {
+          "tier": "B",
+          "name": "服装家纺",
+          "sector": null
+        },
+        {
+          "tier": "B",
+          "name": "饮料制造",
+          "sector": null
+        },
+        {
+          "tier": "C",
+          "name": "游戏",
+          "sector": null
+        }
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "ic": "NO",
+      "composite": 50,
+      "verdict": "不交易",
+      "l7": 73,
+      "cap_flow": 48,
+      "mig": 2,
+      "position": "26%",
+      "bull": 3,
+      "bear": 5,
+      "real_sec_net": -6.2,
+      "real_stk_flow": -0.1,
+      "data_health": "OK",
+      "veto_reason": "CONSISTENT_NO",
+      "market_ew": -0.38,
+      "up_pct": 29.9,
+      "lim_up": 71,
+      "lim_dn": 5,
+      "theme": "生物制品、油气开采及服务（资金主线）；中长期产业验证方向：生物制品、油气开采及服务",
+      "cands": [
+        {
+          "tier": "C",
+          "name": "光伏设备",
+          "sector": null
+        },
+        {
+          "tier": "C",
+          "name": "汽车服务及其他",
+          "sector": null
+        }
+      ]
+    },
+    {
+      "date": "2026-08-12",
+      "ic": "YES",
+      "composite": 70,
+      "verdict": "谨慎参与",
+      "l7": 40,
+      "cap_flow": null,
+      "mig": null,
+      "position": "50-80%",
+      "bull": 6,
+      "bear": 2,
+      "real_sec_net": 3.3,
+      "real_stk_flow": 0.0,
+      "data_health": "DEGRADED",
+      "veto_reason": "DOWNGRADED_TO_CAUTION",
+      "market_ew": 1.199,
+      "up_pct": 74.1,
+      "lim_up": 117,
+      "lim_dn": 1,
+      "theme": "房地产、文化传媒（资金主线）；中长期产业验证方向：房地产、文化传媒",
+      "cands": []
+    },
+    {
+      "date": "2026-08-13",
+      "ic": "NO",
+      "composite": 45,
+      "verdict": "不交易",
+      "l7": 79,
+      "cap_flow": 47,
+      "mig": 2,
+      "position": "<30%（或空仓）",
+      "bull": 2,
+      "bear": 5,
+      "real_sec_net": -6.6,
+      "real_stk_flow": -0.1,
+      "data_health": "OK",
+      "veto_reason": "CONSISTENT_NO",
+      "market_ew": -1.035,
+      "up_pct": 20.8,
+      "lim_up": 76,
+      "lim_dn": 7,
+      "theme": "医疗服务、生物制品（资金主线）；中长期产业验证方向：医疗服务、生物制品",
+      "cands": [
+        {
+          "tier": "C",
+          "name": "计算机设备",
+          "sector": null
+        }
+      ]
+    },
+    {
+      "date": "2026-08-14",
+      "ic": "YES",
+      "composite": 63,
+      "verdict": "不交易",
+      "l7": 61,
+      "cap_flow": 53,
+      "mig": 2,
+      "position": "30-50%",
+      "bull": 4,
+      "bear": 1,
+      "real_sec_net": -0.9,
+      "real_stk_flow": -0.0,
+      "data_health": "OK",
+      "veto_reason": "COMPOSITE_SCORE",
+      "market_ew": 0.182,
+      "up_pct": 44.6,
+      "lim_up": 81,
+      "lim_dn": 19,
+      "theme": "通信服务、环保设备（资金主线）；中长期产业验证方向：通信服务、环保设备",
+      "cands": [
+        {
+          "tier": "B",
+          "name": "通信设备",
+          "sector": null
+        },
+        {
+          "tier": "C",
+          "name": "综合",
+          "sector": null
+        },
+        {
+          "tier": "C",
+          "name": "互联网电商",
+          "sector": null
+        }
+      ]
+    },
+    {
+      "date": "2026-08-17",
+      "ic": null,
+      "composite": 64,
+      "verdict": "不交易",
+      "l7": null,
+      "cap_flow": null,
+      "mig": null,
+      "position": null,
+      "bull": null,
+      "bear": null,
+      "real_sec_net": null,
+      "real_stk_flow": 0.1,
+      "data_health": "DEGRADED",
+      "veto_reason": null,
+      "market_ew": 1.81,
+      "up_pct": 78.2,
+      "lim_up": 151,
+      "lim_dn": 2,
+      "theme": null,
+      "cands": null
+    }
+  ],
+  "num1_ic_yes_win": {
+    "next_1": {
+      "n": 7,
+      "win": 5,
+      "win_pct": 71.4,
+      "avg": 0.715
+    },
+    "next_3": {
+      "n": 6,
+      "win": 4,
+      "win_pct": 66.7,
+      "avg": 0.654
+    },
+    "next_5": {
+      "n": 5,
+      "win": 3,
+      "win_pct": 60.0,
+      "avg": 0.355
+    }
+  },
+  "num2_comp_60_64": {
+    "next_1": {
+      "n": 5,
+      "avg": 1.149,
+      "dates": [
+        "2026-08-04",
+        "2026-08-07",
+        "2026-08-10",
+        "2026-08-14",
+        "2026-08-17"
+      ]
+    },
+    "next_3": {
+      "n": 5,
+      "avg": 0.357,
+      "dates": [
+        "2026-08-04",
+        "2026-08-07",
+        "2026-08-10",
+        "2026-08-14",
+        "2026-08-17"
+      ]
+    },
+    "next_5": {
+      "n": 5,
+      "avg": 0.537,
+      "dates": [
+        "2026-08-04",
+        "2026-08-07",
+        "2026-08-10",
+        "2026-08-14",
+        "2026-08-17"
+      ]
+    }
+  },
+  "num3_comp_65_79": {
+    "next_1": {
+      "n": 2,
+      "avg": -0.247,
+      "dates": [
+        "2026-08-05",
+        "2026-08-12"
+      ]
+    },
+    "next_3": {
+      "n": 2,
+      "avg": 1.618,
+      "dates": [
+        "2026-08-05",
+        "2026-08-12"
+      ]
+    },
+    "next_5": {
+      "n": 2,
+      "avg": 1.199,
+      "dates": [
+        "2026-08-05",
+        "2026-08-12"
+      ]
+    }
+  },
+  "num4_ab_excess": {
+    "n": 13,
+    "avg_excess": 0.553,
+    "detail": [
+      {
+        "date": "2026-08-04",
+        "sector": "软件开发",
+        "tier": "A",
+        "sig_chg": 3.133,
+        "next_chg": 2.046,
+        "mkt_nxt": 1.741,
+        "excess": 0.305
+      },
+      {
+        "date": "2026-08-04",
+        "sector": "教育",
+        "tier": "A",
+        "sig_chg": 3.046,
+        "next_chg": 2.187,
+        "mkt_nxt": 1.741,
+        "excess": 0.446
+      },
+      {
+        "date": "2026-08-04",
+        "sector": "通信服务",
+        "tier": "A",
+        "sig_chg": 3.644,
+        "next_chg": 1.632,
+        "mkt_nxt": 1.741,
+        "excess": -0.109
+      },
+      {
+        "date": "2026-08-05",
+        "sector": "消费电子",
+        "tier": "A",
+        "sig_chg": 3.987,
+        "next_chg": 1.209,
+        "mkt_nxt": 0.54,
+        "excess": 0.669
+      },
+      {
+        "date": "2026-08-05",
+        "sector": "软件开发",
+        "tier": "A",
+        "sig_chg": 2.046,
+        "next_chg": 0.638,
+        "mkt_nxt": 0.54,
+        "excess": 0.098
+      },
+      {
+        "date": "2026-08-05",
+        "sector": "工业金属",
+        "tier": "A",
+        "sig_chg": 3.038,
+        "next_chg": -0.204,
+        "mkt_nxt": 0.54,
+        "excess": -0.744
+      },
+      {
+        "date": "2026-08-06",
+        "sector": "贵金属",
+        "tier": "A",
+        "sig_chg": 3.255,
+        "next_chg": 4.362,
+        "mkt_nxt": 0.906,
+        "excess": 3.456
+      },
+      {
+        "date": "2026-08-06",
+        "sector": "通信设备",
+        "tier": "B",
+        "sig_chg": 3.147,
+        "next_chg": 1.387,
+        "mkt_nxt": 0.906,
+        "excess": 0.481
+      },
+      {
+        "date": "2026-08-07",
+        "sector": "工业金属",
+        "tier": "A",
+        "sig_chg": 2.292,
+        "next_chg": 2.028,
+        "mkt_nxt": 1.426,
+        "excess": 0.602
+      },
+      {
+        "date": "2026-08-07",
+        "sector": "小金属",
+        "tier": "A",
+        "sig_chg": 3.139,
+        "next_chg": 2.964,
+        "mkt_nxt": 1.426,
+        "excess": 1.538
+      },
+      {
+        "date": "2026-08-07",
+        "sector": "化学制药",
+        "tier": "A",
+        "sig_chg": 4.366,
+        "next_chg": 1.323,
+        "mkt_nxt": 1.426,
+        "excess": -0.103
+      },
+      {
+        "date": "2026-08-07",
+        "sector": "医疗器械",
+        "tier": "A",
+        "sig_chg": 2.942,
+        "next_chg": 0.985,
+        "mkt_nxt": 1.426,
+        "excess": -0.441
+      },
+      {
+        "date": "2026-08-10",
+        "sector": "服装家纺",
+        "tier": "B",
+        "sig_chg": 2.596,
+        "next_chg": 0.611,
+        "mkt_nxt": -0.38,
+        "excess": 0.991
+      },
+      {
+        "date": "2026-08-14",
+        "sector": "通信设备",
+        "tier": "B",
+        "sig_chg": 2.452,
+        "next_chg": null,
+        "mkt_nxt": 1.81,
+        "excess": null
+      }
+    ]
+  },
+  "num5_veto_correct": {
+    "vetoed_n": 5,
+    "correct_n": 4,
+    "correct_pct": 80.0,
+    "vetoed_days": [
+      "2026-08-04",
+      "2026-08-06",
+      "2026-08-07",
+      "2026-08-10",
+      "2026-08-14"
+    ],
+    "correct_days": [
+      "2026-08-04",
+      "2026-08-06",
+      "2026-08-07",
+      "2026-08-14"
+    ]
+  },
+  "counterfactual": [
+    {
+      "date": "2026-08-05",
+      "ic": "YES",
+      "composite": 73,
+      "verdict": "谨慎参与",
+      "cf_action": "参与",
+      "mkt_next1": 0.54,
+      "cands": [
+        "消费电子",
+        "软件开发",
+        "工业金属"
+      ]
+    },
+    {
+      "date": "2026-08-06",
+      "ic": "YES",
+      "composite": 59,
+      "verdict": "不交易",
+      "cf_action": "参与",
+      "mkt_next1": 0.906,
+      "cands": [
+        "贵金属",
+        "通信设备"
+      ]
+    },
+    {
+      "date": "2026-08-07",
+      "ic": "YES",
+      "composite": 63,
+      "verdict": "不交易",
+      "cf_action": "参与",
+      "mkt_next1": 1.426,
+      "cands": [
+        "工业金属",
+        "小金属",
+        "化学制药",
+        "医疗器械"
+      ]
+    },
+    {
+      "date": "2026-08-10",
+      "ic": "YES",
+      "composite": 60,
+      "verdict": "不交易",
+      "cf_action": "参与",
+      "mkt_next1": -0.38,
+      "cands": [
+        "服装家纺",
+        "饮料制造"
+      ]
+    },
+    {
+      "date": "2026-08-11",
+      "ic": "NO",
+      "composite": 50,
+      "verdict": "不交易",
+      "cf_action": "不参与",
+      "mkt_next1": 1.199,
+      "cands": []
+    },
+    {
+      "date": "2026-08-12",
+      "ic": "YES",
+      "composite": 70,
+      "verdict": "谨慎参与",
+      "cf_action": "参与",
+      "mkt_next1": -1.035,
+      "cands": []
+    },
+    {
+      "date": "2026-08-13",
+      "ic": "NO",
+      "composite": 45,
+      "verdict": "不交易",
+      "cf_action": "不参与",
+      "mkt_next1": 0.182,
+      "cands": []
+    },
+    {
+      "date": "2026-08-14",
+      "ic": "YES",
+      "composite": 63,
+      "verdict": "不交易",
+      "cf_action": "参与",
+      "mkt_next1": 1.81,
+      "cands": [
+        "通信设备"
+      ]
+    }
+  ]
+}

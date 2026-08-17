@@ -1,0 +1,2113 @@
+{
+  "meta": {
+    "generated": "2026-08-17",
+    "mode": "Phase 1E · FROZEN / OBSERVATION + PROVENANCE MODE",
+    "discipline": "只读/离线/零生产改动；N<30 仅描述性",
+    "market_proxy": "stock_daily 等权均价日收益（IN 查询所需日期）",
+    "incident_in_sample": true
+  },
+  "layer1_env": {
+    "all": {
+      "avg_mkt_ret": 0.327,
+      "n_mkt": 26,
+      "avg_breadth": 0.5138,
+      "n_br": 26,
+      "avg_limit_up": 91.64,
+      "n_lu": 22
+    },
+    "incident_window": {
+      "avg_mkt_ret": 0.719,
+      "n_mkt": 9,
+      "avg_breadth": 0.5301,
+      "n_br": 9,
+      "avg_limit_up": 95.33,
+      "n_lu": 9
+    }
+  },
+  "layer2_ic": {
+    "n_total": 24,
+    "n_yes": 14,
+    "n_no": 10,
+    "yes": {
+      "n": 14,
+      "fwd1": -0.278,
+      "n1": 13,
+      "fwd3": 0.744,
+      "n3": 12,
+      "fwd5": 1.813,
+      "n5": 11,
+      "fwd10": 4.16,
+      "n10": 7,
+      "hit1": 0.538,
+      "hit3": 0.583,
+      "avg_position": 56.1
+    },
+    "no": {
+      "n": 10,
+      "fwd1": 1.193,
+      "n1": 10,
+      "fwd3": 1.111,
+      "n3": 9,
+      "fwd5": 1.907,
+      "n5": 8,
+      "fwd10": 6.418,
+      "n10": 8,
+      "hit1": 0.7,
+      "hit3": 0.778,
+      "avg_position": 33.8
+    },
+    "yes_by_risk": {
+      "<50": {
+        "n": 9,
+        "fwd1": -0.355,
+        "n1": 9,
+        "fwd3": 0.68,
+        "n3": 8,
+        "fwd5": 2.234,
+        "n5": 7,
+        "fwd10": 5.39,
+        "n10": 5,
+        "hit1": 0.444,
+        "hit3": 0.5,
+        "avg_position": 65.0
+      },
+      "50-69": {
+        "n": 5,
+        "fwd1": -0.104,
+        "n1": 4,
+        "fwd3": 0.872,
+        "n3": 4,
+        "fwd5": 1.075,
+        "n5": 4,
+        "fwd10": 1.085,
+        "n10": 2,
+        "hit1": 0.75,
+        "hit3": 0.75,
+        "avg_position": 40.0
+      }
+    }
+  },
+  "layer3_composite": {
+    "60-64": {
+      "n": 7,
+      "fwd1": 0.295,
+      "n1": 5,
+      "fwd3": 1.99,
+      "n3": 5,
+      "fwd5": 2.808,
+      "n5": 4,
+      "fwd10": 7.612,
+      "n10": 2
+    },
+    "65-69": {
+      "n": 2,
+      "fwd1": -0.237,
+      "n1": 2,
+      "fwd3": 2.103,
+      "n3": 2,
+      "fwd5": 4.319,
+      "n5": 2,
+      "fwd10": 7.431,
+      "n10": 2
+    },
+    "70-79": {
+      "n": 3,
+      "fwd1": -0.479,
+      "n1": 3,
+      "fwd3": 0.581,
+      "n3": 2,
+      "fwd5": 2.164,
+      "n5": 2,
+      "fwd10": 5.757,
+      "n10": 1
+    },
+    "<60": {
+      "n": 10,
+      "fwd1": 1.646,
+      "n1": 8,
+      "fwd3": 2.915,
+      "n3": 7,
+      "fwd5": 4.883,
+      "n5": 6,
+      "fwd10": 9.978,
+      "n10": 4
+    }
+  },
+  "layer4_ic_x_comp": {
+    "YES_x_hiComp": {
+      "n": 5,
+      "fwd1": -0.382,
+      "n1": 5,
+      "fwd5": 3.242,
+      "n5": 4,
+      "final_no": 2
+    },
+    "YES_x_loComp": {
+      "n": 7,
+      "fwd1": 0.397,
+      "n1": 6,
+      "fwd5": 2.669,
+      "n5": 5,
+      "final_no": 7
+    },
+    "NO_x_hiComp": {
+      "n": 0,
+      "fwd1": null,
+      "n1": 0,
+      "fwd5": null,
+      "n5": 0,
+      "final_no": 0
+    },
+    "NO_x_loComp": {
+      "n": 6,
+      "fwd1": 1.728,
+      "n1": 6,
+      "fwd5": 5.129,
+      "n5": 4,
+      "final_no": 6
+    }
+  },
+  "layer5_veto": {
+    "veto_rate": 0.643,
+    "n_veto": 9,
+    "n_veto_with_fwd": 8,
+    "veto_accuracy": 0.375,
+    "false_veto_rate": 0.625,
+    "by_reason": {
+      "COMPOSITE_SCORE": 7,
+      "RISK_VETO": 0,
+      "OTHER": 2
+    },
+    "detail": [
+      {
+        "date": "2026-07-20",
+        "composite": 66,
+        "l7": 60,
+        "fwd1": 1.4145829574434554,
+        "reason": "OTHER"
+      },
+      {
+        "date": "2026-07-23",
+        "composite": 60,
+        "l7": 36,
+        "fwd1": -2.5757289839737685,
+        "reason": "COMPOSITE_SCORE"
+      },
+      {
+        "date": "2026-07-29",
+        "composite": 66,
+        "l7": 34,
+        "fwd1": -1.8879709854435989,
+        "reason": "OTHER"
+      },
+      {
+        "date": "2026-07-31",
+        "composite": 64,
+        "l7": 37,
+        "fwd1": 1.264405787537748,
+        "reason": "COMPOSITE_SCORE"
+      },
+      {
+        "date": "2026-08-04",
+        "composite": 63,
+        "l7": 48,
+        "fwd1": 1.7412357871057882,
+        "reason": "COMPOSITE_SCORE"
+      },
+      {
+        "date": "2026-08-06",
+        "composite": 59,
+        "l7": 63,
+        "fwd1": 0.9060967434012746,
+        "reason": "COMPOSITE_SCORE"
+      },
+      {
+        "date": "2026-08-07",
+        "composite": 63,
+        "l7": 59,
+        "fwd1": 1.4257484520460828,
+        "reason": "COMPOSITE_SCORE"
+      },
+      {
+        "date": "2026-08-10",
+        "composite": 60,
+        "l7": 46,
+        "fwd1": -0.3795452036313707,
+        "reason": "COMPOSITE_SCORE"
+      },
+      {
+        "date": "2026-08-14",
+        "composite": 63,
+        "l7": 61,
+        "fwd1": null,
+        "reason": "COMPOSITE_SCORE"
+      }
+    ]
+  },
+  "layer6_candidates": {
+    "A": {
+      "1": {
+        "avg_excess": 0.714,
+        "n": 17
+      },
+      "3": {
+        "avg_excess": -0.921,
+        "n": 17
+      },
+      "5": {
+        "avg_excess": -1.546,
+        "n": 17
+      }
+    },
+    "B": {
+      "1": {
+        "avg_excess": -0.034,
+        "n": 16
+      },
+      "3": {
+        "avg_excess": -0.16,
+        "n": 16
+      },
+      "5": {
+        "avg_excess": -0.511,
+        "n": 15
+      }
+    },
+    "C": {
+      "1": {
+        "avg_excess": -0.41,
+        "n": 17
+      },
+      "3": {
+        "avg_excess": -1.251,
+        "n": 16
+      },
+      "5": {
+        "avg_excess": -2.594,
+        "n": 13
+      }
+    },
+    "n_matched": 144,
+    "n_unmatched_cands": 4
+  },
+  "layer7_counterfactual": {
+    "A_current_final": {
+      "name": "A_current_final",
+      "invested": 3,
+      "exposure": 0.062,
+      "avg_ret_invested": -0.24,
+      "hit_rate": 0.333,
+      "equity_growth_pct": -0.72,
+      "ir_proxy_annualized": -10.55
+    },
+    "B_ic_only": {
+      "name": "B_ic_only",
+      "invested": 13,
+      "exposure": 0.542,
+      "avg_ret_invested": -0.278,
+      "hit_rate": 0.538,
+      "equity_growth_pct": -3.74,
+      "ir_proxy_annualized": -2.57
+    },
+    "C_ic_noveto": {
+      "name": "C_ic_noveto",
+      "invested": 13,
+      "exposure": 0.542,
+      "avg_ret_invested": -0.278,
+      "hit_rate": 0.538,
+      "equity_growth_pct": -3.74,
+      "ir_proxy_annualized": -2.57
+    },
+    "D_ic_candidate": {
+      "name": "D_ic_candidate",
+      "invested": 9,
+      "exposure": 0.375,
+      "avg_ret_invested": 0.484,
+      "hit_rate": 0.667,
+      "equity_growth_pct": 4.28,
+      "ir_proxy_annualized": 4.07
+    }
+  },
+  "ten_numbers": {
+    "1_ic_yes_hit1": 0.538,
+    "2_ic_yes_fwd5": 1.813,
+    "2_n": 11,
+    "3_ic_no_fwd5": 1.907,
+    "3_n": 8,
+    "4_veto_rate": 0.643,
+    "5_false_veto_rate": 0.625,
+    "6_composite_segments": {
+      "60-64": {
+        "n": 7,
+        "fwd1": 0.295,
+        "n1": 5,
+        "fwd3": 1.99,
+        "n3": 5,
+        "fwd5": 2.808,
+        "n5": 4,
+        "fwd10": 7.612,
+        "n10": 2
+      },
+      "65-69": {
+        "n": 2,
+        "fwd1": -0.237,
+        "n1": 2,
+        "fwd3": 2.103,
+        "n3": 2,
+        "fwd5": 4.319,
+        "n5": 2,
+        "fwd10": 7.431,
+        "n10": 2
+      },
+      "70-79": {
+        "n": 3,
+        "fwd1": -0.479,
+        "n1": 3,
+        "fwd3": 0.581,
+        "n3": 2,
+        "fwd5": 2.164,
+        "n5": 2,
+        "fwd10": 5.757,
+        "n10": 1
+      },
+      "<60": {
+        "n": 10,
+        "fwd1": 1.646,
+        "n1": 8,
+        "fwd3": 2.915,
+        "n3": 7,
+        "fwd5": 4.883,
+        "n5": 6,
+        "fwd10": 9.978,
+        "n10": 4
+      }
+    },
+    "7_ic_x_compound_matrix": {
+      "YES_x_hiComp": {
+        "n": 5,
+        "fwd1": -0.382,
+        "n1": 5,
+        "fwd5": 3.242,
+        "n5": 4,
+        "final_no": 2
+      },
+      "YES_x_loComp": {
+        "n": 7,
+        "fwd1": 0.397,
+        "n1": 6,
+        "fwd5": 2.669,
+        "n5": 5,
+        "final_no": 7
+      },
+      "NO_x_hiComp": {
+        "n": 0,
+        "fwd1": null,
+        "n1": 0,
+        "fwd5": null,
+        "n5": 0,
+        "final_no": 0
+      },
+      "NO_x_loComp": {
+        "n": 6,
+        "fwd1": 1.728,
+        "n1": 6,
+        "fwd5": 5.129,
+        "n5": 4,
+        "final_no": 6
+      }
+    },
+    "8_ab_excess": {
+      "A": {
+        "1": {
+          "avg_excess": 0.714,
+          "n": 17
+        },
+        "3": {
+          "avg_excess": -0.921,
+          "n": 17
+        },
+        "5": {
+          "avg_excess": -1.546,
+          "n": 17
+        }
+      },
+      "B": {
+        "1": {
+          "avg_excess": -0.034,
+          "n": 16
+        },
+        "3": {
+          "avg_excess": -0.16,
+          "n": 16
+        },
+        "5": {
+          "avg_excess": -0.511,
+          "n": 15
+        }
+      }
+    },
+    "9_signal_preservation_rate": 0.25,
+    "10_current_data_health": {
+      "note": "来自 flow_snapshot_2026-08-17.json（Provenance 基线）",
+      "capital_effective_weight_in_composite": 0.168,
+      "capital_nominal_weight": 0.4,
+      "effective_weight_fraction_of_flow": 0.4,
+      "ashare_signal_in_composite": false,
+      "rating": "LOW"
+    },
+    "9_n_ic_yes_with_final": 12
+  },
+  "dashboard": {
+    "STATUS": "OBSERVATION",
+    "SAMPLE_NOTE": "N<30，仅描述性现象；推断性结论需 30~60+ 干净样本",
+    "Signal_Preservation": 0.25,
+    "IC_HitRate_1D": 0.538,
+    "IC_Information_Ratio_proxy": "见 L7",
+    "Composite_Incremental": "见 L4/L5（待积累）",
+    "Veto_FalsePositive": 0.625,
+    "AB_Excess_1D": 0.714,
+    "Data_Health": "LOW",
+    "Decision_Delivery": "GAP（Signal Loss Incident 2026-08 已记录）",
+    "n_decision_days": 24,
+    "incident_window": "2026-08-04~2026-08-14"
+  },
+  "records": [
+    {
+      "date": "2026-07-13",
+      "incident": false,
+      "can_buy": "NO",
+      "position_pct": 30.0,
+      "l7": 85,
+      "candidates": [],
+      "n_cand": 0,
+      "fwd1": 4.015388584148316,
+      "fwd3": 2.7411116004573133,
+      "fwd5": -1.7410442324834463,
+      "fwd10": 1.1909120199044887,
+      "breadth": 0.12954813781260063,
+      "lim_up": null
+    },
+    {
+      "date": "2026-07-14",
+      "incident": false,
+      "can_buy": "YES",
+      "position_pct": 65.0,
+      "l7": 36,
+      "candidates": [
+        {
+          "tier": "LINE",
+          "name": "互联网电商",
+          "sector": "互联网电商"
+        },
+        {
+          "tier": "LINE",
+          "name": "医药商业",
+          "sector": "医药商业"
+        },
+        {
+          "tier": "LINE",
+          "name": "医疗服务",
+          "sector": "医疗服务"
+        },
+        {
+          "tier": "LINE",
+          "name": "化学制药",
+          "sector": "化学制药"
+        },
+        {
+          "tier": "LINE",
+          "name": "中药",
+          "sector": "中药"
+        },
+        {
+          "tier": "LINE",
+          "name": "生物制品",
+          "sector": "生物制品"
+        },
+        {
+          "tier": "LINE",
+          "name": "石油加工贸易",
+          "sector": "石油加工贸易"
+        },
+        {
+          "tier": "LINE",
+          "name": "油气开采及服务",
+          "sector": "油气开采及服务"
+        }
+      ],
+      "n_cand": 0,
+      "fwd1": 0.07715319720547065,
+      "fwd3": -5.33614890313353,
+      "fwd5": -4.197915744601676,
+      "fwd10": -3.6306560723642134,
+      "breadth": 0.7843957930886456,
+      "lim_up": 81
+    },
+    {
+      "date": "2026-07-15",
+      "incident": false,
+      "can_buy": "NO",
+      "position_pct": 40.0,
+      "l7": 53,
+      "candidates": [
+        {
+          "tier": "A",
+          "name": "中药",
+          "sector": "中药"
+        },
+        {
+          "tier": "LINE",
+          "name": "中药",
+          "sector": "中药"
+        },
+        {
+          "tier": "LINE",
+          "name": "生物制品",
+          "sector": "生物制品"
+        },
+        {
+          "tier": "LINE",
+          "name": "美容护理",
+          "sector": "美容护理"
+        },
+        {
+          "tier": "LINE",
+          "name": "白酒",
+          "sector": "白酒"
+        },
+        {
+          "tier": "LINE",
+          "name": "游戏",
+          "sector": "游戏"
+        },
+        {
+          "tier": "LINE",
+          "name": "保险",
+          "sector": "保险"
+        },
+        {
+          "tier": "LINE",
+          "name": "医疗服务",
+          "sector": "医疗服务"
+        },
+        {
+          "tier": "LINE",
+          "name": "化学制药",
+          "sector": "化学制药"
+        }
+      ],
+      "n_cand": 1,
+      "fwd1": -1.3012343114521485,
+      "fwd3": -5.607039859433094,
+      "fwd5": -5.174692171183127,
+      "fwd10": -2.5107869596086685,
+      "breadth": 0.5637339055793992,
+      "lim_up": null
+    },
+    {
+      "date": "2026-07-16",
+      "incident": false,
+      "can_buy": "YES",
+      "position_pct": 40.0,
+      "l7": 58,
+      "candidates": [
+        {
+          "tier": "B",
+          "name": "保险",
+          "sector": "保险"
+        },
+        {
+          "tier": "B",
+          "name": "白酒",
+          "sector": "白酒"
+        },
+        {
+          "tier": "C",
+          "name": "证券",
+          "sector": "证券"
+        },
+        {
+          "tier": "C",
+          "name": "化学制药",
+          "sector": "化学制药"
+        },
+        {
+          "tier": "LINE",
+          "name": "保险",
+          "sector": "保险"
+        },
+        {
+          "tier": "LINE",
+          "name": "白酒",
+          "sector": "白酒"
+        },
+        {
+          "tier": "LINE",
+          "name": "证券",
+          "sector": "证券"
+        },
+        {
+          "tier": "LINE",
+          "name": "化学制药",
+          "sector": "化学制药"
+        },
+        {
+          "tier": "LINE",
+          "name": "医疗服务",
+          "sector": "医疗服务"
+        },
+        {
+          "tier": "LINE",
+          "name": "煤炭开采加工",
+          "sector": "煤炭开采加工"
+        },
+        {
+          "tier": "LINE",
+          "name": "油气开采及服务",
+          "sector": "油气开采及服务"
+        },
+        {
+          "tier": "LINE",
+          "name": "电力",
+          "sector": "电力"
+        }
+      ],
+      "n_cand": 4,
+      "fwd1": -4.162052528652094,
+      "fwd3": -3.009702097166922,
+      "fwd5": -2.1730043577336433,
+      "fwd10": -3.0903331799724043,
+      "breadth": 0.37695773439176145,
+      "lim_up": null
+    },
+    {
+      "date": "2026-07-17",
+      "incident": false,
+      "can_buy": "NO",
+      "position_pct": 21.0,
+      "l7": 87,
+      "candidates": [
+        {
+          "tier": "B",
+          "name": "白酒",
+          "sector": "白酒"
+        },
+        {
+          "tier": "C",
+          "name": "公路铁路运输",
+          "sector": "公路铁路运输"
+        },
+        {
+          "tier": "C",
+          "name": "石油加工贸易",
+          "sector": "石油加工贸易"
+        },
+        {
+          "tier": "LINE",
+          "name": "白酒",
+          "sector": "白酒"
+        },
+        {
+          "tier": "LINE",
+          "name": "银行",
+          "sector": "银行"
+        },
+        {
+          "tier": "LINE",
+          "name": "电力",
+          "sector": "电力"
+        },
+        {
+          "tier": "LINE",
+          "name": "公路铁路运输",
+          "sector": "公路铁路运输"
+        },
+        {
+          "tier": "LINE",
+          "name": "石油加工贸易",
+          "sector": "石油加工贸易"
+        },
+        {
+          "tier": "LINE",
+          "name": "厨卫电器",
+          "sector": "厨卫电器"
+        },
+        {
+          "tier": "LINE",
+          "name": "燃气",
+          "sector": "燃气"
+        },
+        {
+          "tier": "LINE",
+          "name": "保险",
+          "sector": "保险"
+        }
+      ],
+      "n_cand": 3,
+      "fwd1": -0.20922851470680515,
+      "fwd3": 0.24784274671034723,
+      "fwd5": -0.5537578005297084,
+      "fwd10": 3.727823505285155,
+      "breadth": 0.09157194938880549,
+      "lim_up": 33
+    },
+    {
+      "date": "2026-07-18",
+      "incident": false,
+      "composite": 58,
+      "verdict": "",
+      "final_w": null,
+      "fwd1": null,
+      "fwd3": null,
+      "fwd5": null,
+      "fwd10": null,
+      "breadth": null,
+      "lim_up": null
+    },
+    {
+      "date": "2026-07-19",
+      "incident": false,
+      "composite": 58,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": null,
+      "fwd3": null,
+      "fwd5": null,
+      "fwd10": null,
+      "breadth": null,
+      "lim_up": null
+    },
+    {
+      "date": "2026-07-20",
+      "incident": false,
+      "can_buy": "YES",
+      "position_pct": 40.0,
+      "l7": 60,
+      "candidates": [
+        {
+          "tier": "B",
+          "name": "白酒",
+          "sector": "白酒"
+        },
+        {
+          "tier": "B",
+          "name": "保险",
+          "sector": "保险"
+        },
+        {
+          "tier": "C",
+          "name": "证券",
+          "sector": "证券"
+        },
+        {
+          "tier": "C",
+          "name": "化学制药",
+          "sector": "化学制药"
+        },
+        {
+          "tier": "LINE",
+          "name": "白酒",
+          "sector": "白酒"
+        },
+        {
+          "tier": "LINE",
+          "name": "保险",
+          "sector": "保险"
+        },
+        {
+          "tier": "LINE",
+          "name": "油气开采及服务",
+          "sector": "油气开采及服务"
+        },
+        {
+          "tier": "LINE",
+          "name": "证券",
+          "sector": "证券"
+        },
+        {
+          "tier": "LINE",
+          "name": "化学制药",
+          "sector": "化学制药"
+        },
+        {
+          "tier": "LINE",
+          "name": "医疗服务",
+          "sector": "医疗服务"
+        },
+        {
+          "tier": "LINE",
+          "name": "煤炭开采加工",
+          "sector": "煤炭开采加工"
+        },
+        {
+          "tier": "LINE",
+          "name": "电力",
+          "sector": "电力"
+        }
+      ],
+      "n_cand": 4,
+      "composite": 66,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": 1.4145829574434554,
+      "fwd3": 2.2894472906891394,
+      "fwd5": 2.9839074000796773,
+      "fwd10": 5.259597200782462,
+      "breadth": 0.3954111718666238,
+      "lim_up": 58
+    },
+    {
+      "date": "2026-07-21",
+      "incident": false,
+      "can_buy": "YES",
+      "position_pct": 65.0,
+      "l7": 48,
+      "candidates": [
+        {
+          "tier": "A",
+          "name": "贵金属",
+          "sector": "贵金属"
+        },
+        {
+          "tier": "A",
+          "name": "通信设备",
+          "sector": "通信设备"
+        },
+        {
+          "tier": "B",
+          "name": "半导体",
+          "sector": "半导体"
+        },
+        {
+          "tier": "LINE",
+          "name": "贵金属",
+          "sector": "贵金属"
+        },
+        {
+          "tier": "LINE",
+          "name": "通信设备",
+          "sector": "通信设备"
+        },
+        {
+          "tier": "LINE",
+          "name": "互联网电商",
+          "sector": "互联网电商"
+        },
+        {
+          "tier": "LINE",
+          "name": "IT服务",
+          "sector": "IT服务"
+        },
+        {
+          "tier": "LINE",
+          "name": "多元金融",
+          "sector": "多元金融"
+        },
+        {
+          "tier": "LINE",
+          "name": "计算机设备",
+          "sector": "计算机设备"
+        },
+        {
+          "tier": "LINE",
+          "name": "软件开发",
+          "sector": "软件开发"
+        },
+        {
+          "tier": "LINE",
+          "name": "半导体",
+          "sector": "半导体"
+        }
+      ],
+      "n_cand": 3,
+      "composite": 72,
+      "verdict": "谨慎参与",
+      "final_w": 0.5,
+      "fwd1": -0.9432108673362971,
+      "fwd3": -1.735287526553908,
+      "fwd5": 0.592116211924143,
+      "fwd10": 5.7567129621823865,
+      "breadth": 0.5448669201520913,
+      "lim_up": 131
+    },
+    {
+      "date": "2026-07-22",
+      "incident": false,
+      "can_buy": "NO",
+      "position_pct": 30.0,
+      "l7": 72,
+      "candidates": [
+        {
+          "tier": "A",
+          "name": "白酒",
+          "sector": "白酒"
+        },
+        {
+          "tier": "A",
+          "name": "电力",
+          "sector": "电力"
+        },
+        {
+          "tier": "B",
+          "name": "保险",
+          "sector": "保险"
+        },
+        {
+          "tier": "LINE",
+          "name": "白酒",
+          "sector": "白酒"
+        },
+        {
+          "tier": "LINE",
+          "name": "美容护理",
+          "sector": "美容护理"
+        },
+        {
+          "tier": "LINE",
+          "name": "电力",
+          "sector": "电力"
+        },
+        {
+          "tier": "LINE",
+          "name": "港口航运",
+          "sector": "港口航运"
+        },
+        {
+          "tier": "LINE",
+          "name": "保险",
+          "sector": "保险"
+        },
+        {
+          "tier": "LINE",
+          "name": "贵金属",
+          "sector": "贵金属"
+        },
+        {
+          "tier": "LINE",
+          "name": "油气开采及服务",
+          "sector": "油气开采及服务"
+        },
+        {
+          "tier": "LINE",
+          "name": "煤炭开采加工",
+          "sector": "煤炭开采加工"
+        }
+      ],
+      "n_cand": 3,
+      "composite": 55,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": 1.8230675121142736,
+      "fwd3": 2.51436129144218,
+      "fwd5": 2.8092766293819738,
+      "fwd10": 8.622728071110553,
+      "breadth": 0.2734615384615385,
+      "lim_up": 54
+    },
+    {
+      "date": "2026-07-23",
+      "incident": false,
+      "can_buy": "YES",
+      "position_pct": 65.0,
+      "l7": 36,
+      "candidates": [
+        {
+          "tier": "B",
+          "name": "汽车整车",
+          "sector": "汽车整车"
+        },
+        {
+          "tier": "B",
+          "name": "贵金属",
+          "sector": "贵金属"
+        },
+        {
+          "tier": "C",
+          "name": "证券",
+          "sector": "证券"
+        },
+        {
+          "tier": "C",
+          "name": "保险",
+          "sector": "保险"
+        },
+        {
+          "tier": "LINE",
+          "name": "汽车整车",
+          "sector": "汽车整车"
+        },
+        {
+          "tier": "LINE",
+          "name": "贵金属",
+          "sector": "贵金属"
+        },
+        {
+          "tier": "LINE",
+          "name": "农化制品",
+          "sector": "农化制品"
+        },
+        {
+          "tier": "LINE",
+          "name": "证券",
+          "sector": "证券"
+        },
+        {
+          "tier": "LINE",
+          "name": "保险",
+          "sector": "保险"
+        },
+        {
+          "tier": "LINE",
+          "name": "电网设备",
+          "sector": "电网设备"
+        },
+        {
+          "tier": "LINE",
+          "name": "电池",
+          "sector": "电池"
+        },
+        {
+          "tier": "LINE",
+          "name": "煤炭开采加工",
+          "sector": "煤炭开采加工"
+        }
+      ],
+      "n_cand": 4,
+      "composite": 60,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": -2.5757289839737685,
+      "fwd3": -0.26823113582740143,
+      "fwd5": -0.9377051970329786,
+      "fwd10": 7.253801175323904,
+      "breadth": 0.7670705904981727,
+      "lim_up": 155
+    },
+    {
+      "date": "2026-07-24",
+      "incident": false,
+      "can_buy": "NO",
+      "position_pct": 30.0,
+      "l7": 83,
+      "candidates": [
+        {
+          "tier": "C",
+          "name": "汽车服务及其他",
+          "sector": "汽车服务及其他"
+        },
+        {
+          "tier": "C",
+          "name": "半导体",
+          "sector": "半导体"
+        },
+        {
+          "tier": "LINE",
+          "name": "汽车服务及其他",
+          "sector": "汽车服务及其他"
+        },
+        {
+          "tier": "LINE",
+          "name": "半导体",
+          "sector": "半导体"
+        },
+        {
+          "tier": "LINE",
+          "name": "电子化学品",
+          "sector": "电子化学品"
+        },
+        {
+          "tier": "LINE",
+          "name": "公路铁路运输",
+          "sector": "公路铁路运输"
+        },
+        {
+          "tier": "LINE",
+          "name": "小家电",
+          "sector": "小家电"
+        },
+        {
+          "tier": "LINE",
+          "name": "燃气",
+          "sector": "燃气"
+        },
+        {
+          "tier": "LINE",
+          "name": "饮料制造",
+          "sector": "饮料制造"
+        },
+        {
+          "tier": "LINE",
+          "name": "教育",
+          "sector": "教育"
+        }
+      ],
+      "n_cand": 2,
+      "composite": 54,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": 3.340692848006732,
+      "fwd3": 3.6379853928781625,
+      "fwd5": 4.305422921086155,
+      "fwd10": 11.086922433470935,
+      "breadth": 0.1027318199307426,
+      "lim_up": 48
+    },
+    {
+      "date": "2026-07-27",
+      "incident": false,
+      "can_buy": "NO",
+      "position_pct": 65.0,
+      "l7": 39,
+      "candidates": [
+        {
+          "tier": "B",
+          "name": "教育",
+          "sector": "教育"
+        },
+        {
+          "tier": "C",
+          "name": "饮料制造",
+          "sector": "饮料制造"
+        },
+        {
+          "tier": "C",
+          "name": "美容护理",
+          "sector": "美容护理"
+        },
+        {
+          "tier": "LINE",
+          "name": "旅游及酒店",
+          "sector": "旅游及酒店"
+        },
+        {
+          "tier": "LINE",
+          "name": "饮料制造",
+          "sector": "饮料制造"
+        },
+        {
+          "tier": "LINE",
+          "name": "美容护理",
+          "sector": "美容护理"
+        },
+        {
+          "tier": "LINE",
+          "name": "美容护理",
+          "sector": "美容护理"
+        },
+        {
+          "tier": "LINE",
+          "name": "汽车整车",
+          "sector": "汽车整车"
+        },
+        {
+          "tier": "LINE",
+          "name": "教育",
+          "sector": "教育"
+        },
+        {
+          "tier": "LINE",
+          "name": "银行",
+          "sector": "银行"
+        },
+        {
+          "tier": "LINE",
+          "name": "白酒",
+          "sector": "白酒"
+        }
+      ],
+      "n_cand": 3,
+      "fwd1": -0.9407608238499954,
+      "fwd3": -1.6057203638889628,
+      "fwd5": 2.209752822702704,
+      "fwd10": 9.028437303209946,
+      "breadth": 0.8503442689347914,
+      "lim_up": 214
+    },
+    {
+      "date": "2026-07-28",
+      "incident": false,
+      "can_buy": "NO",
+      "position_pct": 40.0,
+      "l7": 69,
+      "candidates": [
+        {
+          "tier": "B",
+          "name": "饮料制造",
+          "sector": "饮料制造"
+        },
+        {
+          "tier": "B",
+          "name": "教育",
+          "sector": "教育"
+        },
+        {
+          "tier": "C",
+          "name": "保险",
+          "sector": "保险"
+        },
+        {
+          "tier": "C",
+          "name": "公路铁路运输",
+          "sector": "公路铁路运输"
+        },
+        {
+          "tier": "LINE",
+          "name": "保险",
+          "sector": "保险"
+        },
+        {
+          "tier": "LINE",
+          "name": "饮料制造",
+          "sector": "饮料制造"
+        },
+        {
+          "tier": "LINE",
+          "name": "公路铁路运输",
+          "sector": "公路铁路运输"
+        },
+        {
+          "tier": "LINE",
+          "name": "汽车整车",
+          "sector": "汽车整车"
+        },
+        {
+          "tier": "LINE",
+          "name": "食品加工制造",
+          "sector": "食品加工制造"
+        },
+        {
+          "tier": "LINE",
+          "name": "小家电",
+          "sector": "小家电"
+        },
+        {
+          "tier": "LINE",
+          "name": "教育",
+          "sector": "教育"
+        },
+        {
+          "tier": "LINE",
+          "name": "农化制品",
+          "sector": "农化制品"
+        }
+      ],
+      "n_cand": 4,
+      "composite": 38,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": 1.2401092596874497,
+      "fwd3": 1.89210425962536,
+      "fwd5": 5.134196341369002,
+      "fwd10": 9.6461329626101,
+      "breadth": 0.2627526467757459,
+      "lim_up": 4
+    },
+    {
+      "date": "2026-07-29",
+      "incident": false,
+      "can_buy": "YES",
+      "position_pct": 65.0,
+      "l7": 34,
+      "candidates": [
+        {
+          "tier": "A",
+          "name": "零售",
+          "sector": "零售"
+        },
+        {
+          "tier": "B",
+          "name": "电力",
+          "sector": "电力"
+        },
+        {
+          "tier": "B",
+          "name": "钢铁",
+          "sector": "钢铁"
+        },
+        {
+          "tier": "LINE",
+          "name": "电力",
+          "sector": "电力"
+        },
+        {
+          "tier": "LINE",
+          "name": "零售",
+          "sector": "零售"
+        },
+        {
+          "tier": "LINE",
+          "name": "白酒",
+          "sector": "白酒"
+        },
+        {
+          "tier": "LINE",
+          "name": "银行",
+          "sector": "银行"
+        },
+        {
+          "tier": "LINE",
+          "name": "钢铁",
+          "sector": "钢铁"
+        },
+        {
+          "tier": "LINE",
+          "name": "游戏",
+          "sector": "游戏"
+        },
+        {
+          "tier": "LINE",
+          "name": "饮料制造",
+          "sector": "饮料制造"
+        },
+        {
+          "tier": "LINE",
+          "name": "汽车整车",
+          "sector": "汽车整车"
+        }
+      ],
+      "n_cand": 3,
+      "composite": 66,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": -1.8879709854435989,
+      "fwd3": 1.916557259202012,
+      "fwd5": 5.654598137759037,
+      "fwd10": 9.601997003855267,
+      "breadth": 0.7633808240277243,
+      "lim_up": 94
+    },
+    {
+      "date": "2026-07-30",
+      "incident": false,
+      "can_buy": "NO",
+      "position_pct": 26.0,
+      "l7": 71,
+      "candidates": [
+        {
+          "tier": "B",
+          "name": "汽车整车",
+          "sector": "汽车整车"
+        },
+        {
+          "tier": "B",
+          "name": "厨卫电器",
+          "sector": "厨卫电器"
+        },
+        {
+          "tier": "C",
+          "name": "保险",
+          "sector": "保险"
+        },
+        {
+          "tier": "C",
+          "name": "公路铁路运输",
+          "sector": "公路铁路运输"
+        },
+        {
+          "tier": "LINE",
+          "name": "保险",
+          "sector": "保险"
+        },
+        {
+          "tier": "LINE",
+          "name": "公路铁路运输",
+          "sector": "公路铁路运输"
+        },
+        {
+          "tier": "LINE",
+          "name": "汽车整车",
+          "sector": "汽车整车"
+        },
+        {
+          "tier": "LINE",
+          "name": "厨卫电器",
+          "sector": "厨卫电器"
+        },
+        {
+          "tier": "LINE",
+          "name": "贵金属",
+          "sector": "贵金属"
+        },
+        {
+          "tier": "LINE",
+          "name": "饮料制造",
+          "sector": "饮料制造"
+        },
+        {
+          "tier": "LINE",
+          "name": "食品加工制造",
+          "sector": "食品加工制造"
+        },
+        {
+          "tier": "LINE",
+          "name": "教育",
+          "sector": "教育"
+        }
+      ],
+      "n_cand": 4,
+      "composite": 45,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": 2.580702489447817,
+      "fwd3": 5.844704991872551,
+      "fwd5": 8.269045643097229,
+      "fwd10": 10.554748570386074,
+      "breadth": 0.31325764864344813,
+      "lim_up": 59
+    },
+    {
+      "date": "2026-07-31",
+      "incident": false,
+      "can_buy": "YES",
+      "position_pct": 65.0,
+      "l7": 37,
+      "candidates": [],
+      "n_cand": 0,
+      "composite": 64,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": 1.264405787537748,
+      "fwd3": 4.978527403850741,
+      "fwd5": 6.501579038239869,
+      "fwd10": 7.969219800046967,
+      "breadth": 0.8441408504906677,
+      "lim_up": 123
+    },
+    {
+      "date": "2026-08-03",
+      "incident": false,
+      "composite": 55,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": 1.8935396413435557,
+      "fwd3": 4.227380056588248,
+      "fwd5": 6.671265991940367,
+      "fwd10": null,
+      "breadth": 0.7433134500673465,
+      "lim_up": 104
+    },
+    {
+      "date": "2026-08-04",
+      "incident": true,
+      "can_buy": "YES",
+      "position_pct": 65.0,
+      "l7": 48,
+      "candidates": [
+        {
+          "tier": "A",
+          "name": "软件开发",
+          "sector": "软件开发"
+        },
+        {
+          "tier": "A",
+          "name": "文化传媒",
+          "sector": "文化传媒"
+        },
+        {
+          "tier": "A",
+          "name": "教育",
+          "sector": "教育"
+        },
+        {
+          "tier": "A",
+          "name": "通信服务",
+          "sector": "通信服务"
+        },
+        {
+          "tier": "B",
+          "name": "IT服务",
+          "sector": "IT服务"
+        },
+        {
+          "tier": "LINE",
+          "name": "软件开发",
+          "sector": "软件开发"
+        },
+        {
+          "tier": "LINE",
+          "name": "影视院线",
+          "sector": "影视院线"
+        },
+        {
+          "tier": "LINE",
+          "name": "文化传媒",
+          "sector": "文化传媒"
+        },
+        {
+          "tier": "LINE",
+          "name": "教育",
+          "sector": "教育"
+        },
+        {
+          "tier": "LINE",
+          "name": "通信服务",
+          "sector": "通信服务"
+        },
+        {
+          "tier": "LINE",
+          "name": "游戏",
+          "sector": "游戏"
+        },
+        {
+          "tier": "LINE",
+          "name": "互联网电商",
+          "sector": "互联网电商"
+        },
+        {
+          "tier": "LINE",
+          "name": "IT服务",
+          "sector": "IT服务"
+        }
+      ],
+      "n_cand": 5,
+      "composite": 63,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": 1.7412357871057882,
+      "fwd3": 3.2173200805556634,
+      "fwd5": 4.291597575531858,
+      "fwd10": null,
+      "breadth": 0.6551856840484895,
+      "lim_up": 150
+    },
+    {
+      "date": "2026-08-05",
+      "incident": true,
+      "can_buy": "YES",
+      "position_pct": 65.0,
+      "l7": 42,
+      "candidates": [
+        {
+          "tier": "A",
+          "name": "消费电子",
+          "sector": "消费电子"
+        },
+        {
+          "tier": "A",
+          "name": "软件开发",
+          "sector": "软件开发"
+        },
+        {
+          "tier": "A",
+          "name": "工业金属",
+          "sector": "工业金属"
+        },
+        {
+          "tier": "LINE",
+          "name": "港口航运",
+          "sector": "港口航运"
+        },
+        {
+          "tier": "LINE",
+          "name": "消费电子",
+          "sector": "消费电子"
+        },
+        {
+          "tier": "LINE",
+          "name": "软件开发",
+          "sector": "软件开发"
+        },
+        {
+          "tier": "LINE",
+          "name": "工业金属",
+          "sector": "工业金属"
+        },
+        {
+          "tier": "LINE",
+          "name": "互联网电商",
+          "sector": "互联网电商"
+        },
+        {
+          "tier": "LINE",
+          "name": "教育",
+          "sector": "教育"
+        },
+        {
+          "tier": "LINE",
+          "name": "IT服务",
+          "sector": "IT服务"
+        },
+        {
+          "tier": "LINE",
+          "name": "贵金属",
+          "sector": "贵金属"
+        }
+      ],
+      "n_cand": 3,
+      "composite": 73,
+      "verdict": "谨慎参与",
+      "final_w": 0.5,
+      "fwd1": 0.5398338997382179,
+      "fwd3": 2.8972555856407567,
+      "fwd5": 3.736135422094322,
+      "fwd10": null,
+      "breadth": 0.6587805347182151,
+      "lim_up": 114
+    },
+    {
+      "date": "2026-08-06",
+      "incident": true,
+      "can_buy": "YES",
+      "position_pct": 40.0,
+      "l7": 63,
+      "candidates": [
+        {
+          "tier": "A",
+          "name": "贵金属",
+          "sector": "贵金属"
+        },
+        {
+          "tier": "B",
+          "name": "通信设备",
+          "sector": "通信设备"
+        },
+        {
+          "tier": "C",
+          "name": "燃气",
+          "sector": "燃气"
+        },
+        {
+          "tier": "LINE",
+          "name": "种植业与林业",
+          "sector": "种植业与林业"
+        },
+        {
+          "tier": "LINE",
+          "name": "贵金属",
+          "sector": "贵金属"
+        },
+        {
+          "tier": "LINE",
+          "name": "汽车服务及其他",
+          "sector": "汽车服务及其他"
+        },
+        {
+          "tier": "LINE",
+          "name": "包装印刷",
+          "sector": "包装印刷"
+        },
+        {
+          "tier": "LINE",
+          "name": "电子化学品",
+          "sector": "电子化学品"
+        },
+        {
+          "tier": "LINE",
+          "name": "燃气",
+          "sector": "燃气"
+        },
+        {
+          "tier": "LINE",
+          "name": "通信设备",
+          "sector": "通信设备"
+        },
+        {
+          "tier": "LINE",
+          "name": "煤炭开采加工",
+          "sector": "煤炭开采加工"
+        }
+      ],
+      "n_cand": 3,
+      "composite": 59,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": 0.9060967434012746,
+      "fwd3": 1.9563192133581264,
+      "fwd5": 2.1111324235954854,
+      "fwd10": null,
+      "breadth": 0.5067307692307692,
+      "lim_up": 96
+    },
+    {
+      "date": "2026-08-07",
+      "incident": true,
+      "can_buy": "YES",
+      "position_pct": 40.0,
+      "l7": 59,
+      "candidates": [
+        {
+          "tier": "A",
+          "name": "工业金属",
+          "sector": "工业金属"
+        },
+        {
+          "tier": "A",
+          "name": "小金属",
+          "sector": "小金属"
+        },
+        {
+          "tier": "A",
+          "name": "化学制药",
+          "sector": "化学制药"
+        },
+        {
+          "tier": "A",
+          "name": "医疗器械",
+          "sector": "医疗器械"
+        },
+        {
+          "tier": "LINE",
+          "name": "工业金属",
+          "sector": "工业金属"
+        },
+        {
+          "tier": "LINE",
+          "name": "小金属",
+          "sector": "小金属"
+        },
+        {
+          "tier": "LINE",
+          "name": "化学制药",
+          "sector": "化学制药"
+        },
+        {
+          "tier": "LINE",
+          "name": "医疗器械",
+          "sector": "医疗器械"
+        },
+        {
+          "tier": "LINE",
+          "name": "建筑材料",
+          "sector": "建筑材料"
+        },
+        {
+          "tier": "LINE",
+          "name": "医疗服务",
+          "sector": "医疗服务"
+        },
+        {
+          "tier": "LINE",
+          "name": "生物制品",
+          "sector": "生物制品"
+        },
+        {
+          "tier": "LINE",
+          "name": "贵金属",
+          "sector": "贵金属"
+        }
+      ],
+      "n_cand": 4,
+      "composite": 63,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": 1.4257484520460828,
+      "fwd3": 2.252631684153461,
+      "fwd5": 1.3780460112052806,
+      "fwd10": null,
+      "breadth": 0.5123029603998462,
+      "lim_up": 85
+    },
+    {
+      "date": "2026-08-10",
+      "incident": true,
+      "can_buy": "YES",
+      "position_pct": 65.0,
+      "l7": 46,
+      "candidates": [
+        {
+          "tier": "B",
+          "name": "服装家纺",
+          "sector": "服装家纺"
+        },
+        {
+          "tier": "B",
+          "name": "饮料制造",
+          "sector": "饮料制造"
+        },
+        {
+          "tier": "C",
+          "name": "游戏",
+          "sector": "游戏"
+        },
+        {
+          "tier": "LINE",
+          "name": "服装家纺",
+          "sector": "服装家纺"
+        },
+        {
+          "tier": "LINE",
+          "name": "游戏",
+          "sector": "游戏"
+        },
+        {
+          "tier": "LINE",
+          "name": "饮料制造",
+          "sector": "饮料制造"
+        },
+        {
+          "tier": "LINE",
+          "name": "食品加工制造",
+          "sector": "食品加工制造"
+        },
+        {
+          "tier": "LINE",
+          "name": "农化制品",
+          "sector": "农化制品"
+        },
+        {
+          "tier": "LINE",
+          "name": "贵金属",
+          "sector": "贵金属"
+        },
+        {
+          "tier": "LINE",
+          "name": "医疗服务",
+          "sector": "医疗服务"
+        },
+        {
+          "tier": "LINE",
+          "name": "煤炭开采加工",
+          "sector": "煤炭开采加工"
+        }
+      ],
+      "n_cand": 3,
+      "composite": 60,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": -0.3795452036313707,
+      "fwd3": -0.22827883258812465,
+      "fwd5": null,
+      "fwd10": null,
+      "breadth": 0.7446685878962536,
+      "lim_up": 114
+    },
+    {
+      "date": "2026-08-11",
+      "incident": true,
+      "can_buy": "NO",
+      "position_pct": 26.0,
+      "l7": 73,
+      "candidates": [
+        {
+          "tier": "C",
+          "name": "光伏设备",
+          "sector": "光伏设备"
+        },
+        {
+          "tier": "C",
+          "name": "汽车服务及其他",
+          "sector": "汽车服务及其他"
+        },
+        {
+          "tier": "LINE",
+          "name": "电机",
+          "sector": "电机"
+        },
+        {
+          "tier": "LINE",
+          "name": "环保设备",
+          "sector": "环保设备"
+        },
+        {
+          "tier": "LINE",
+          "name": "化学制药",
+          "sector": "化学制药"
+        },
+        {
+          "tier": "LINE",
+          "name": "影视院线",
+          "sector": "影视院线"
+        },
+        {
+          "tier": "LINE",
+          "name": "生物制品",
+          "sector": "生物制品"
+        },
+        {
+          "tier": "LINE",
+          "name": "光伏设备",
+          "sector": "光伏设备"
+        },
+        {
+          "tier": "LINE",
+          "name": "汽车服务及其他",
+          "sector": "汽车服务及其他"
+        },
+        {
+          "tier": "LINE",
+          "name": "油气开采及服务",
+          "sector": "油气开采及服务"
+        }
+      ],
+      "n_cand": 2,
+      "composite": 50,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": 1.1993569853856911,
+      "fwd3": 0.333780165765285,
+      "fwd5": null,
+      "fwd10": null,
+      "breadth": 0.2985590778097983,
+      "lim_up": 65
+    },
+    {
+      "date": "2026-08-12",
+      "incident": true,
+      "can_buy": "YES",
+      "position_pct": 65.0,
+      "l7": 40,
+      "candidates": [],
+      "n_cand": 0,
+      "composite": 70,
+      "verdict": "谨慎参与",
+      "final_w": 0.5,
+      "fwd1": -1.0350997614289148,
+      "fwd3": null,
+      "fwd5": null,
+      "fwd10": null,
+      "breadth": 0.741402497598463,
+      "lim_up": 100
+    },
+    {
+      "date": "2026-08-13",
+      "incident": true,
+      "can_buy": "NO",
+      "position_pct": 30.0,
+      "l7": 79,
+      "candidates": [
+        {
+          "tier": "C",
+          "name": "计算机设备",
+          "sector": "计算机设备"
+        },
+        {
+          "tier": "LINE",
+          "name": "化学制药",
+          "sector": "化学制药"
+        },
+        {
+          "tier": "LINE",
+          "name": "医药商业",
+          "sector": "医药商业"
+        },
+        {
+          "tier": "LINE",
+          "name": "生物制品",
+          "sector": "生物制品"
+        },
+        {
+          "tier": "LINE",
+          "name": "中药",
+          "sector": "中药"
+        },
+        {
+          "tier": "LINE",
+          "name": "医疗器械",
+          "sector": "医疗器械"
+        },
+        {
+          "tier": "LINE",
+          "name": "计算机设备",
+          "sector": "计算机设备"
+        },
+        {
+          "tier": "LINE",
+          "name": "电力",
+          "sector": "电力"
+        },
+        {
+          "tier": "LINE",
+          "name": "医疗服务",
+          "sector": "医疗服务"
+        }
+      ],
+      "n_cand": 1,
+      "composite": 45,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": 0.1816616431905338,
+      "fwd3": null,
+      "fwd5": null,
+      "fwd10": null,
+      "breadth": 0.2080691642651297,
+      "lim_up": 67
+    },
+    {
+      "date": "2026-08-14",
+      "incident": true,
+      "can_buy": "YES",
+      "position_pct": 40.0,
+      "l7": 61,
+      "candidates": [
+        {
+          "tier": "B",
+          "name": "通信设备",
+          "sector": "通信设备"
+        },
+        {
+          "tier": "C",
+          "name": "综合",
+          "sector": "综合"
+        },
+        {
+          "tier": "C",
+          "name": "互联网电商",
+          "sector": "互联网电商"
+        },
+        {
+          "tier": "LINE",
+          "name": "综合",
+          "sector": "综合"
+        },
+        {
+          "tier": "LINE",
+          "name": "小金属",
+          "sector": "小金属"
+        },
+        {
+          "tier": "LINE",
+          "name": "环保设备",
+          "sector": "环保设备"
+        },
+        {
+          "tier": "LINE",
+          "name": "互联网电商",
+          "sector": "互联网电商"
+        },
+        {
+          "tier": "LINE",
+          "name": "通信服务",
+          "sector": "通信服务"
+        },
+        {
+          "tier": "LINE",
+          "name": "通信设备",
+          "sector": "通信设备"
+        },
+        {
+          "tier": "LINE",
+          "name": "IT服务",
+          "sector": "IT服务"
+        },
+        {
+          "tier": "LINE",
+          "name": "游戏",
+          "sector": "游戏"
+        }
+      ],
+      "n_cand": 3,
+      "composite": 63,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": null,
+      "fwd3": null,
+      "fwd5": null,
+      "fwd10": null,
+      "breadth": 0.44553314121037463,
+      "lim_up": 67
+    },
+    {
+      "date": "2026-08-17",
+      "incident": false,
+      "composite": 64,
+      "verdict": "不交易",
+      "final_w": 0.0,
+      "fwd1": null,
+      "fwd3": null,
+      "fwd5": null,
+      "fwd10": null,
+      "breadth": 0.7816644243705555,
+      "lim_up": null
+    }
+  ]
+}
