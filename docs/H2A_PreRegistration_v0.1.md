@@ -1,8 +1,16 @@
-# H2-A Pre-Registration v0.1（预登记方案，冻结，未运行）
+# H2-A Pre-Registration v0.1（预登记方案，已执行 · FAIL · 封存）
 
 > 本文件与 `backend/output/research_contracts/RC-H2A-PREREG-v0.1.json` 共同构成 H2-A 的预登记契约。
 > 状态：**PRE-REGISTRATION（已登记，未运行）**——本步骤不写代码、不算特征、不读取 E2 结果、不跑任何实验。
 > 原则：**先登记，后运行。** 预登记文件修改时间必须早于 H2-A 首次运行时间。
+
+> ⚠️ **执行状态更新（2026-08-19 追加 · 不修改下方 §0–§9 原始预登记设计）**
+> - **Systematic Research Lab · Experiment #001**
+> - 执行：**EXECUTED 2026-08-14T16:45:19Z** · 结果：**FAIL** · **REPRODUCED 2026-08-19（字节级一致，确定性可复现）**
+> - 原始登记时状态标签为「未运行」（保留上文原句仅供溯源）；原始预登记文件 mtime = 1786725903（≈2026-08-13 冻结）。
+> - 产物：`backend/output/research_contracts/h2a_observation_v0_1.json`（含首次运行）；复现备份：`h2a_observation_v0_1.firstrun.bak`。
+> - FAIL 原因：3 个冻结 Archetype 未能分离样本（A=202/210、B=0、C=8）；observed max Lift=1.029 低于 permutation null 均值 1.156（empirical_percentile=40.7%）→ 无超出随机标签的证据 → 终止 E2-conditioned Exit 研究线。
+> - **封存声明（P0）**：H2-A 正式冻结。禁止重新调参、禁止重新定义 Archetype、禁止重新寻找 E2；不进 H2-B / OOS / Robustness / 生产。下方 §0–§9 设计保持冻结未改。
 
 ---
 

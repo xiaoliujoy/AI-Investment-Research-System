@@ -3,7 +3,7 @@
 > 配套 `docs/EQ1_PreRegistration_v0.1.md`（EQ-1 v0.1，已 OBSERVATION）、`docs/EQ1R_Risk_Normalized_Robustness_Specification_Review_v0.1.md`（EQ-1R v0.1，已 OBSERVATION）。
 > 本文只解决 **「ETD → IAE → Giveback 是否构成一条可识别的路径机制关联」** 的规格审查。
 > **不写代码、不跑 210 笔数据、不对任何参数做数据驱动调优。**
-> 状态：经用户 2026-08-15 枢轴决策批准进入「路径机制研究」（可信度中高 ~85%），明确**先于**参数敏感性 v0.2 与 H4 深挖。本文为 Spec Review，待用户审阅后进入 `EQ-1M Pre-Registration v0.1`，再 `--check` → Code → Compile → Gate 0 → Run。
+> 状态：经用户 2026-08-15 枢轴决策批准进入「路径机制研究」（可信度中高 ~85%），明确**先于**参数敏感性 v0.2 与 H4 深挖。本文为 Spec Review，待用户审阅后进入 `EQ-1M Pre-Registration v0.1`，再 `--check` → Code → Compile → Gate 0 → Run。**已于 2026-08-15T15:06 执行（`eq1m_observation_v0_1.json`，decision=OBSERVATION），状态升级为 EXECUTED · OBSERVATION · ARCHIVED；原规格设计未改。**
 
 ---
 

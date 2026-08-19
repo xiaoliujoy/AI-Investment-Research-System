@@ -1,7 +1,7 @@
 # EQ-1 Pre-Registration v0.1
 
 > 配套 `docs/EQ1_Methodology_Review_v0.1.1.md` 与 `docs/EQ1_CP_D_Specification_Review_v0.1.md`。
-> **状态：FROZEN · NOT RUN。** 本文为预登记，冻结后未经运行。
+> **状态：EXECUTED · OBSERVATION · ARCHIVED。** 本文预登记已于 2026-08-15T05:05 执行（`eq1_observation_v0_1.json`，decision=OBSERVATION，按预登记纪律「第一次 Run 只描述数据」故无 PASS/FAIL）。原状态行「FROZEN · NOT RUN」保留仅供溯源，不代表实际状态。实验设计（§0–§9 / Gate 0 令牌）一字未改。
 > 机器可读契约：`backend/output/research_contracts/RC-EQ1-PREREG-v0.1.json`（`eq1_result = PENDING`）。
 > 运行时纪律：Gate 0 冻结令牌校验 → Code → `py_compile` → Run；**第一次 Run 只允许回答「数据是什么」，不回答「应如何交易」**。
 

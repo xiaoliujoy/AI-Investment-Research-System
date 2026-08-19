@@ -3,7 +3,7 @@
 > 配套 `docs/EQ1_PreRegistration_v0.1.md`（EQ-1 v0.1，已 OBSERVATION）与 `docs/EQ1_Methodology_Review_v0.1.1.md`。
 > 本文只解决 **「IAE→Giveback 强关系是否由 initial risk / stop distance 这个尺度变量制造」** 的稳健性检验规格。
 > **不写代码、不跑 142 笔数据、不对任何参数做数据驱动调优。**
-> 状态：经用户 2026-08-15 审阅，4 项方法学修正已落盘（seed=`20260816` 冻结 / `P&L_norm`=Secondary economic diagnostic / B 收紧为风险尺度敏感性检查且 A·B·C 联合解释 / Fisher-z 标为 approximation）；**具备正式冻结条件**，进入 `EQ-1R Pre-Registration v0.1`，再 Code → Compile → Gate 0 → Run。
+> 状态：经用户 2026-08-15 审阅，4 项方法学修正已落盘（seed=`20260816` 冻结 / `P&L_norm`=Secondary economic diagnostic / B 收紧为风险尺度敏感性检查且 A·B·C 联合解释 / Fisher-z 标为 approximation）；**具备正式冻结条件**，进入 `EQ-1R Pre-Registration v0.1`，再 Code → Compile → Gate 0 → Run。**已于 2026-08-15T14:12 执行（`eq1r_observation_v0_1.json`，decision=OBSERVATION），状态升级为 EXECUTED · OBSERVATION · ARCHIVED；原规格设计未改。**
 
 ---
 
