@@ -140,8 +140,9 @@ backend/test_constitution.py
 archive/test_plans_*.json
 archive/*_backup.json
 
-# 个人 IP 内容创作产物：交易笔记口播稿（品牌内容，不随代码仓库发布；md/txt 均排除）
+# 个人 IP 内容创作产物：交易笔记口播稿、社媒知识卡片（品牌内容，不随代码仓库发布；md/txt 均排除）
 content/交易笔记_*
+content/*知识卡片*
 
 # 运行/个人日志（含个人动态 IP，不公开）
 archive/*.log

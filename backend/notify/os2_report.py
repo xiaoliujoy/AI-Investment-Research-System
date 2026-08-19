@@ -843,6 +843,10 @@ def render_html(memo):
     ga_sec = _sec("全球资产观察", "Global Asset Watch · 商品+CIO", "P1",
                   _global_asset_inner(memo, wechat=False), cls="ga")
 
+    # ── 外围参考：30Y 美债黑天鹅观察（纯展示层，读观察快照，零评分影响）──
+    ust_sec = _sec("外围参考", "External · 美债黑天鹅观察", "P1",
+                   _ust_yield_observe())
+
     # ── ⑦ 系统学习 ──
     lr = memo.learning or {}
     da = lr.get("dimension_accuracy") or {}
@@ -933,7 +937,7 @@ def render_html(memo):
             f'<meta name="viewport" content="width=device-width,initial-scale=1">'
             f'<title>A股 Trading OS · {_esc(memo.trade_date)}</title><style>{CSS}</style></head>'
             f'<body><div class="wrap">{top}{cockpit}{exec_sec}{health_sec}{pf_sec}{dec_sec}{watch_sec}{cand_sec}{leader_sec}'
-            f'{why_sec}{ga_sec}{risk_sec}{learn_sec}{alpha_sec}{gold_sec}{app_sec}'
+            f'{why_sec}{ga_sec}{ust_sec}{risk_sec}{learn_sec}{alpha_sec}{gold_sec}{app_sec}'
             f'<div class="foot">Trading OS · 唯一裁决 · 驾驶舱首屏 · 由个人AI研投系统生成 · 仅供参考，买卖决策以人工看图为准</div>'
             f'</div></body></html>')
 
@@ -1100,6 +1104,63 @@ def _global_asset_inner(memo, wechat=False):
         note_html = f'<div class="ga-note">{note}</div>'
 
     return asset_table + risk_sec + env_line + rank_sec + note_html
+
+
+def _ust_yield_observe():
+    """外围参考：30Y 美债收益率观察卡（纯展示层，读观察快照 JSON，零评分影响）。
+
+    数据源：output/archive/ust_yield_snapshots/ust_yield_snapshot_*.json
+    （美国财政部官方每日收盘收益率，ust_yield_observer.py 生成）。
+    只展示，不参与任何评分/权重/裁决。
+    """
+    import glob as _glob
+    import json as _json
+    snap_dir = os.path.join(ROOT, "output", "archive", "ust_yield_snapshots")
+    snaps = sorted(_glob.glob(os.path.join(snap_dir, "ust_yield_snapshot_*.json")))
+    if not snaps:
+        return ('<div style="font-size:13px;color:#8a96a3;">'
+                '美债观察快照未生成：先运行 backend/os_layers/ust_yield_observer.py</div>')
+    try:
+        s = _json.load(open(snaps[-1], encoding="utf-8"))
+    except Exception as e:
+        return f'<div style="font-size:13px;color:#cf3b2f;">美债观察快照读取失败: {_esc(e)}</div>'
+    if s.get("status") != "OK":
+        return (f'<div style="font-size:13px;color:#cf3b2f;">美债观察快照状态 '
+                f'{_esc(s.get("status"))}（{_esc(s.get("failure_stage", ""))}）</div>')
+    c = s["curve"]
+    state = s.get("state", "NORMAL")
+    state_cn = {"BLACK_SWAN": "黑天鹅区（>5.30 · 2007-06 以来新高）",
+                "ALERT": "警戒区（5.00~5.30）",
+                "ELEVATED": "偏高区（4.50~5.00）",
+                "NORMAL": "常态区（≤4.50）"}.get(state, state)
+    color = {"BLACK_SWAN": "#cf3b2f", "ALERT": "#c0392b", "ELEVATED": "#c79a16",
+             "NORMAL": "#1a8a4f"}.get(state, "#8a96a3")
+    y30, y10, y2 = c.get("y30"), c.get("y10"), c.get("y2")
+    spread = c.get("spread_30y_10y")
+    chg = s.get("change_from_prev_snapshot_bp")
+    chg_txt = f"{chg:+.1f} bp" if chg is not None else "—"
+    band = s.get("y30_year_band", {})
+    band_txt = f"{band.get('pct_in_year')}%（区间 {band.get('low')}~{band.get('high')}%）"
+    dstr = f"{c.get('date')} · 美国财政部官方收盘"
+    rows = ""
+    for k, v in [("30Y", f"{y30}%"), ("10Y", f"{y10}%"), ("2Y", f"{y2}%"),
+                 ("30Y-10Y", spread if spread is not None else "—"),
+                 ("较昨日", chg_txt), ("年内分位", band_txt)]:
+        rows += (f'<div style="padding:5px 0;border-bottom:1px dashed #eef1f5;font-size:14px;">'
+                 f'<span style="display:inline-block;min-width:64px;font-weight:700;color:#2f7dac;">{_esc(k)}</span>'
+                 f'<span>{_esc(v)}</span></div>')
+    rows += (f'<div style="padding:5px 0;border-bottom:1px dashed #eef1f5;font-size:14px;">'
+             f'<span style="display:inline-block;min-width:64px;font-weight:700;color:#2f7dac;">状态</span>'
+             f'<b style="color:{color};">{_esc(state_cn)}</b></div>'
+             f'<div style="padding:5px 0;font-size:14px;">'
+             f'<span style="display:inline-block;min-width:64px;font-weight:700;color:#2f7dac;">数据</span>'
+             f'<span>{_esc(dstr)}</span></div>')
+    return (f'<div style="background:#fff8f6;border-left:3px solid {color};padding:8px 12px;border-radius:6px;">'
+            f'<div style="font-size:12px;font-weight:700;color:{color};margin-bottom:4px;">'
+            f'30Y 无风险利率锚 · {_esc(state)}</div>{rows}'
+            f'<div style="font-size:12px;color:#8a96a3;margin-top:6px;">'
+            f'利率上行 → 贴现率抬升、高估值成长承压；等效加息、分流股市资金、抬高融资成本。'
+            f'观察层数据，非交易信号。</div></div>')
 
 
 def render_wechat_html(memo):
@@ -1277,6 +1338,10 @@ def render_wechat_html(memo):
     ga_sec = _wx_sec("全球资产观察", "Global Asset Watch", "P1",
                      _global_asset_inner(memo, wechat=True))
 
+    # ── 外围参考：30Y 美债黑天鹅观察（纯展示层，读观察快照，零评分影响）──
+    ust_sec = _wx_sec("外围参考", "External · 美债黑天鹅观察", "P1",
+                      _ust_yield_observe())
+
     # ── 系统学习 ──
     lr = memo.learning or {}
     da = lr.get("dimension_accuracy") or {}
@@ -1374,7 +1439,7 @@ def render_wechat_html(memo):
     return (f'<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8">'
             f'<title>A股 Trading OS · {_esc(memo.trade_date)}</title></head><body>'
             f'{intro}{top}{cockpit}{exec_sec}{health_sec}{pf_sec}{dec_sec}{watch_sec}{cand_sec}{leader_sec}'
-            f'{why_sec}{ga_sec}{risk_sec}{learn_sec}{alpha_sec}{gold_wx_sec}{app_sec}{footer}'
+            f'{why_sec}{ga_sec}{ust_sec}{risk_sec}{learn_sec}{alpha_sec}{gold_wx_sec}{app_sec}{footer}'
             f'</body></html>')
 
 

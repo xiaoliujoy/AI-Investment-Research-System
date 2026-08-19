@@ -165,6 +165,14 @@ def detect_contradiction(ctx):
     if _LEVEL.get(final, 0) >= 2:
         return None, ""
 
+    # 看多氛围闸门：IC 偏多 或 上涨家数过半，否则板块流入只是防御轮动/
+    # 避险切换，外围微涨只是噪音，不构成「看多表象」，触发矛盾型=标题党。
+    # 例：8.18 IC=NO + 上涨36% + 资金从半导体切向银行/种植业(防守) → 不触发。
+    ic_bullish = ctx["ic_can_buy"] in ("YES", "CAUTION")
+    breadth_bullish = ctx["rise_ratio"] is not None and ctx["rise_ratio"] > 0.5
+    if not (ic_bullish or breadth_bullish):
+        return None, ""
+
     # 优先级：板块净流入 > 委员会看多 > 外围走强 > 上涨家数过半
     if ctx["inflow_sectors"]:
         sec = ctx["inflow_sectors"][0]
@@ -204,7 +212,11 @@ def _risk_title(ctx):
         pct = int(round(ctx["rise_ratio"] * 100))
         return _t(f"上涨家数仅{pct}%，市场仍处偏弱防守周期")
     if ctx["risk_biggest"]:
-        return _t(f"{ctx['risk_biggest']}风险未解除，明日重点看风险释放")
+        # risk_biggest 在生产环境是一整句（含「——」解释），不能直接拼进标题
+        _rb = ctx["risk_biggest"].split("——")[0].split("。")[0].strip()
+        if not _rb:
+            _rb = "风险"
+        return _t(f"最大风险：{_rb}，明日重点看风险释放")
     return _t("当前宜防守，明日重点看信号确认")
 
 
@@ -222,11 +234,21 @@ def _opportunity_title(ctx):
     return None
 
 
-def _build_summary(ctx):
+def _build_summary(ctx, contradiction=False):
     md = _md(ctx["trade_date"])
     verdict_txt = {"NO": "维持空仓防守", "CAUTION": "谨慎参与", "YES": "发出进攻信号"}.get(ctx["final"], "审慎应对")
-    if ctx["inflow_sectors"]:
+    if contradiction and ctx["inflow_sectors"]:
+        # 矛盾型：现象=看多表象（板块回流），与主标题呼应
         phen = f"{ctx['inflow_sectors'][0]}板块大额回流但持续性待验证"
+    elif ctx["retreat_count"] is not None:
+        # 非矛盾型：现象=风险数据，与决策/风险型标题呼应，避免「标题说退潮、摘要说回流」
+        parts = [f"全市场{ctx['retreat_count']}个板块退潮"]
+        if ctx["rise_ratio"] is not None:
+            parts.append(f"上涨家数仅{int(round(ctx['rise_ratio'] * 100))}%")
+        phen = "，".join(parts)
+    elif ctx["rise_ratio"] is not None and ctx["rise_ratio"] < 0.5:
+        pct = int(round(ctx["rise_ratio"] * 100))
+        phen = f"上涨家数仅{pct}%，市场偏弱"
     elif ctx["risk_biggest"]:
         phen = f"最大风险为{ctx['risk_biggest']}"
     else:
@@ -242,13 +264,14 @@ def _build_summary(ctx):
 def build_titles(ctx):
     """按优先级生成 主标题 + 备选 + 摘要 + 类型。返回 dict。"""
     contradiction, surface = detect_contradiction(ctx)
+    is_contradiction = bool(contradiction)
 
     decision_t = _decision_title(ctx)
     risk_t = _risk_title(ctx)
     mainline_t = _mainline_title(ctx)
     opp_t = _opportunity_title(ctx)
 
-    if contradiction:
+    if is_contradiction:
         main_title = contradiction
         title_type = "矛盾型"
     else:
@@ -268,7 +291,7 @@ def build_titles(ctx):
     return {
         "main_title": main_title,
         "backup_titles": backups,
-        "summary": _build_summary(ctx),
+        "summary": _build_summary(ctx, contradiction=is_contradiction),
         "title_type": title_type,
         "surface_signal": surface,
         "report_date": ctx["trade_date"],
