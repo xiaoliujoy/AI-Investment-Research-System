@@ -42,6 +42,7 @@ PY = _VENV_PY if os.path.exists(_VENV_PY) else sys.executable
 STEPS = [
     ("step1_数据采集", "daily_collect.py", 2),             # Data OS：板块主线+市值回填（统一采集入口）
     ("step1b_技术回填", "tech_fill.py", 0),                # 本地回填 high_20d/ma/量比：确保 latest_date() 推进到最新交易日（防日期卡死）
+    ("step1b2_派生表补齐", "build_derived_tables.py", 0),  # 本地从 stock_daily 聚合 sector_daily/market_daily/limit_up_daily；必须在 tech_fill 之后（sector_daily.cm20_count 依赖 ma20），幂等自守卫
     ("step2_八层决策树", "decision_tree.py", 0),
     ("step2b_决策简报(总指挥)", "run_brain_report.py", 0),  # brain 推理链+L0叙事+决策结论
     ("step2b2_Ledger记录", "write_decision_ledger.py", 0), # v0.2 Phase 1B/1C：Decision Ledger 独立步骤（读既有 brain_report，run_id 幂等，不重复写）
