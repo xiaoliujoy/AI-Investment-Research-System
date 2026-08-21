@@ -160,7 +160,10 @@ def detect_contradiction(ctx):
     且标题点出该表象。避免把「系统日常保守」包装成「矛盾」。
     """
     final = ctx["final"]
-    if final not in ("NO", "CAUTION"):
+    # 矛盾型仅当系统「否决」看多表象时成立（最终裁决=NO）。CAUTION 是谨慎认同，
+    # 并非否决，建议仓位 50-80% 本身即参与，不构成标题级认知冲突。
+    # 例：8.20 IC=YES + 上涨76% + 最终CAUTION(仓位50-80%) → 不触发，走决策型。
+    if final != "NO":
         return None, ""
     if _LEVEL.get(final, 0) >= 2:
         return None, ""
@@ -214,6 +217,9 @@ def _risk_title(ctx):
     if ctx["risk_biggest"]:
         # risk_biggest 在生产环境是一整句（含「——」解释），不能直接拼进标题
         _rb = ctx["risk_biggest"].split("——")[0].split("。")[0].strip()
+        # 源数据 bug 防护：rise_ratio>=0.5 时「上涨家数仅X%」应为「上涨家数X%」
+        if ctx["rise_ratio"] is not None and ctx["rise_ratio"] >= 0.5:
+            _rb = _rb.replace("上涨家数仅", "上涨家数")
         if not _rb:
             _rb = "风险"
         return _t(f"最大风险：{_rb}，明日重点看风险释放")
@@ -244,7 +250,10 @@ def _build_summary(ctx, contradiction=False):
         # 非矛盾型：现象=风险数据，与决策/风险型标题呼应，避免「标题说退潮、摘要说回流」
         parts = [f"全市场{ctx['retreat_count']}个板块退潮"]
         if ctx["rise_ratio"] is not None:
-            parts.append(f"上涨家数仅{int(round(ctx['rise_ratio'] * 100))}%")
+            pct = int(round(ctx["rise_ratio"] * 100))
+            # rise_ratio>=0.5 是普涨，不能叫「仅」
+            word = "上涨家数" if ctx["rise_ratio"] >= 0.5 else "上涨家数仅"
+            parts.append(f"{word}{pct}%")
         phen = "，".join(parts)
     elif ctx["rise_ratio"] is not None and ctx["rise_ratio"] < 0.5:
         pct = int(round(ctx["rise_ratio"] * 100))
