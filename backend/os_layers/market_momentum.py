@@ -56,6 +56,7 @@ import os
 import sys
 import json
 import bisect
+import shutil
 import datetime as dt
 from collections import defaultdict
 
@@ -577,6 +578,86 @@ def save_outputs(snapshot):
     return {"latest": latest, "history": hist, "timeseries": ts_path, "md": md_path, "html": html_path}
 
 
+# ----------------------------------------------------------------------------
+# 3.5) fail-fast 守卫：关键列有效率检查（上游源表故障自动拦截）
+# ----------------------------------------------------------------------------
+# 背景：08-16 / 08-19 / 08-22 多次同型故障（上游 Google Sheet 处于 research_updating
+# 或 GOOGLEFINANCE 缓存未刷新），导出 xlsx 里 20/60/120日相对强度 大面积为 null；
+# 若照常写 latest / 追加 timeseries 会污染观察链底座。正常轮次有效率接近 100%。
+# 本守卫只做数据完整性拦截（防御代码），不改变任何模型/阈值/输出格式。
+QUALITY_THRESHOLD = 0.50   # 任一关键列有效率低于该值 -> 判定源表故障，拦截
+QUALITY_COLUMNS = ("rs20", "rs60", "rs120")
+
+
+def quality_check(snapshot):
+    """检查关键列（rs20/rs60/rs120）在宇宙内的有效率。返回 (ok, rates)。"""
+    recs = snapshot.get("records", [])
+    n = len(recs)
+    rates = {c: 0.0 for c in QUALITY_COLUMNS}
+    if n:
+        for c in QUALITY_COLUMNS:
+            valid = sum(1 for r in recs if r.get(c) is not None)
+            rates[c] = valid / n
+    ok = n > 0 and all(v >= QUALITY_THRESHOLD for v in rates.values())
+    return ok, rates
+
+
+def quarantine_bad_snapshot(snapshot, src_path, rates):
+    """源表故障自动隔离：源文件 + 坏快照入 quarantine/，生成故障报告。
+
+    铁律：不覆盖 momentum_latest.json、不追加 momentum_timeseries.jsonl。
+    """
+    d = snapshot["data_date"]
+    qu = os.path.join(OUTPUT_DIR, "quarantine", d + "_source_na")
+    os.makedirs(qu, exist_ok=True)
+    # 源文件副本（保留证据）
+    if src_path and os.path.exists(src_path):
+        try:
+            shutil.copy2(src_path, os.path.join(qu, os.path.basename(src_path)))
+        except Exception:
+            pass
+    # 坏快照 json 副本
+    with open(os.path.join(qu, "market_momentum_" + d + ".json"), "w", encoding="utf-8") as f:
+        json.dump(snapshot, f, ensure_ascii=False, indent=2, default=str)
+    # 故障报告
+    ts = timeseries_summary()
+    rate_str = "、".join(c + "=" + "{:.0%}".format(rates[c]) for c in QUALITY_COLUMNS)
+    drift = snapshot.get("replication_drift", {})
+    lines = [
+        "# 全市场动量观察 · 上游源表故障记录（" + d + "）",
+        "",
+        "- 生成时间：" + dt.datetime.now().isoformat(timespec="seconds"),
+        "- 数据日期：" + d,
+        "- 状态：**fail-fast 守卫拦截，无有效信号；latest / timeseries 未被触碰**",
+        "",
+        "## 故障现象",
+        "- 关键列有效率低于阈值 " + str(QUALITY_THRESHOLD) + "：" + rate_str,
+        "- 宇宙规模：" + str(snapshot.get("universe_size", 0)),
+        "- 档位分布：" + str(snapshot.get("tier_distribution", {})),
+        "- 复刻漂移：max=" + str(drift.get("max")) + " / min=" + str(drift.get("min")),
+        "",
+        "## 根因判断",
+        "与 08-16、08-19 同型：上游 Google Sheet 公式列（research_updating / GOOGLEFINANCE 缓存未刷新）",
+        "未返回有效数值，导出 xlsx 里相对强度列大面积为空。属上游源表问题，非本地解析 bug。",
+        "",
+        "## 处置（自动）",
+        "- 坏源表与坏快照已隔离至 `backend/output/quarantine/" + d + "_source_na/`",
+        "- `momentum_latest.json` 保持上一个有效快照不变",
+        "- `momentum_timeseries.jsonl` 未追加（累计仍 " + str(ts["snapshots"] if ts else 0) + " 条）",
+        "",
+        "## 未触碰生产链",
+        "- 未修改 run_daily / risk_guard / shadow / CIO / 任何生产评分",
+        "",
+        "## 下一步",
+        "- 等上游 TheMarketMemo / tradecat 公开表公式刷新后，次日自动化自动重试",
+        "- 兜底：本机有网时手动导出有效 xlsx 丢 `backend/imports/` 后重跑本模块",
+    ]
+    md_path = os.path.join(OUTPUT_DIR, "momentum_observation_" + d + "_source_outage.md")
+    with open(md_path, "w", encoding="utf-8") as f:
+        f.write("\n".join(lines) + "\n")
+    return {"quarantine_dir": qu, "report": md_path}
+
+
 def _to_markdown(s):
     rs = s["rotation_signal"]
     ts = timeseries_summary()
@@ -760,6 +841,20 @@ def main():
 
     print("[2/3] 构建快照 + 双模型 + 复刻校验")
     snapshot = build_snapshot(parsed)
+
+    # fail-fast 守卫：上游源表故障（关键列大面积 null）时自动隔离，不污染观察链
+    ok, rates = quality_check(snapshot)
+    if not ok:
+        rate_str = "、".join(c + "=" + "{:.0%}".format(rates[c]) for c in QUALITY_COLUMNS)
+        print("[FAIL-FAST] 失败：关键列有效率低于 " + str(QUALITY_THRESHOLD) +
+              "（" + rate_str + "），判定上游源表故障")
+        q = quarantine_bad_snapshot(snapshot, path, rates)
+        print("      已隔离: " + q["quarantine_dir"])
+        print("      故障报告: " + q["report"])
+        ts = timeseries_summary()
+        print("      momentum_latest.json 未覆盖，时间序列保持 " + str(ts["snapshots"] if ts else 0) + " 条")
+        print("      处置：等上游公式刷新后次日自动重试；或手动导出有效 xlsx 丢 backend/imports/ 后重跑")
+        sys.exit(2)
 
     print("[3/3] 写出（含时间序列累积）")
     paths = save_outputs(snapshot)

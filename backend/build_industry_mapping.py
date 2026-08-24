@@ -16,7 +16,7 @@ import requests
 from py_mini_racer import MiniRacer
 import akshare.stock_feature.stock_board_industry_ths as ths_mod
 
-DB = "C:/Users/JOY/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db"
+DB = "C:/Users/LIU/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36"
 
 

@@ -177,16 +177,14 @@ def is_mismatch(ratio):
     return ratio is not None and ratio > MISMATCH_RATIO_LIMIT
 
 
-def build_cross_check(conn, data, sdict):
-    """构造 westock concept.top 与 sector_daily TOP 的交叉验证 JSON。"""
-    date = data["date"]
-    # westock concept.top
+def _load_westock_rank(conn, date, src, rank_type):
+    """从入库表取 westock 某源某排行的板块列表（行业/概念均可）。"""
     cur = conn.execute(
         "SELECT name, net_amount_wan, net_d5_wan, net_d20_wan, change_pct "
-        "FROM sector_flow_westock WHERE date=? AND src='concept' AND rank_type='top'",
-        (date,),
+        "FROM sector_flow_westock WHERE date=? AND src=? AND rank_type=?",
+        (date, src, rank_type),
     )
-    wtop = [
+    return [
         {
             "name": n,
             "net_yi": round((net or 0) / 10000.0, 2),
@@ -196,24 +194,22 @@ def build_cross_check(conn, data, sdict):
         }
         for n, net, d5, d20, chg in cur.fetchall()
     ]
-    # sector_daily TOP10 by net_amount
-    stop = sorted(
-        [(n, v["net"], v["chg"]) for n, v in sdict.items() if v["net"] is not None],
-        key=lambda x: x[1], reverse=True,
-    )[:10]
-    stop = [{"name": n, "net_yi": round(net, 2), "chg": chg} for n, net, chg in stop]
-    # 对齐
-    aligned = []
-    divergent = []
-    suspect_alignment = []
-    mismatched = []
-    for w in wtop:
+
+
+def _align_rank_to_sector(wlist, sdict):
+    """把 westock 某排行（top/bottom）与 sector_daily 对齐，返回 (aligned, divergent, suspect, mismatched)。
+
+    对齐防护沿用既有 align / mag_ratio / is_mismatch：
+      - 量级偏离 > MISMATCH_RATIO_LIMIT 倍 → 名称错配，按未对齐剔除，不产分歧结论；
+      - 量级偏离 > MAG_RATIO_LIMIT 但 <= MISMATCH 倍 → 弱证据（方向一致不算强证据）。
+    """
+    aligned, divergent, suspect, mismatched = [], [], [], []
+    for w in wlist:
         sname = align(w["name"], sdict)
         if sname:
             snet = sdict[sname]["net"]
             same = (w["net_yi"] >= 0) == (snet is not None and snet >= 0)
             ratio = mag_ratio(w["net_yi"], snet)
-            # 极端量级偏离 = 名称错配，按未对齐处理：不进 aligned、不产生 divergent。
             if is_mismatch(ratio):
                 mismatched.append({
                     "w_name": w["name"], "s_name": sname,
@@ -232,10 +228,44 @@ def build_cross_check(conn, data, sdict):
             if not same:
                 divergent.append(w["name"])
             if not ok:
-                suspect_alignment.append({
+                suspect.append({
                     "w_name": w["name"], "s_name": sname,
                     "mag_ratio": round(ratio, 2) if ratio is not None else None,
                 })
+    return aligned, divergent, suspect, mismatched
+
+
+def build_cross_check(conn, data, sdict):
+    """构造 westock plate（行业板块）与 sector_daily（行业板块）的交叉验证 JSON。
+
+    口径修正（2026-08-22）：
+      - 交叉验证主体从 concept.top（概念板块）切换为 plate.top / plate.bottom（行业板块），
+        与 sector_daily 同为行业口径，可比性成立，消除每日恒 unaligned 假警报。
+      - concept 侧为概念板块噪音，与行业板块天然不可比，降级为"参考"不进入一致性判定分母。
+      - 对齐防护（align / mag_ratio / MISMATCH_RATIO_LIMIT）全部保留。
+    """
+    date = data["date"]
+    # westock plate.top（行业板块净流入端） + plate.bottom（行业板块净流出端）
+    wtop = _load_westock_rank(conn, date, "plate", "top")
+    wbottom = _load_westock_rank(conn, date, "plate", "bottom")
+    # sector_daily TOP10 by net_amount（行业板块，与 plate 同口径）
+    stop = sorted(
+        [(n, v["net"], v["chg"]) for n, v in sdict.items() if v["net"] is not None],
+        key=lambda x: x[1], reverse=True,
+    )[:10]
+    stop = [{"name": n, "net_yi": round(net, 2), "chg": chg} for n, net, chg in stop]
+
+    # 对齐：top 与 bottom 分别对齐（bottom 反向验证，方向判定也随之反向）
+    aligned_top, divergent_top, suspect_top, mismatched_top = _align_rank_to_sector(wtop, sdict)
+    aligned_bot, divergent_bot, suspect_bot, mismatched_bot = _align_rank_to_sector(wbottom, sdict)
+
+    # bottom 侧：westock 净流出（net_yi<0）对齐 sector_daily 净流出（net<0）才算同向；
+    # 这里 aligned_bot 的 same_dir 是按"同号"算的，净流出端同号即同向（均流出），语义正确。
+    aligned = aligned_top + aligned_bot
+    divergent = divergent_top + divergent_bot
+    suspect_alignment = suspect_top + suspect_bot
+    mismatched = mismatched_top + mismatched_bot
+
     # 一致性判定
     # 关键区分：对照基准缺失(no_baseline) != 两源分歧(divergent)。
     # sector_daily 当日无数据时不得判 divergent，否则把"数据没来"污染成"结论分歧"。
@@ -245,7 +275,7 @@ def build_cross_check(conn, data, sdict):
         note = f"sector_daily 当日({date})无数据，无法交叉验证；westock 侧已入库，待 daily_collect 补数后重跑。"
     elif not aligned:
         consistency = "unaligned"
-        note = "sector_daily 有数据但 westock concept.top 板块名全部未对齐（命名口径差异或量级错配），非方向分歧。"
+        note = "sector_daily 有数据但 westock plate 行业板块全部未对齐（命名口径差异或量级错配），非方向分歧。"
     elif all(a["same_dir"] for a in aligned):
         consistency = "consistent"
     else:
@@ -253,7 +283,8 @@ def build_cross_check(conn, data, sdict):
     strong = [a for a in aligned if a["mag_ok"]]
     out = {
         "date": date,
-        "westock_concept_top": wtop,
+        "westock_plate_top": wtop,
+        "westock_plate_bottom": wbottom,
         "sector_daily_top10": stop,
         "aligned": aligned,
         "consistency": consistency,
@@ -264,6 +295,11 @@ def build_cross_check(conn, data, sdict):
         "mismatched": mismatched,
         "mag_ratio_limit": MAG_RATIO_LIMIT,
         "mismatch_ratio_limit": MISMATCH_RATIO_LIMIT,
+        # concept 侧为概念板块噪音，不参与判定（仅记录供参考）
+        "concept_side_note": (
+            "concept（概念板块）与 sector_daily（行业板块）口径不可比，"
+            "已降级为参考噪音，不进入一致性判定分母；定主线以 plate 侧为准。"
+        ),
     }
     if mismatched:
         mnames = "、".join(f"{m['w_name']}↔{m['s_name']}({m['mag_ratio']}x)" for m in mismatched)
@@ -298,14 +334,19 @@ def update_decision_log(conn, cross):
 
 def compare_report(data, sdict):
     lines = []
-    matched = []
+    matched_plate = []
     unmatched = []
     mismatched = []
+    concept_raw = []  # 概念板块噪音，不参与任何对齐尝试
     for src in ("plate", "concept"):
         for rk in ("top", "bottom"):
             for b in data.get(src, {}).get(rk, []):
                 wname = b.get("name")
                 w_net_yi = (b.get("zljlr") or 0) / 10000.0
+                if src == "concept":
+                    # 概念板块与行业板块口径不可比，不尝试对齐，仅作为噪音记录
+                    concept_raw.append((src, rk, wname, w_net_yi))
+                    continue
                 sname = align(wname, sdict)
                 if sname:
                     sv = sdict[sname]
@@ -316,28 +357,26 @@ def compare_report(data, sdict):
                         mismatched.append((src, rk, wname, sname, w_net_yi, sv["net"], ratio))
                         unmatched.append((src, rk, wname, w_net_yi))
                         continue
-                    matched.append((src, rk, wname, sname, w_net_yi, sv["net"], same, ratio))
+                    matched_plate.append((src, rk, wname, sname, w_net_yi, sv["net"], same, ratio))
                 else:
                     unmatched.append((src, rk, wname, w_net_yi))
     lines.append(f"# 板块资金流对照报告  {data['date']}\n")
     if not sdict:
         lines.append(f"> ⚠️ sector_daily 当日无数据，本报告仅为 westock 单源快照，**未做交叉验证**。\n")
-    lines.append(f"- westock 样本: {len(matched)+len(unmatched)}；对齐命中: {len(matched)}")
-    if matched:
-        same = sum(1 for m in matched if m[6])
-        strong = sum(1 for m in matched if m[6] and mag_ok(m[7]))
-        plate = [m for m in matched if m[0] == "plate"]
-        lines.append(f"- 方向一致率: {same}/{len(matched)} = {same/len(matched)*100:.0f}%")
+    lines.append(f"- westock 样本(plate): {len(matched_plate)+len(unmatched)}；plate 对齐命中: {len(matched_plate)}")
+    # 主判定口径 = plate 侧（行业板块，与 sector_daily 同口径可比）
+    if matched_plate:
+        same = sum(1 for m in matched_plate if m[6])
+        strong = sum(1 for m in matched_plate if m[6] and mag_ok(m[7]))
+        lines.append(f"- **方向一致率（plate 侧主口径）**: {same}/{len(matched_plate)} = {same/len(matched_plate)*100:.0f}%")
         lines.append(
-            f"- **强证据**(方向一致 且 量级偏离≤{MAG_RATIO_LIMIT:g}x): {strong}/{len(matched)}"
+            f"- **强证据**(方向一致 且 量级偏离≤{MAG_RATIO_LIMIT:g}x): {strong}/{len(matched_plate)}"
         )
-        if plate:
-            p_same = sum(1 for m in plate if m[6])
-            lines.append(f"- plate 侧（口径可比，主看这一栏）: {p_same}/{len(plate)}")
         lines.append("")
+        lines.append("## plate 侧（行业板块，口径可比，主看这一栏）")
         lines.append("| westock | 类型 | westock净流入(亿) | sector_daily净流入(亿) | 量级比 | 一致 |")
         lines.append("|---|---|---|---|---|---|")
-        for src, rk, wn, sn, wn_yi, sn_yi, same, ratio in matched:
+        for src, rk, wn, sn, wn_yi, sn_yi, same, ratio in matched_plate:
             rtxt = f"{ratio:.1f}x" if ratio is not None else "n/a"
             if not mag_ok(ratio):
                 rtxt = f"⚠️{rtxt}"
@@ -347,7 +386,7 @@ def compare_report(data, sdict):
             lines.append(
                 f"| {wn} | {src}/{rk} | {wn_yi:.2f} | {sn_yi if sn_yi is not None else 'NULL'} | {rtxt} | {flag} |"
             )
-        suspects = [m for m in matched if not mag_ok(m[7])]
+        suspects = [m for m in matched_plate if not mag_ok(m[7])]
         if suspects:
             lines.append(
                 f"\n> 🟡 量级偏离>{MAG_RATIO_LIMIT:g}x 共 {len(suspects)} 项："
@@ -360,9 +399,18 @@ def compare_report(data, sdict):
             + "、".join(f"{m[2]}↔{m[3]}({m[6]:.0f}x：{m[4]:.2f}亿 vs {m[5]}亿)" for m in mismatched)
         )
     if unmatched:
-        lines.append("\n## 未对齐")
+        lines.append("\n## 未对齐（plate 侧，概念板块不在此列）")
         for src, rk, wn, wn_yi in unmatched:
             lines.append(f"- [{src}/{rk}] {wn} ({wn_yi:.2f}亿)")
+    if concept_raw:
+        lines.append("\n## 概念板块（噪音参考，不参与交叉验证）")
+        lines.append("| westock | 类型 | westock净流入(亿) |")
+        lines.append("|---|---|---|")
+        for src, rk, wn, wn_yi in concept_raw:
+            lines.append(f"| {wn} | {src}/{rk} | {wn_yi:.2f} |")
+        lines.append(
+            "\n> ℹ️ concept 为概念板块，与 sector_daily 行业板块口径不可比，不尝试对齐，仅供人工参考，不计入方向一致率分母、不污染未对齐清单。"
+        )
     return "\n".join(lines)
 
 

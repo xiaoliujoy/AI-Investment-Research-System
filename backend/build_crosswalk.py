@@ -12,7 +12,7 @@ import os
 import re
 import sqlite3
 
-DB = "C:/Users/JOY/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db"
+DB = "C:/Users/LIU/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db"
 _ML = os.path.join(os.path.dirname(__file__), "output", "sector_mainline.json")
 
 # 同花顺名 -> 东财板块名（针对模糊仍易错的少量手工覆盖）

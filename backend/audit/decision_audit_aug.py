@@ -15,7 +15,7 @@
 import json, glob, os, re, sqlite3
 from collections import defaultdict, OrderedDict
 
-ROOT = "C:/Users/JOY/WorkBuddy/个人AI研投系统"
+ROOT = "C:/Users/LIU/WorkBuddy/个人AI研投系统"
 DB   = os.path.join(ROOT, "backend/database/vibe_research.db")
 OUT  = os.path.join(ROOT, "backend/audit")
 os.makedirs(OUT, exist_ok=True)

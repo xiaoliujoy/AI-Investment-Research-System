@@ -23,8 +23,8 @@ for k in ['http_proxy', 'https_proxy', 'HTTP_PROXY', 'HTTPS_PROXY', 'all_proxy',
     os.environ.pop(k, None)
 import akshare as ak
 
-DB = "C:/Users/JOY/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db"
-OUT = "C:/Users/JOY/WorkBuddy/个人AI研投系统/backend/output"
+DB = "C:/Users/LIU/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db"
+OUT = "C:/Users/LIU/WorkBuddy/个人AI研投系统/backend/output"
 
 
 def _f(x):

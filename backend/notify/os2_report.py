@@ -1789,6 +1789,13 @@ def write(memo, path):
             logger.info("资产认知快照缺失，跳过历史落库（不影响日报）")
     except Exception as e:  # 历史持久化失败绝不影响日报产出
         logger.warning("资产认知历史落库失败（已跳过，不影响日报）：%s", e)
+    # 观察层 Red-Team 压力测试：事件驱动挂钩（产出即触发，故障完全隔离）
+    # 仅当 memo HTML 成功写盘后触发；子进程异常 / 超时一律吞掉，不阻塞日报与推送。
+    try:
+        from os_layers.redteam_trigger import trigger_redteam_poc
+        trigger_redteam_poc(path)
+    except Exception as e:  # 触发器自身任何异常都不允许上抛到主日报链路
+        logger.warning("Red-Team 挂钩调用异常（已忽略，不影响日报）：%s", e)
     return len(html_text)
 
 

@@ -1,0 +1,12 @@
+{
+  "symbol": "XAUUSD",
+  "trade_contract_size": 100.0,
+  "point": 0.01,
+  "tick_size": 0.01,
+  "tick_value": 1.0,
+  "volume_min": 0.01,
+  "volume_step": 0.01,
+  "volume_max": 100.0,
+  "spread_avg_points": 3.0,
+  "source": "OFFLINE_KNOWN_CONSTANT"
+}

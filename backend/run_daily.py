@@ -36,7 +36,7 @@ from data_freshness import build as _build_freshness
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(ROOT, "output")
 # 优先使用 venv Python（akshare/pandas 等装在 venv 中）
-_VENV_PY = "C:/Users/JOY/.workbuddy/binaries/python/envs/default/Scripts/python.exe"
+_VENV_PY = "C:/Users/LIU/.workbuddy/binaries/python/envs/default/Scripts/python.exe"
 PY = _VENV_PY if os.path.exists(_VENV_PY) else sys.executable
 
 STEPS = [

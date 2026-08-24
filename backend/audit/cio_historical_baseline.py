@@ -17,7 +17,7 @@ Signal Loss Incident (2026-08-04 ~ 2026-08-14) 保留在样本内，单独标记
 import sqlite3, json, glob, re, os
 from collections import defaultdict
 
-ROOT = "C:/Users/JOY/WorkBuddy/个人AI研投系统"
+ROOT = "C:/Users/LIU/WorkBuddy/个人AI研投系统"
 DB = os.path.join(ROOT, "backend/database/vibe_research.db")
 ARCHIVE = os.path.join(ROOT, "backend/output/archive/brain_report_2026-*.json")
 MEMO_DIR = os.path.join(ROOT, "backend/output")

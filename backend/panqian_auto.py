@@ -45,7 +45,7 @@ STATUS_FILE = os.path.join(OUT, "panqian_auto_status.json")
 LOG_FILE = os.path.join(OUT, "panqian_auto.log")
 ALERT_LOG = os.path.join(OUT, "panqian_alerts.log")
 
-_VENV_PY = "C:/Users/JOY/.workbuddy/binaries/python/envs/default/Scripts/python.exe"
+_VENV_PY = "C:/Users/LIU/.workbuddy/binaries/python/envs/default/Scripts/python.exe"
 PY = _VENV_PY if os.path.exists(_VENV_PY) else sys.executable
 
 SECTION_KEYS = ("hotspot", "announce", "global", "limit_up",

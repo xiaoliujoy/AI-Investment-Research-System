@@ -157,28 +157,40 @@ def _calc_dxy() -> dict | None:
 
 
 def get_bond_quotes() -> list[dict]:
-    """获取债券收益率。"""
+    """获取债券收益率。
+
+    BUGFIX 2026-08-21：ak.bond_zh_us_rate 的列顺序是「中国国债收益率10年」排在
+    「美国国债收益率10年」之前，旧代码按含"10"+"年"模糊匹配取第一个命中列，
+    导致 US10Y 实际写入中国 10Y 收益率（≈1.7%），而非美国 10Y（≈4.7%）。
+    现改为按国家前缀精确匹配；美国列未更新（NaN）时跳过不写，避免污染。
+    """
     import akshare as ak
-    
+    import math
+
     symbols = load_symbols()
     bonds = symbols.get("bonds", [])
-    
+
     results = []
-    
+
     for bond in symbols.get("bonds", []):
         symbol = bond["symbol"]
         name = bond["name"]
-        
+
         try:
             # 尝试获取美国国债收益率
             df = ak.bond_zh_us_rate(start_date="20260101")
-            
+
             if df is not None and not df.empty:
                 latest = df.iloc[-1]
-                # 10年期
-                cols = [c for c in latest.index if "10" in str(c) and "年" in str(c)]
-                if cols:
-                    rate = latest[cols[0]]
+                # 10年期：按国家精确匹配（美国列名="美国国债收益率10年"）
+                country = "美国" if "US" in str(symbol).upper() else "中国"
+                target_col = f"{country}国债收益率10年"
+                if target_col in latest.index:
+                    rate = latest[target_col]
+                    # NaN 视为接口未更新（美债收盘后才有当日值），跳过不写
+                    if rate is None or (isinstance(rate, float) and math.isnan(rate)):
+                        print(f"  {symbol}: 接口未返回 {target_col}（NaN），跳过")
+                        continue
                     results.append({
                         "symbol": symbol,
                         "name": name,
@@ -187,10 +199,10 @@ def get_bond_quotes() -> list[dict]:
                         "volume": 0,
                         "market_status": "closed",
                     })
-                    
+
         except Exception as e:
             print(f"  Failed to get {symbol}: {e}")
-    
+
     return results
 
 

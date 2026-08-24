@@ -22,7 +22,7 @@ import requests
 import akshare as ak
 import pandas as pd
 
-DB = "C:/Users/JOY/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db"
+DB = "C:/Users/LIU/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db"
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"
 BASE = "https://datacenter-web.eastmoney.com/api/data/v1/get?"
 
