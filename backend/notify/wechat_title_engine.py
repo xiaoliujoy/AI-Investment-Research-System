@@ -318,7 +318,7 @@ def generate_wechat_meta(memo, decision, score):
 # ═══════════════════════════════════════════════════════
 def emit_wechat_meta(memo):
     """守卫式入口：计算裁决→生成 meta→落盘+打印。任何异常都不应阻断日报。"""
-    from os2_report import compute_weighted_score, resolve_decision
+    from notify.os2_report import compute_weighted_score, resolve_decision
 
     score = compute_weighted_score(memo)
     decision = resolve_decision(memo, score)

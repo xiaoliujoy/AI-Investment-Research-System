@@ -33,6 +33,9 @@ Decision Log 交叉验证连续报 no_baseline，日报据空表空算。
 - sector_daily.net_amount 源自 stock_flow_daily，真实数据起于 2026-07-20；本脚本拒绝
   重建早于该日的 sector_daily，避免把占位值写进历史（见 build_sector_daily.py 文件头警告）。
 - 全程幂等：底层三个 build_* 脚本均为「先 DELETE 目标区间再 INSERT」。
+- 2026-08-27 修复：ma20 未就绪时**不再整体 return 2 中断**。原设计会因当日 ma20 缺失而把整轮
+  增量补齐全部跳过（三表同时缺当天）。现改为仅延后 sector_daily 的 stale 日期，
+  market_daily/limit_up_daily 照常补齐（二者不依赖 ma20）。
 """
 from __future__ import annotations
 
@@ -121,22 +124,35 @@ def main():
 
     stale = check_ma20_ready(conn, days)
     if stale:
-        print(f"⚠ 以下日期 ma20 未回填，cm20_count 会静默变全 0：{stale}")
-        print("  → 请先执行  python tech_fill.py  再重跑本脚本。")
-        if not args.dry_run:
-            conn.close()
-            return 2
+        # 2026-08-27 修复：ma20 未就绪不再整体 return 2 中断——否则仅当日 ma20 缺失就会
+        # 把整轮 30 天增量补齐（含 market_daily/limit_up_daily）全部跳过，造成三表永久缺当天。
+        # 改为：market_daily/limit_up_daily 不依赖 ma20，照常补齐；仅 sector_daily 延后 stale
+        # 日期（cm20_count 依赖 ma20，写全0 是假数据），待 ma20 就绪后下一轮自动补齐。
+        print(f"⚠ 以下日期 ma20 未回填（仅影响 sector_daily.cm20_count）：{stale}")
+        print("  → sector_daily 将延后到 ma20 就绪后补齐；market_daily/limit_up_daily 不受影响。")
+        print("  → 如需立即补齐 sector_daily，请先执行  python tech_fill.py  再重跑本脚本。")
 
     total = 0
     for table, script, flow_bound in TABLES:
         miss = missing_dates(conn, table, days)
+        deferred = []
         if flow_bound:
             blocked = [d for d in miss if d < FLOW_REAL_START]
             if blocked:
                 print(f"  [{table}] 跳过 {len(blocked)} 天（早于资金流真实起点 {FLOW_REAL_START}）")
             miss = [d for d in miss if d >= FLOW_REAL_START]
+            # sector_daily.cm20_count = COUNT(close>=ma20)，ma20 为 NULL 时该列静默变全0（假数据）。
+            # 故 ma20 未就绪的日期延后补齐，绝不写全0。
+            if stale:
+                deferred = [d for d in miss if d in set(stale)]
+                if deferred:
+                    print(f"  [{table}] 延后 {len(deferred)} 天（ma20 未就绪，避免 cm20_count 静默全0）：{deferred[0]} ~ {deferred[-1]}")
+                    miss = [d for d in miss if d not in set(stale)]
         if not miss:
-            print(f"✅ {table:<16} 无缺口")
+            if deferred:
+                print(f"  [{table}] 已延后至 ma20 就绪（不写全0 假数据），下一轮自动补齐")
+            else:
+                print(f"✅ {table:<16} 无缺口")
             continue
         print(f"🔧 {table:<16} 缺 {len(miss)} 天：{miss[0]} ~ {miss[-1]}")
         if args.dry_run:

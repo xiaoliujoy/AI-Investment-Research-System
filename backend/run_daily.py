@@ -30,6 +30,8 @@ import json
 import argparse
 import subprocess
 import datetime
+import time
+import sqlite3
 
 from data_freshness import build as _build_freshness
 
@@ -92,6 +94,44 @@ def run_script(script, retries=0, timeout=900):
     return last
 
 
+def wait_for_today_ready(max_attempts=6, backoff=20):
+    """数据就绪门：step1 采集完、step1b 技术回填前，确认最新交易日 stock_daily 已写满。
+
+    背景（2026-08-27 修复）：15:30 收盘后 TDX/akshare 当日数据有 15~60 分钟晚到窗口，
+    若 step1 在 stock_daily 当日行未写满时就结束、step1b(tech_fill) 提前跑，当日 ma20 会
+    是 NULL，进而 step1b2(build_derived_tables) 命中 ma20 检查、把派生表缺口永久留到次日。
+    本门在 step1b 前循环探测「最新交易日 stock_daily 行数 ≥ 4000」，带有限退避重试，
+    吸收数据晚到；达最大重试仍不足则放行后续步骤（派生表靠 build_derived 的延后机制自愈）。
+
+    仅校验行数（数据是否写完），不校验 ma20——ma20 就绪由 tech_fill 负责，缺失则由
+    build_derived 的非致命延后逻辑兜底，避免新上市股 ma20 合法为空导致本门死等。
+    """
+    db = os.path.join(ROOT, "database", "vibe_research.db")
+    for i in range(max_attempts):
+        td, cnt = None, 0
+        try:
+            conn = sqlite3.connect(db, timeout=30)
+            td = conn.execute("SELECT MAX(date) FROM stock_daily").fetchone()[0]
+            if td:
+                cnt = conn.execute(
+                    "SELECT COUNT(*) FROM stock_daily WHERE date=?", (td,)
+                ).fetchone()[0]
+            conn.close()
+        except Exception as e:  # noqa
+            print(f"[就绪门] 查库失败（{e}），第 {i+1}/{max_attempts} 次重试", flush=True)
+        if td and cnt >= 4000:
+            print(f"[就绪门] 最新交易日 {td} 已采集 {cnt} 行（≥4000），数据就绪，进入技术回填。",
+                  flush=True)
+            return True
+        print(f"[就绪门] 最新交易日 {td or '?'} 仅 {cnt} 行（<4000），等待数据写完…"
+              f"（{i+1}/{max_attempts}，{backoff}s 后重试）", flush=True)
+        if i < max_attempts - 1:
+            time.sleep(backoff)
+    print("[就绪门] 达最大重试仍 <4000 行，继续后续步骤（派生表会在 ma20 就绪后自动补齐）。",
+          flush=True)
+    return False
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--only", choices=["decision"], help="只跑决策树（用已有 sector_mainline.json）")
@@ -117,6 +157,10 @@ def main():
         steps = [s for s in steps if s[0] != "step3_推送看板"]
 
     for name, script, retries in steps:
+        # 数据就绪门：step1 采集完、step1b 技术回填前，确认最新交易日已写满。
+        # 吸收 15:30 收盘后数据晚到窗口，避免 tech_fill/build_derived 在当日 ma20 还是 NULL 时跑。
+        if name == "step1b_技术回填":
+            wait_for_today_ready()
         print(f"\n========== {name} ({script}) ==========", flush=True)
         r = run_script(script, retries=retries)
         r["step"] = name
