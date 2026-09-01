@@ -588,6 +588,41 @@ def save_outputs(snapshot):
 QUALITY_THRESHOLD = 0.50   # 任一关键列有效率低于该值 -> 判定源表故障，拦截
 QUALITY_COLUMNS = ("rs20", "rs60", "rs120")
 
+# 源表「元信息」tab 关键字段（读自工作簿，用于故障报告实证根因）
+META_KEYS = ("工作簿状态", "控制修订", "数据机制", "失败策略", "原作者", "相关终端-市场数据")
+
+
+def read_workbook_meta(src_path):
+    """读源表「元信息」tab，提取工作簿状态/控制修订等，故障根因从「推断」变「引用源头证据」。
+
+    仅诊断用途；读不到或非 xlsx 时返回 {}，不影响 fail-fast 判定。
+    """
+    if not src_path or not str(src_path).lower().endswith(".xlsx") or not os.path.exists(src_path):
+        return {}
+    try:
+        wb = openpyxl.load_workbook(src_path, read_only=True, data_only=True)
+        meta = {}
+        if wb.sheetnames:
+            ws = wb[wb.sheetnames[0]]
+            for row in ws.iter_rows(values_only=True):
+                if len(row) >= 2 and row[0] in META_KEYS and row[1] is not None:
+                    meta[str(row[0])] = str(row[1])[:100]
+        wb.close()
+        return meta
+    except Exception:
+        return {}
+
+
+def count_prior_failures():
+    """扫描 quarantine/ 下 *_source_na 目录，统计同型源表故障累计次数（含本轮产生的目录）。"""
+    qu_root = os.path.join(OUTPUT_DIR, "quarantine")
+    if not os.path.isdir(qu_root):
+        return 0
+    try:
+        return sum(1 for d in os.listdir(qu_root) if d.endswith("_source_na"))
+    except Exception:
+        return 0
+
 
 def quality_check(snapshot):
     """检查关键列（rs20/rs60/rs120）在宇宙内的有效率。返回 (ok, rates)。"""
@@ -602,13 +637,15 @@ def quality_check(snapshot):
     return ok, rates
 
 
-def quarantine_bad_snapshot(snapshot, src_path, rates):
+def quarantine_bad_snapshot(snapshot, src_path, rates, meta=None):
     """源表故障自动隔离：源文件 + 坏快照入 quarantine/，生成故障报告。
 
     铁律：不覆盖 momentum_latest.json、不追加 momentum_timeseries.jsonl。
+    隔离目录/报告用「运行日期」命名（源表 data_date 在连续故障期会停滞，
+    若用 data_date 命名，多日故障会互相覆盖证据；运行日期保证每日一份可追溯）。
     """
-    d = snapshot["data_date"]
-    qu = os.path.join(OUTPUT_DIR, "quarantine", d + "_source_na")
+    run_date = dt.date.today().isoformat()
+    qu = os.path.join(OUTPUT_DIR, "quarantine", run_date + "_source_na")
     os.makedirs(qu, exist_ok=True)
     # 源文件副本（保留证据）
     if src_path and os.path.exists(src_path):
@@ -617,18 +654,27 @@ def quarantine_bad_snapshot(snapshot, src_path, rates):
         except Exception:
             pass
     # 坏快照 json 副本
-    with open(os.path.join(qu, "market_momentum_" + d + ".json"), "w", encoding="utf-8") as f:
+    with open(os.path.join(qu, "market_momentum_" + run_date + ".json"), "w", encoding="utf-8") as f:
         json.dump(snapshot, f, ensure_ascii=False, indent=2, default=str)
     # 故障报告
     ts = timeseries_summary()
     rate_str = "、".join(c + "=" + "{:.0%}".format(rates[c]) for c in QUALITY_COLUMNS)
     drift = snapshot.get("replication_drift", {})
+    meta = meta or {}
+    prior = count_prior_failures()
+    meta_lines = "\n".join(
+        "- " + k + "：" + v for k, v in meta.items()
+    ) if meta else "- （源表无「元信息」tab 或读取失败，无法实证；按公式列全空判定）"
     lines = [
-        "# 全市场动量观察 · 上游源表故障记录（" + d + "）",
+        "# 全市场动量观察 · 上游源表故障记录（" + run_date + "）",
         "",
         "- 生成时间：" + dt.datetime.now().isoformat(timespec="seconds"),
-        "- 数据日期：" + d,
+        "- 运行日期：" + run_date + " ｜ 源表数据日期：" + snapshot.get("data_date", "N/A"),
         "- 状态：**fail-fast 守卫拦截，无有效信号；latest / timeseries 未被触碰**",
+        "- 同型故障累计（含本轮）：第 " + str(prior) + " 次",
+        "",
+        "## 源表元信息（读自工作簿「元信息」tab）",
+        meta_lines,
         "",
         "## 故障现象",
         "- 关键列有效率低于阈值 " + str(QUALITY_THRESHOLD) + "：" + rate_str,
@@ -637,11 +683,13 @@ def quarantine_bad_snapshot(snapshot, src_path, rates):
         "- 复刻漂移：max=" + str(drift.get("max")) + " / min=" + str(drift.get("min")),
         "",
         "## 根因判断",
-        "与 08-16、08-19 同型：上游 Google Sheet 公式列（research_updating / GOOGLEFINANCE 缓存未刷新）",
-        "未返回有效数值，导出 xlsx 里相对强度列大面积为空。属上游源表问题，非本地解析 bug。",
+        "上游工作簿处于「" + str(meta.get("工作簿状态", "未知（未读到）")) + "」状态："
+        "公式派生列（RS20/60/120、综合排名）整表未产出，导出 xlsx 里相对强度列全空。"
+        "属上游源表问题（其研究批处理 fail_closed 未完成），非本地解析 bug，"
+        "手动导出同样拿不到数值（问题在源表公式本身，不在导出通道）。",
         "",
         "## 处置（自动）",
-        "- 坏源表与坏快照已隔离至 `backend/output/quarantine/" + d + "_source_na/`",
+        "- 坏源表与坏快照已隔离至 `backend/output/quarantine/" + run_date + "_source_na/`",
         "- `momentum_latest.json` 保持上一个有效快照不变",
         "- `momentum_timeseries.jsonl` 未追加（累计仍 " + str(ts["snapshots"] if ts else 0) + " 条）",
         "",
@@ -649,10 +697,11 @@ def quarantine_bad_snapshot(snapshot, src_path, rates):
         "- 未修改 run_daily / risk_guard / shadow / CIO / 任何生产评分",
         "",
         "## 下一步",
-        "- 等上游 TheMarketMemo / tradecat 公开表公式刷新后，次日自动化自动重试",
-        "- 兜底：本机有网时手动导出有效 xlsx 丢 `backend/imports/` 后重跑本模块",
+        "- 治本：等上游 TheMarketMemo / tradecatlabs 工作簿解除 research_updating（公式列恢复）后，次日自动化自动重试",
+        "- 兜底仅适用于「无网/未抓到」型故障：本机有网时手动导出 xlsx 丢 `backend/imports/` 后重跑本模块；"
+        "对 research_updating 型故障手动导出无效",
     ]
-    md_path = os.path.join(OUTPUT_DIR, "momentum_observation_" + d + "_source_outage.md")
+    md_path = os.path.join(OUTPUT_DIR, "momentum_observation_" + run_date + "_source_outage.md")
     with open(md_path, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
     return {"quarantine_dir": qu, "report": md_path}
@@ -846,14 +895,19 @@ def main():
     ok, rates = quality_check(snapshot)
     if not ok:
         rate_str = "、".join(c + "=" + "{:.0%}".format(rates[c]) for c in QUALITY_COLUMNS)
+        meta = read_workbook_meta(path)
         print("[FAIL-FAST] 失败：关键列有效率低于 " + str(QUALITY_THRESHOLD) +
               "（" + rate_str + "），判定上游源表故障")
-        q = quarantine_bad_snapshot(snapshot, path, rates)
+        if meta.get("工作簿状态"):
+            print("      源表元信息：工作簿状态=" + meta["工作簿状态"] +
+                  " ｜ 控制修订=" + str(meta.get("控制修订", "N/A"))[:60])
+        q = quarantine_bad_snapshot(snapshot, path, rates, meta=meta)
         print("      已隔离: " + q["quarantine_dir"])
         print("      故障报告: " + q["report"])
         ts = timeseries_summary()
         print("      momentum_latest.json 未覆盖，时间序列保持 " + str(ts["snapshots"] if ts else 0) + " 条")
-        print("      处置：等上游公式刷新后次日自动重试；或手动导出有效 xlsx 丢 backend/imports/ 后重跑")
+        print("      处置：治本=等上游解除 research_updating；兜底(仅无网型故障)=" +
+              "手动导出有效 xlsx 丢 backend/imports/ 后重跑")
         sys.exit(2)
 
     print("[3/3] 写出（含时间序列累积）")
