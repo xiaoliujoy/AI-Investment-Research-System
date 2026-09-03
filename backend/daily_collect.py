@@ -59,6 +59,23 @@ STEPS = [
 # 个股日线兜底触发阈值：最新交易日 stock_daily 行数低于此值视为 tdx 跳过/缺数据
 QUOTES_FALLBACK_THRESHOLD = 4800
 
+# ── 失败可见性（P0-A1, 2026-09-03）────────────────────────────────────────
+# 原则：任何生产数据只要无法证明「新鲜、完整、时点正确」，就没有资格进入 Brain。
+# 因此采集层必须区分「关键步」与「非关键步」：
+#   - 关键步失败 → 退出码非零 → run_daily 中断 → 不产出/不推送（失败必见）
+#   - 非关键步失败 → 不阻断 A股生产链，但必须打印 DEGRADED 清单并写入 collect.log.json
+# 非关键步＝商品/全球/观察层（黄金、期货、regime），它们服务另一条资产线，
+# 其失败不应让 A股日报停摆；但绝不允许「静默 OK」。
+CRITICAL_STEPS = {
+    "tdx",                 # 通达信个股日线（无 vipdoc 时自动跳过并 rc=0）
+    "quotes_fallback",     # 东财兜底个股日线（tdx 缺失时的唯一生产源）
+    "sector",              # 板块成交额 + 资金流（方法论第一步）
+    "cap",                 # 个股市值
+    "flow",                # 个股资金流（方法论第二步）
+    "global_align",        # 跨资产快照对齐
+    "verify_completeness", # 采集后置完整性校验（见下）
+}
+
 
 def _run(name, script):
     path = os.path.join(ROOT, script)
@@ -82,12 +99,19 @@ def _run(name, script):
 
 def collect(only=None):
     log = {"ts": datetime.datetime.now().isoformat(timespec="seconds"),
-           "steps": [], "overall_ok": True, "only": only}
+           "steps": [], "overall_ok": True, "critical_ok": True,
+           "degraded": [], "only": only}
 
     def _append(r):
         log["steps"].append(r)
+        name = r.get("step")
         if not r["ok"]:
             log["overall_ok"] = False
+            # 关键步失败 → 阻断下游；非关键步失败 → 记入 degraded（可见但不阻断）
+            if name in CRITICAL_STEPS:
+                log["critical_ok"] = False
+            else:
+                log["degraded"].append(name)
 
     # 1) 个股日线：先 tdx，再东财兜底（确保在 cap 补市值之前个股行已存在）
     if only in (None, "tdx", "quotes"):
@@ -115,6 +139,12 @@ def collect(only=None):
     # 3.5d) Regime 历史验证层（Phase 1.7：逐日回溯 risk_state + 远期收益，训练 Phase 2 基础）
     if only in (None, "regime", "commodity", "align", "factor"):
         _append(ensure_regime_history())
+
+    # 4) 采集后置完整性校验（P0-A1）：证明数据「新鲜 + 完整 + 时点正确」
+    #    必须放在所有采集步之后；--only 单步跑时跳过（单步本就不完整，校验无意义）
+    if only is None:
+        _append(verify_completeness())
+
     logpath = os.path.join(OUT, "collect.log.json")
     with open(logpath, "w", encoding="utf-8") as f:
         json.dump(log, f, ensure_ascii=False, indent=2, default=str)
@@ -217,6 +247,70 @@ def ensure_global_history():
         return {"step": "global_align", "ok": False, "rc": -1, "note": str(e)[:200]}
 
 
+def verify_completeness():
+    """采集后置完整性校验（P0-A1）：证明「今天的数据确实是今天的、而且是完整的」。
+
+    为什么需要这一步：退出码只能证明「脚本没崩」，不能证明「数据是真的」。
+    历史事故（2026-08-31 广度 55% 实为 08-28 值）的根因就是——上游缺数据，
+    下游照跑，旧数据被当新数据用。退出码一路绿灯，没人知道数据是旧的。
+
+    判定规则（针对目标交易日 target）：
+      - stock_daily 行数 == 0        → 疑似非交易日（节假日/休市），不阻断，但明确记录
+      - stock_daily 行数 0 < n < 阈值 → **部分采集失败，阻断**（最危险的静默场景）
+      - stock_daily 行数 >= 阈值      → 通过
+      - stock_flow_daily 同理（阈值较小，约 5500 只）
+    """
+    import sqlite3
+    db = os.path.join(ROOT, "database", "vibe_research.db")
+    target = _target_trade_date()
+    FLOW_MIN = 4000
+    checks, failed, notes = [], [], []
+    try:
+        con = sqlite3.connect(db)
+        cur = con.cursor()
+        cur.execute("SELECT COUNT(*) FROM stock_daily WHERE date=?", (target,))
+        n_quote = cur.fetchone()[0]
+        cur.execute("SELECT COUNT(*) FROM stock_flow_daily WHERE date=?", (target,))
+        n_flow = cur.fetchone()[0]
+        con.close()
+    except Exception as e:
+        return {"step": "verify_completeness", "ok": False, "rc": -1,
+                "note": f"完整性校验无法执行（DB 不可读）: {type(e).__name__}: {str(e)[:120]}"}
+
+    # ── 个股日线 ──
+    if n_quote == 0:
+        checks.append({"check": "stock_daily", "rows": 0, "status": "skip"})
+        notes.append(f"{target} stock_daily 0 行 → 疑似非交易日(节假日/休市)，"
+                     f"不阻断但下游若沿用旧快照需人工确认")
+    elif n_quote < QUOTES_FALLBACK_THRESHOLD:
+        checks.append({"check": "stock_daily", "rows": n_quote,
+                       "min": QUOTES_FALLBACK_THRESHOLD, "status": "fail"})
+        failed.append(f"stock_daily {target} 仅 {n_quote} 行 "
+                      f"(<{QUOTES_FALLBACK_THRESHOLD}) → 部分采集失败")
+    else:
+        checks.append({"check": "stock_daily", "rows": n_quote, "status": "pass"})
+
+    # ── 个股资金流 ──
+    if n_flow == 0:
+        checks.append({"check": "stock_flow_daily", "rows": 0, "status": "skip"})
+        notes.append(f"{target} stock_flow_daily 0 行，疑似非交易日")
+    elif n_flow < FLOW_MIN:
+        checks.append({"check": "stock_flow_daily", "rows": n_flow,
+                       "min": FLOW_MIN, "status": "fail"})
+        failed.append(f"stock_flow_daily {target} 仅 {n_flow} 行 (<{FLOW_MIN})")
+    else:
+        checks.append({"check": "stock_flow_daily", "rows": n_flow, "status": "pass"})
+
+    return {"step": "verify_completeness",
+            "ok": not failed,
+            "rc": 0 if not failed else 1,
+            "target_date": target,
+            "checks": checks,
+            "note": ("; ".join(failed) if failed
+                     else f"完整性校验通过：stock_daily={n_quote} stock_flow_daily={n_flow}"
+                          + (" | " + "; ".join(notes) if notes else ""))}
+
+
 def ensure_commodity_health():
     """商品数据质量层（Commodity OS Phase 0.5 入口）。
 
@@ -296,7 +390,33 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser(description="统一数据采集（Data OS 入口）")
     ap.add_argument("--only", choices=["tdx", "sector", "cap", "flow", "quotes", "align", "commodity", "health", "factor"],
                     help="只跑指定采集步骤")
+    ap.add_argument("--strict", action="store_true",
+                    help="严格模式：任何一步（含非关键步）失败都返回非零退出码")
     args = ap.parse_args()
     log = collect(only=args.only)
-    status = "OK" if log["overall_ok"] else "FAIL"
-    print(f"collect {status}  steps={len(log['steps'])}  log={os.path.join(OUT, 'collect.log.json')}")
+
+    # ── 失败可见（P0-A1）：退出码必须真实反映成败 ──────────────────────────
+    # 旧逻辑无论成败都 rc=0 → run_daily 标 OK → 下游拿旧数据继续跑 → 静默产出错误 memo。
+    # 现在：关键步失败 rc=1；--strict 下任何步失败 rc=1。
+    critical_ok = log.get("critical_ok", log["overall_ok"])  # 兼容旧日志格式
+    failed = [s["step"] for s in log["steps"] if not s.get("ok")]
+    degraded = log.get("degraded", [])
+
+    if critical_ok and not (args.strict and failed):
+        print(f"collect OK  steps={len(log['steps'])}  log={os.path.join(OUT, 'collect.log.json')}")
+        if degraded:
+            # 非关键步失败：不阻断，但必须可见
+            print(f"collect DEGRADED (非关键步失败，不阻断 A股生产链): {', '.join(degraded)}")
+        sys.exit(0)
+
+    print("=" * 72, file=sys.stderr)
+    print(f"collect FAIL  关键步失败，阻断下游（防止旧数据被当新数据使用）", file=sys.stderr)
+    print(f"  失败步骤: {', '.join(failed) if failed else '(无)'}", file=sys.stderr)
+    if degraded:
+        print(f"  非关键降级: {', '.join(degraded)}", file=sys.stderr)
+    for s in log["steps"]:
+        if not s.get("ok"):
+            print(f"    - {s['step']}: {str(s.get('note', ''))[:160]}", file=sys.stderr)
+    print(f"  完整日志: {os.path.join(OUT, 'collect.log.json')}", file=sys.stderr)
+    print("=" * 72, file=sys.stderr)
+    sys.exit(1)

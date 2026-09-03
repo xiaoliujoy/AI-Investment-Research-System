@@ -41,18 +41,31 @@ OUT = os.path.join(ROOT, "output")
 _VENV_PY = "C:/Users/LIU/.workbuddy/binaries/python/envs/default/Scripts/python.exe"
 PY = _VENV_PY if os.path.exists(_VENV_PY) else sys.executable
 
+# 步骤元组：(名称, 脚本, 重试次数, critical)
+#   critical=True  → 失败即中断整条链（后续步骤不再执行，overall_ok=False）
+#   critical=False → 失败仅记录并继续（不阻断，但必须在日志中可见）
+#
+# ── 为什么需要 critical（P0-A2, 2026-09-03）──────────────────────────────
+# 旧逻辑只有 `overall_ok = overall_ok and r["ok"]`，没有 break：step2b 简报失败后
+# step3 推送照跑，produce() 读到上一交易日的 brain_report.json 缓存，把旧数据当
+# 新数据推送出去。2026-08-31「广度 55% 实为 08-28 值」事故的确切通道就在这里。
+#
+# 判据：凡是「产出或承载当日生产数据」的步骤 = critical；
+#       凡是「富化/观察/分发」的步骤 = 非 critical（失败应可见，但不必停摆）。
+#   step2b2 Ledger 归为 critical：Phase 1E 治理要求决策必须有 provenance，
+#       没有 Ledger 记录的决策不满足审计要求，因此不允许悄悄产出。
 STEPS = [
-    ("step1_数据采集", "daily_collect.py", 2),             # Data OS：板块主线+市值回填（统一采集入口）
-    ("step1b_技术回填", "tech_fill.py", 0),                # 本地回填 high_20d/ma/量比：确保 latest_date() 推进到最新交易日（防日期卡死）
-    ("step1b2_派生表补齐", "build_derived_tables.py", 0),  # 本地从 stock_daily 聚合 sector_daily/market_daily/limit_up_daily；必须在 tech_fill 之后（sector_daily.cm20_count 依赖 ma20），幂等自守卫
-    ("step2_八层决策树", "decision_tree.py", 0),
-    ("step2b_决策简报(总指挥)", "run_brain_report.py", 0),  # brain 推理链+L0叙事+决策结论
-    ("step2b2_Ledger记录", "write_decision_ledger.py", 0), # v0.2 Phase 1B/1C：Decision Ledger 独立步骤（读既有 brain_report，run_id 幂等，不重复写）
-    ("step2c_关系规律", "relationship_engine.py", 0),     # Relationship&Observation Engine：自动相关性+规律库
-    ("step2d_CRO裁定", "cro_agent.py", 0),                # CRO 总裁定词：编排各引擎，每日三问（交易/边际/规律）
-    ("step2e_为什么引擎", "narrative_engine.py", 0),      # Narrative Engine：板块「为什么」因果链（实时新闻+产业链逻辑）
-    ("step2f_资金迁移", "capital_migration.py", 0),       # Capital Migration Engine：板块轮动+跨资产闭环+反证树，落盘每日快照
-    ("step3_推送看板", "notify/push_daily.py", 0),        # 企业微信/飞书/公众号；无配置则自动跳过
+    ("step1_数据采集", "daily_collect.py", 2, True),             # Data OS：板块主线+市值回填（统一采集入口）
+    ("step1b_技术回填", "tech_fill.py", 0, True),                # 本地回填 high_20d/ma/量比：确保 latest_date() 推进到最新交易日（防日期卡死）
+    ("step1b2_派生表补齐", "build_derived_tables.py", 0, True),  # 本地从 stock_daily 聚合 sector_daily/market_daily/limit_up_daily；必须在 tech_fill 之后（sector_daily.cm20_count 依赖 ma20），幂等自守卫
+    ("step2_八层决策树", "decision_tree.py", 0, True),
+    ("step2b_决策简报(总指挥)", "run_brain_report.py", 0, True), # brain 推理链+L0叙事+决策结论
+    ("step2b2_Ledger记录", "write_decision_ledger.py", 0, True), # v0.2 Phase 1B/1C：Decision Ledger 独立步骤（读既有 brain_report，run_id 幂等，不重复写）
+    ("step2c_关系规律", "relationship_engine.py", 0, False),     # Relationship&Observation Engine：自动相关性+规律库
+    ("step2d_CRO裁定", "cro_agent.py", 0, False),                # CRO 总裁定词：编排各引擎，每日三问（交易/边际/规律）
+    ("step2e_为什么引擎", "narrative_engine.py", 0, False),      # Narrative Engine：板块「为什么」因果链（实时新闻+产业链逻辑）
+    ("step2f_资金迁移", "capital_migration.py", 0, False),       # Capital Migration Engine：板块轮动+跨资产闭环+反证树，落盘每日快照
+    ("step3_推送看板", "notify/push_daily.py", 0, False),        # 企业微信/飞书/公众号；无配置则自动跳过
 ]
 
 # OMI 期权观察层：Observation Only，独立于评分系统，失败不影响主流水线。
@@ -156,15 +169,17 @@ def main():
     if args.no_push or args.memo_only:
         steps = [s for s in steps if s[0] != "step3_推送看板"]
 
-    for name, script, retries in steps:
+    for _idx, (name, script, retries, critical) in enumerate(steps):
         # 数据就绪门：step1 采集完、step1b 技术回填前，确认最新交易日已写满。
         # 吸收 15:30 收盘后数据晚到窗口，避免 tech_fill/build_derived 在当日 ma20 还是 NULL 时跑。
         if name == "step1b_技术回填":
             wait_for_today_ready()
-        print(f"\n========== {name} ({script}) ==========", flush=True)
+        print(f"\n========== {name} ({script}){'  [CRITICAL]' if critical else ''} ==========",
+              flush=True)
         r = run_script(script, retries=retries)
         r["step"] = name
         r["script"] = script
+        r["critical"] = critical
         log["steps"].append(r)
         overall_ok = overall_ok and r["ok"]
         status = "OK" if r["ok"] else "FAIL"
@@ -172,6 +187,25 @@ def main():
               f"attempt={r.get('attempt')}", flush=True)
         if r.get("tail"):
             print(r["tail"][-1000:], flush=True)
+
+        if not r["ok"] and critical:
+            # ── fail-fast（P0-A2）：关键步失败即中断 ──────────────────────
+            # 后续步骤必须在「上游数据已被证明新鲜完整」的前提下才能运行。
+            # 否则 step3 推送会读到上一交易日的缓存，把旧数据当新数据发出去。
+            skipped = [s[0] for s in steps[_idx + 1:]]
+            log["aborted_at"] = name
+            log["skipped_steps"] = skipped
+            print("\n" + "=" * 72, flush=True)
+            print(f"❌ 关键步骤失败，中断整条流水线：{name}", flush=True)
+            print(f"   rc={r.get('returncode')}  (retries={retries})", flush=True)
+            if skipped:
+                print(f"   已跳过后续步骤：{', '.join(skipped)}", flush=True)
+            print("   原因：关键步失败后继续运行，下游会读到上一交易日的缓存数据并当作",
+                  flush=True)
+            print("         当日结果推送。按「宁可失败，也绝不悄悄产出错误结果」原则中断。",
+                  flush=True)
+            print("=" * 72, flush=True)
+            break
 
     # === OMI 期权观察层 (Observation Only) ===
     # 独立于 IC/CIO 评分：无论成功失败，只记录观测状态，绝不翻转 overall_ok。

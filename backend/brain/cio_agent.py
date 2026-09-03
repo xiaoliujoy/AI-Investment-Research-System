@@ -458,8 +458,23 @@ def _rating_stars(n: int) -> str:
 #  数据加载
 # ═══════════════════════════════════════════════════════
 
+class StaleCacheError(Exception):
+    """缓存数据日期落后于当前数据最新日，拒绝渲染。
+
+    防止旧缓存被当成当日结果推送出去（08-31 类型事故的根因通道）。
+    """
+
+
 def _load_data():
-    """加载所有数据源。"""
+    """加载所有数据源，并强制校验缓存 trade_date 与「当前数据最新日」一致。
+
+    P0-A3 stale-date 保护：若 run_daily 在关键步骤失败中断（如 daily_collect
+    rc!=0），run_brain_report 不会重跑，brain_report.json 停留在上一交易日。
+    此时若 push_daily 被单独调用（15:30 automation / --memo-only），绝不能把
+    旧缓存渲染成「今日备忘录」推送出去。日期不符直接抛 StaleCacheError，
+    使 produce() 向上传播异常、push_daily.py 以非零退出——宁可失败，也绝不
+    悄悄产出错误结果。
+    """
     brain = {}
     tree = {}
 
@@ -472,6 +487,21 @@ def _load_data():
     if os.path.exists(tp):
         with open(tp, "r", encoding="utf-8") as f:
             tree = json.load(f)
+
+    # 当前数据最新日（与 produce() 给 memo 定的 trade_date 同源）
+    expected = _report_date()
+    for label, cache in (("brain_report.json", brain), ("decision_tree.json", tree)):
+        td = cache.get("trade_date") if isinstance(cache, dict) else None
+        if not td:
+            raise StaleCacheError(
+                f"{label} 缺少 trade_date 字段（数据未生成或不完整），拒绝渲染。"
+            )
+        if td != expected:
+            raise StaleCacheError(
+                f"{label} 的 trade_date={td} 与当前数据最新日 {expected} 不一致。"
+                f"缓存已过期，拒绝将其渲染为 {expected} 的备忘录"
+                f"（防止旧数据被当新数据推送）。"
+            )
 
     return brain, tree
 

@@ -1,0 +1,15 @@
+{
+  "snapshot_id": "market_daily_shell_cleanup_20260903",
+  "old_rule_version": "legacy_full_backfill_1990_2026",
+  "snapshot_time": "2026-09-03T11:14:33",
+  "source_commit": "adc62a8",
+  "action": "DELETE NULL shell rows (up_count/down_count/total_amount all NULL)",
+  "row_count": 8678,
+  "date_range": [
+    "1990-12-19",
+    "2026-07-09"
+  ],
+  "checksum": "d74a30bbaf705912b015bc654666069f4f80cf9868a384683cd3a6c150817b50",
+  "backup_table": "market_daily_shell_backup_20260903",
+  "remaining_real_rows": 39
+}

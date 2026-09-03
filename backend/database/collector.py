@@ -121,7 +121,13 @@ def collect_market_daily(date: str = None) -> dict:
         "emotion_score": None,
         "stage": None,
     }
-    
+
+    # P0-A4 守卫：若 akshare 抓取整体失败（涨跌家数全 0 且成交额全 0），视为无源，
+    # 跳过保存，避免把「0 涨 0 跌 0 成交」的假行写进 market_daily（下游日报会误读为真实环境）。
+    if up == 0 and down == 0 and flat == 0 and total_amount == 0:
+        print(f"[collect_market_daily] {date} 源数据全空（akshare 可能失败），跳过写入避免假数据")
+        return data
+
     models.save_market_daily(data)
     return data
 

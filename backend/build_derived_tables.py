@@ -133,6 +133,8 @@ def main():
         print("  → 如需立即补齐 sector_daily，请先执行  python tech_fill.py  再重跑本脚本。")
 
     total = 0
+    failed = []          # P0-A1：构建脚本返回非零的表
+    deferred_map = {}    # table -> 被合法延后的日期集合
     for table, script, flow_bound in TABLES:
         miss = missing_dates(conn, table, days)
         deferred = []
@@ -155,17 +157,52 @@ def main():
                 print(f"✅ {table:<16} 无缺口")
             continue
         print(f"🔧 {table:<16} 缺 {len(miss)} 天：{miss[0]} ~ {miss[-1]}")
+        deferred_map[table] = set(deferred)
         if args.dry_run:
             continue
         ok, tail = run_build(script, miss[0], miss[-1])
         print(f"   {'OK ' if ok else 'FAIL'} {tail[:160]}")
-        total += len(miss) if ok else 0
+        if ok:
+            total += len(miss)
+        else:
+            failed.append(table)
+
+    # ── 后置校验（P0-A1）：脚本 rc=0 不等于数据落地 ────────────────────────
+    # 旧逻辑无论成败都 return 0 → run_daily 标 OK → market_daily 停更无人知晓
+    # （2026-09-03 盘点发现 8717 行里 8678 行是空壳，正是这类静默失败的产物）。
+    # 这里强制验证「窗口内最新交易日必须真的存在于每张派生表」，否则视为失败。
+    verify_failed = []
+    if not args.dry_run:
+        latest = days[-1]
+        cur = conn.cursor()
+        for table, script, flow_bound in TABLES:
+            if flow_bound and latest < FLOW_REAL_START:
+                continue                                  # 早于资金流起点，合法跳过
+            if latest in deferred_map.get(table, set()):
+                continue                                  # ma20 未就绪，合法延后
+            cur.execute(f"SELECT COUNT(*) FROM {table} WHERE date=?", (latest,))
+            n = cur.fetchone()[0]
+            if n == 0:
+                verify_failed.append(table)
+                print(f"   ❌ 后置校验失败：{table} 在最新交易日 {latest} 仍无数据")
+            else:
+                print(f"   ✅ 后置校验：{table} {latest} 有 {n} 行")
 
     conn.close()
     if args.dry_run:
         print("\n[dry-run] 未写库。")
     else:
         print(f"\n完成：补齐 {total} 个表-日。")
+
+    if failed or verify_failed:
+        print("=" * 68)
+        print(f"build_derived_tables FAIL —— 阻断下游，防止派生表旧数据被当新数据使用")
+        if failed:
+            print(f"  构建脚本失败: {', '.join(failed)}")
+        if verify_failed:
+            print(f"  后置校验失败: {', '.join(verify_failed)}")
+        print("=" * 68)
+        return 1
     return 0
 
 

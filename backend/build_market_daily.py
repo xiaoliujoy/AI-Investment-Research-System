@@ -40,6 +40,28 @@ def get_conn():
     return sqlite3.connect(DB)
 
 
+def has_source(con, date: str) -> int:
+    """统计该日期在 stock_daily 中可用的真实 A 股源行数（口径同 compute_day 的 base CTE）。
+
+    P0-A4 守卫：若某交易日 stock_daily 没有可用成交额源（早期历史 amount=0、或换板日
+    无数据），compute_day 会算出全 0/NULL。此时绝不允许写入 market_daily 空壳行——否则
+    下游日报读到的不是「无数据」而是「0 涨 0 跌 0 成交」，属于悄悄产出错误结果。
+    返回可用源行数，0 即「无源，应跳过」。
+    """
+    cur = con.cursor()
+    uf = unit_factor(con, date)
+    cur.execute(
+        """
+        SELECT COUNT(*) FROM stock_daily
+        WHERE date = ?
+          AND substr(code,1,2) IN ('60','00','30','68')
+          AND amount * ? > 0 AND amount * ? <= 1000
+        """,
+        (date, uf, uf),
+    )
+    return cur.fetchone()[0]
+
+
 def get_dates(start: str, end: str):
     con = get_conn()
     cur = con.cursor()
@@ -173,7 +195,13 @@ def main():
     con = get_conn()
     cur = con.cursor()
     n = 0
+    skipped = 0
     for r in rows:
+        # P0-A4 守卫：无可用源（早期历史 amount=0 / 换板日无数据）→ 跳过，绝不写空壳行
+        if has_source(con, r["date"]) == 0:
+            print(f"  SKIP {r['date']}: stock_daily 无可用 A 股成交额源，不写空壳行")
+            skipped += 1
+            continue
         cur.execute(
             """
             INSERT OR REPLACE INTO market_daily
@@ -193,7 +221,7 @@ def main():
         n += 1
     con.commit()
     con.close()
-    print(f"WROTE {n} 天 ({args.start}..{args.end})")
+    print(f"WROTE {n} 天 ({args.start}..{args.end})" + (f"，SKIP {skipped} 天（无源，未写空壳）" if skipped else ""))
 
 
 if __name__ == "__main__":
