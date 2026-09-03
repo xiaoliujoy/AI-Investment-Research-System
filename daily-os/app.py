@@ -19,7 +19,7 @@ DB_PATH = os.path.join(BASE_DIR, "daily_os.db")
 INDEX_PATH = os.path.join(BASE_DIR, "index.html")
 # 交易 OS 主库（只读拉取 + 复盘回写 trader_review），路径以 backend/db.py 为准
 TRADING_DB = os.path.normpath(os.path.join(BASE_DIR, "..", "backend", "database", "vibe_research.db"))
-PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8777
+PORT = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].lstrip("-").isdigit() else 8777
 
 NOON_STATES = ["平静", "喜悦", "丰盛", "焦虑", "疲惫", "混乱", "其他"]
 
