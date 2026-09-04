@@ -908,6 +908,12 @@ def render_html(memo):
     if dh:
         ok_badge = ("✅ 数据健康 · 允许交易" if dh.get("trade_allowed")
                     else "⛔ 数据健康未通过 · 禁止交易")
+        # P1-B.1.3：渲染 summary，使 UNAVAILABLE（模块不可用）对最终用户可见。
+        # 复用既有 .li.ok / .li.no 样式，不新增 CSS。
+        summary_row = (
+            f'<div class="li {"ok" if dh.get("trade_allowed") else "no"}">'
+            f'{_esc(dh.get("summary", ""))}</div>'
+            if dh.get("summary") else "")
         rows = "".join(
             f'<div class="li {"ok" if c["ok"] else "no"}">{_esc(c["name"])}：'
             f'{_esc(c["value"])}（{_esc(c["detail"])}）</div>'
@@ -916,7 +922,7 @@ def render_html(memo):
         health_sec = (f'<div class="sec health{hcls}"><div class="sech">🩺 数据健康'
                       f'<span class="badge">{"P0" if not dh.get("trade_allowed") else "OK"}</span></div>'
                       f'<div class="hbadge{" bad" if not dh.get("trade_allowed") else ""}">'
-                      f'{ok_badge}</div><div class="hchecks">{rows}</div></div>')
+                      f'{ok_badge}</div><div class="hchecks">{summary_row}{rows}</div></div>')
     else:
         health_sec = ""
 
@@ -1221,6 +1227,12 @@ def render_wechat_html(memo):
     if dh:
         ok_badge = ("✅ 数据健康 · 允许交易" if dh.get("trade_allowed")
                     else "⛔ 数据健康未通过 · 禁止交易")
+        # P1-B.1.3：渲染 summary，使 UNAVAILABLE（模块不可用）对最终用户可见。
+        summary_row = (
+            f'<div style="font-size:12px;line-height:1.7;font-weight:600;'
+            f'color:{"#2e9e5b" if dh.get("trade_allowed") else "#cf3b2f"};'
+            f'padding:2px 0;">{_esc(dh.get("summary", ""))}</div>'
+            if dh.get("summary") else "")
         rows = "".join(
             f'<div style="font-size:12px;line-height:1.7;">{"✅" if c["ok"] else "⛔"} '
             f'{_esc(c["name"])}：{_esc(c["value"])}（{_esc(c["detail"])}）</div>'
@@ -1229,7 +1241,7 @@ def render_wechat_html(memo):
                 f'border:1px solid {"#2e9e5b" if dh.get("trade_allowed") else "#cf3b2f"};'
                 f'border-radius:8px;padding:8px 12px;margin-bottom:8px;'
                 f'color:{"#2e9e5b" if dh.get("trade_allowed") else "#cf3b2f"};'
-                f'font-size:14px;font-weight:700;">{ok_badge}</div>{rows}')
+                f'font-size:14px;font-weight:700;">{ok_badge}</div>{summary_row}{rows}')
         health_sec = _wx_sec("数据健康", "Data Integrity Layer · 闸门",
                               "P0" if not dh.get("trade_allowed") else "OK", hbox)
     else:

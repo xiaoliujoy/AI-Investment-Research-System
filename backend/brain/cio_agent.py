@@ -1469,9 +1469,16 @@ def _build_data_health() -> dict:
         from data_health import check as _dh_check
         return _dh_check()
     except Exception as e:  # noqa
+        # 三态语义（P1-B.1.3）：PASS / FAIL / UNAVAILABLE。
+        # UNAVAILABLE 与 FAIL 同为 fail-closed，但 reason 可区分。
+        #   summary      = caller / report 可见的稳定业务文案（不暴露异常细节）
+        #   error_detail = 内部诊断字段，不渲染，且不参与
+        #                  trade_allowed / failed / final 任何判定
         return {
-            "trade_date": "", "checks": [], "trade_allowed": True, "failed": [],
-            "summary": f"（数据健康模块暂不可用：{e}）",
+            "trade_date": "", "checks": [], "trade_allowed": False,
+            "failed": ["数据健康模块不可用"],
+            "summary": "数据健康模块暂不可用",
+            "error_detail": str(e)[:300],
             "n_stocks": 0, "flow_cov": 0.0, "cap_cov": 0.0,
         }
 
