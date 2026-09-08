@@ -240,7 +240,7 @@ def decide(results, conflicts=None, confidence=None, feedback=None):
         hard_no.append("全球避险主导")
     if _dir(results, "FLOW") == "bearish":
         hard_no.append("资金面流出主导")
-    if _dir(results, "sentiment") in ("退潮", "冰点"):
+    if _dir(results, "sentiment") == "bearish":
         hard_no.append("情绪退潮/冰点")
     if comp is not None and comp >= 70:
         hard_no.append(f"综合风险高({comp})")
