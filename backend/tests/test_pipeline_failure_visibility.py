@@ -41,6 +41,16 @@ def test_daily_collect_exit_nonzero_on_incomplete(monkeypatch):
         daily_collect, "ensure_individual_quotes",
         lambda: {"step": "quotes_fallback", "ok": False, "rc": 1, "note": "FAULT-INJECT"},
     )
+    # P1-B3 · B3-F8：daily_collect._run() 用 subprocess 拉起子脚本，
+    # 子进程不加载 pytest conftest，因此**不受 conftest 生产库隔离守卫保护**
+    # （进程边界是 monkeypatch 类隔离的天然盲区）。实测它会连
+    # backend/database/vibe_research.db 并创建空库。这里一并打桩，
+    # 保证本测试 100% 进程内、零 DB 触碰。
+    def _no_subprocess(name, script):
+        return {"step": name, "ok": False, "rc": -1, "elapsed_s": 0.0,
+                "stderr_tail": "FAULT-INJECT: subprocess disabled in test"}
+
+    monkeypatch.setattr(daily_collect, "_run", _no_subprocess)
 
     log = daily_collect.collect()
 

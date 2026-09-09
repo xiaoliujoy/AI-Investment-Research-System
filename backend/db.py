@@ -22,13 +22,19 @@ Usage:
 import os
 import sqlite3
 
-_DB_PATH = os.path.normpath(
+_DEFAULT_DB_PATH = os.path.normpath(
     os.path.join(
         os.path.dirname(os.path.abspath(__file__)),
         "database",
         "vibe_research.db",
     )
 )
+
+# P1-B3 · E1：进程级环境传递。
+#   子进程（subprocess.run 拉起的脚本）不加载 pytest conftest，因此无法通过
+#   monkeypatch 改 DB_PATH —— 环境变量是唯一能跨进程边界传播的载体。
+#   未设置 VIBE_DB_PATH 时，行为与历史完全一致（100% 向后兼容）。
+_DB_PATH = os.environ.get("VIBE_DB_PATH") or _DEFAULT_DB_PATH
 
 
 def db_path() -> str:

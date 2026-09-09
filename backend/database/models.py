@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 import sqlite3
 import time
 from datetime import datetime, timedelta, timezone
@@ -11,7 +12,12 @@ from typing import Any, Optional
 BEIJING = timezone(timedelta(hours=8))
 
 # 数据库路径
-DB_PATH = Path(__file__).parent.parent / "database" / "vibe_research.db"
+_DEFAULT_DB_PATH = Path(__file__).parent.parent / "database" / "vibe_research.db"
+
+# P1-B3 · E1：进程级环境传递（与 backend/db.py 同口径）。
+#   子进程不加载 conftest、不继承 monkeypatch，只能靠环境变量把沙箱路径传下去。
+#   未设置 VIBE_DB_PATH 时，行为与历史完全一致（100% 向后兼容）。
+DB_PATH = Path(os.environ["VIBE_DB_PATH"]) if os.environ.get("VIBE_DB_PATH") else _DEFAULT_DB_PATH
 
 
 def get_db() -> sqlite3.Connection:
