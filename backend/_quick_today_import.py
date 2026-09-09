@@ -1,11 +1,14 @@
 """快速导入今天 TDX数据。只读每个.day文件最后一条记录，定位日期=20260714则导入。"""
+
+from db import get_conn, _DB_PATH
+
 import sqlite3
 import struct
 import time
 from pathlib import Path
 
 TDX = Path("C:/new_tdx64/vipdoc")
-DB = Path("database/vibe_research.db")
+DB = str(_DB_PATH)
 TARGET = 20260714
 
 def get_short_code(fname: str) -> str:
@@ -65,7 +68,7 @@ def main():
         print("未找到今日数据！")
         return
 
-    conn = sqlite3.connect(str(DB))
+    conn = get_conn()
     c = conn.cursor()
 
     # 删旧 + 查 name

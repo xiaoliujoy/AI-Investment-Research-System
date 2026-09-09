@@ -34,6 +34,7 @@ daily_collect.py — 统一数据采集入口（Data OS 门面）
   - 用独立子进程调用每个脚本（与 run_daily 一致），单步失败不阻断整体。
   - 采集日志写 output/collect.log.json。
 """
+from db import get_conn, _DB_PATH
 import os
 import sys
 import json
@@ -177,10 +178,10 @@ def ensure_individual_quotes():
     否则新交易日 stock_daily 还没这天的行，MAX(date) 永远指向旧日 → 兜底永远跳过 → 新日缺数据。
     """
     import sqlite3
-    db = os.path.join(ROOT, "database", "vibe_research.db")
+    db = str(_DB_PATH)
     try:
         target = _target_trade_date()
-        con = sqlite3.connect(db); cur = con.cursor()
+        con = get_conn(); cur = con.cursor()
         cur.execute("SELECT COUNT(*) FROM stock_daily WHERE date=?", (target,))
         cnt = cur.fetchone()[0]
         con.close()
@@ -211,10 +212,10 @@ def ensure_global_history():
     若 target 当日已存在完整批次则幂等跳过；若只存在残缺批次则先删后补。
     """
     import sqlite3
-    db = os.path.join(ROOT, "database", "vibe_research.db")
+    db = str(_DB_PATH)
     try:
         target = _target_trade_date()
-        con = sqlite3.connect(db); cur = con.cursor()
+        con = get_conn(); cur = con.cursor()
         # 最近完整快照（行数>=2 的最新日期）
         cur.execute("""SELECT date, COUNT(*) c FROM global_history
                        GROUP BY date HAVING c >= 2 ORDER BY date DESC LIMIT 1""")
@@ -261,12 +262,12 @@ def verify_completeness():
       - stock_flow_daily 同理（阈值较小，约 5500 只）
     """
     import sqlite3
-    db = os.path.join(ROOT, "database", "vibe_research.db")
+    db = str(_DB_PATH)
     target = _target_trade_date()
     FLOW_MIN = 4000
     checks, failed, notes = [], [], []
     try:
-        con = sqlite3.connect(db)
+        con = get_conn()
         cur = con.cursor()
         cur.execute("SELECT COUNT(*) FROM stock_daily WHERE date=?", (target,))
         n_quote = cur.fetchone()[0]

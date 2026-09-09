@@ -14,11 +14,14 @@ CIO Decision Engine — Portfolio Decision Layer（战略层 / 组合决策层�
   Regime Engine(现有 regime_history) → 本引擎映射配置 → 历史验证(backtest)
 不碰 Layer1 评分模型、不扩展日报、不新增数据源（冻结口径一致）。
 """
+
+from db import get_conn, _DB_PATH
+
 import sqlite3, json, os
 from risk_budget import score_to_budget, budget_to_text, STRATEGIC_EQUITY_FLOOR
 from risk_governance import governance_observation, latest_breadth  # Phase 2.0-A 旁路观测(不改决策)
 
-DB = os.path.join(os.path.dirname(__file__), 'database', 'vibe_research.db')
+DB = str(_DB_PATH)
 
 REGIME_LABEL = {'A': '风险扩张', 'B': '正常震荡', 'C': '风险收缩'}
 
@@ -35,7 +38,7 @@ CORE_EQUITY_BENCHMARK = 60
 
 
 def _conn():
-    con = sqlite3.connect(DB)
+    con = get_conn()
     con.row_factory = sqlite3.Row
     return con
 

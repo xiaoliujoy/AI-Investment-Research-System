@@ -26,14 +26,17 @@ Phase 2.0 升级（用户 2026-08-04）：增加 failure_type 分类，未来得
   python build_failure_log.py --add "ep" "2020-02-01" "2020-03-31" "ctx" --signal proxy_sim --type false_negative
   python build_failure_log.py --export        # 导出 JSON
 """
+
+from db import get_conn, _DB_PATH
+
 import sqlite3, json, os, sys, datetime
 
-DB = os.path.join(os.path.dirname(__file__), 'database', 'vibe_research.db')
+DB = str(_DB_PATH)
 TODAY = datetime.date.today().strftime('%Y-%m-%d')
 
 
 def _conn():
-    con = sqlite3.connect(DB)
+    con = get_conn()
     con.row_factory = sqlite3.Row
     return con
 

@@ -25,6 +25,9 @@
     variables[i] = {id,title,why,source,evidence,branches[],base_case,implication}
     branches[j]  = {name,weight,market,winners[],losers[],watch}
 """
+
+from db import get_conn, _DB_PATH
+
 import os
 import json
 import sqlite3
@@ -33,7 +36,7 @@ from datetime import datetime
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(ROOT, "output")
-DB_PATH = os.path.join(ROOT, "database", "vibe_research.db")
+DB_PATH = _DB_PATH
 
 # ── 板块主题归类（赢家/输家解析始终基于当前真实流向）──
 THEME_KW = {
@@ -257,7 +260,7 @@ def _global_change(symbols):
     if not os.path.exists(DB_PATH):
         return {}
     try:
-        con = sqlite3.connect(DB_PATH)
+        con = get_conn()
         cur = con.cursor()
         out = {}
         for sym in symbols:

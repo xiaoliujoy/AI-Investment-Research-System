@@ -22,6 +22,7 @@ import sys
 import json
 import statistics
 import urllib.request
+from universe import market_of
 
 _FIN_CACHE = {}  # 进程内缓存：code -> {rev_yoy, np_yoy, roe, gross, industry}
 
@@ -65,11 +66,10 @@ def get_financials(period="20260331"):
 
 
 def _gtimg_prefix(code):
-    if code.startswith("6") or code.startswith("9"):
-        return "sh" + code
-    if code.startswith("8") or code.startswith("4"):
-        return "bj" + code
-    return "sz" + code
+    """6 位代码 → 腾讯 gtimg 前缀代码（sh/sz/bj + code）。北交所严格收敛为 83/87/920；
+    其余（含 9/4/88/5/11 等）归 sz，与 universe.market_of 对齐，消除裸 8/9 前缀误判。
+    返回格式保持历史「前缀+代码」（如 sh600000），供 qt.gtimg.cn/q= 拼接使用。"""
+    return {"沪市": "sh", "深市": "sz", "北交所": "bj", "其他": "sz"}[market_of(code)] + code
 
 
 def get_pe(codes):

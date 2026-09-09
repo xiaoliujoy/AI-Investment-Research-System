@@ -1,7 +1,8 @@
+from db import get_conn, _DB_PATH
 import sqlite3, re, os, json
 
-DB = "database/vibe_research.db"
-con = sqlite3.connect(DB)
+DB = str(_DB_PATH)
+con = get_conn()
 
 print("=== A. stock_info 脏名残留 27 个 ===")
 rows = con.execute("SELECT code,name FROM stock_info WHERE name LIKE '% %' OR name LIKE '%A%'").fetchall()

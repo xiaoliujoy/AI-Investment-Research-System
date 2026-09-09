@@ -34,6 +34,7 @@ https://github.com/Elian-dan/AI-Portfolio-Compass-public）的
 输出：build() 返回 dict，供 CIO memo + research_memo 渲染。
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 
 import os
 import json
@@ -45,7 +46,7 @@ from typing import Optional
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(ROOT, "output")
 TRADES_PATH = os.path.join(OUT, "trades.jsonl")
-DB_PATH = os.path.join(ROOT, "database", "vibe_research.db")
+DB_PATH = str(_DB_PATH)
 
 REVIEW_MOVE_THRESHOLD = 0.03   # 3% 阈值（与原项目一致）
 STOP_DELAY_RATIO = -0.10       # 浮亏 > 10% 且仍持有 -> 止损拖延标记
@@ -136,7 +137,7 @@ def _post_deal_closes(code: str, deal_date: str):
     """从 TDX stock_daily 取成交后 1日/5日/最新 收盘价。无数据返回 (None,)*3。"""
     nc = _normalize_code(code)
     try:
-        con = sqlite3.connect(DB_PATH)
+        con = get_conn()
         rows = con.execute(
             "SELECT date, close FROM stock_daily WHERE code=? AND date > ? "
             "ORDER BY date ASC", (nc, deal_date[:10])).fetchall()

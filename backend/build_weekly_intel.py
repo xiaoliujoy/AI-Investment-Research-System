@@ -29,16 +29,19 @@ build_weekly_intel.py — Joy Research · 周度认知更新 Weekly Intelligence
     python build_weekly_report.py show [--week-end YYYY-MM-DD]
     python build_weekly_report.py export
 """
+
+from db import get_conn, _DB_PATH
+
 import sqlite3, json, os, argparse
 from datetime import datetime, timedelta
 
-DB = os.path.join(os.path.dirname(__file__), "database", "vibe_research.db")
+DB = str(_DB_PATH)
 OUT = os.path.join(os.path.dirname(__file__), "output", "research_weekly_intel.md")
 FLOW_AVAIL_FROM = "2026-07-20"  # stock_flow_daily 真实数据起点（审计确认）
 
 
 def conn():
-    return sqlite3.connect(DB)
+    return get_conn()
 
 
 def most_recent_friday(d=None):

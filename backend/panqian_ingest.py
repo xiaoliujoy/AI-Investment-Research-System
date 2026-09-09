@@ -14,6 +14,7 @@ panqian_ingest.py —— 盘前纪要「灌入」模块（Phase 1）
 所有下游读取方都以「文件存在且非空 + has_data」为前置，缺失安全降级。
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 
 import os
 import re
@@ -38,9 +39,9 @@ def _load_map():
     code2name = {}
     try:
         import sqlite3
-        db = os.path.join(BASE, "database", "vibe_research.db")
+        db = str(_DB_PATH)
         if os.path.exists(db):
-            con = sqlite3.connect(db)
+            con = get_conn()
             for code, name in con.execute("SELECT code, name FROM stock_info"):
                 code2name[str(code).strip()] = name
             con.close()

@@ -16,6 +16,9 @@ breadth_cross_check.py  —  观察层 · G2 市场宽度口径对齐诊断
 用法：
   python breadth_cross_check.py [--date YYYY-MM-DD] [--window 750]
 """
+
+from db import get_conn, _DB_PATH
+
 import argparse
 import json
 import os
@@ -24,7 +27,7 @@ from datetime import date
 
 import pandas as pd
 
-DB = os.path.join(os.path.dirname(__file__), "..", "database", "vibe_research.db")
+DB = str(_DB_PATH)
 OUT_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "output")
 
 # TheMarketMemo 市场宽度阈值（来自 docs/themarketmemo_kb.md §B）
@@ -111,7 +114,7 @@ def main():
     ap.add_argument("--window", type=int, default=750, help="MA 计算回看交易日数")
     args = ap.parse_args()
 
-    con = sqlite3.connect(DB)
+    con = get_conn()
     cur = con.cursor()
     max_date = args.date or cur.execute("SELECT MAX(date) FROM stock_daily").fetchone()[0]
     print(f"[i] target date = {max_date}, window = {args.window}")

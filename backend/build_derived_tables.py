@@ -38,6 +38,7 @@ Decision Log 交叉验证连续报 no_baseline，日报据空表空算。
   market_daily/limit_up_daily 照常补齐（二者不依赖 ma20）。
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 
 import argparse
 import os
@@ -46,7 +47,7 @@ import subprocess
 import sys
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
-DB = os.path.join(ROOT, "database", "vibe_research.db")
+DB = str(_DB_PATH)
 PY = sys.executable
 
 # sector_daily.net_amount 的真实资金流起始日，早于此日不重建（否则历史被占位值污染）
@@ -61,7 +62,7 @@ TABLES = [
 
 
 def connect():
-    conn = sqlite3.connect(DB, timeout=60)
+    conn = get_conn(timeout=60)
     conn.execute("PRAGMA busy_timeout=60000")
     return conn
 

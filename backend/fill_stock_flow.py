@@ -22,6 +22,7 @@ fill_stock_flow —— 个股资金流数据源（Data OS，独立表）
   - 北交所(8xx/92x) push2 不覆盖，保持缺省（流动性低，可接受）。
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 
 import os
 import sqlite3
@@ -32,7 +33,7 @@ import urllib.parse
 import json
 from pathlib import Path
 
-DB = str(Path(__file__).parent / "database" / "vibe_research.db")
+DB = str(_DB_PATH)
 # 注意：push2delay 子域无视 pz 参数、强制每页最多 100 条（实测 pz=1000 仍只回 100）。
 # 故分页步长固定 100，循环翻页直到不足 100 条为止（全 A 约 5540 只 → ~56 页）。
 PZ = 100           # 每页条数（push2delay 实际上限）
@@ -94,7 +95,7 @@ def _fetch_page(pn: int):
 def fill(date=None, verbose=True):
     """回填指定交易日（默认最新）的个股资金流。返回统计 dict。"""
     _clear_proxy()
-    c = sqlite3.connect(DB, timeout=30)
+    c = get_conn(timeout=30)
     c.execute("PRAGMA busy_timeout=30000")
     if date is None:
         row = c.execute("SELECT max(date) FROM stock_daily").fetchone()

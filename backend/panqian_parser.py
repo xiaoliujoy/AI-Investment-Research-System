@@ -25,6 +25,7 @@ panqian_parser.py —— 公众号「盘前纪要」解析器（Phase 1）
   python panqian_parser.py -            # 从 stdin 读（粘贴后 Ctrl-D）
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 
 import os
 import re
@@ -97,9 +98,9 @@ def _load_stock_map():
     code2name, name2code = {}, {}
     try:
         import sqlite3
-        db = os.path.join(BASE, "database", "vibe_research.db")
+        db = str(_DB_PATH)
         if os.path.exists(db):
-            con = sqlite3.connect(db)
+            con = get_conn()
             for code, name in con.execute(
                     "SELECT code, name FROM stock_info WHERE name IS NOT NULL AND name<>''"):
                 code2name[str(code).strip()] = _norm_name(name)

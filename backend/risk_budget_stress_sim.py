@@ -23,10 +23,13 @@ Risk Budget Rule Stress Simulation（Phase 1.9C — P0，用户建议的"稳定�
   - 三策略对比：A 100%权益 / B 固定60-40 / C AI Risk Budget(代理分) —— 同 1.9B 成本模型
   - 四段历史情景：2015股灾 / 2018熊市 / 2020疫情 / 2022股债双杀（含全周期 2010-2026）
 """
+
+from db import get_conn, _DB_PATH
+
 import sqlite3, json, os, sys, datetime, math
 from collections import Counter
 
-DB = os.path.join(os.path.dirname(__file__), 'database', 'vibe_research.db')
+DB = str(_DB_PATH)
 OUT = os.path.join(os.path.dirname(__file__), '..', 'output')
 TODAY = datetime.date.today().strftime('%Y-%m-%d')
 
@@ -51,7 +54,7 @@ EPISODES = {
 
 
 def connect():
-    con = sqlite3.connect(DB)
+    con = get_conn()
     con.execute('PRAGMA busy_timeout=15000')
     return con
 
@@ -267,7 +270,7 @@ def main():
 
 def update_failure_log(fail_updates):
     import sqlite3 as _sql
-    con = _sql.connect(DB)
+    con = get_conn()
     for name, min_eq, crisis_days, dd_a, dd_c, outcome in fail_updates:
         state = (f"PROXY规则: 情景期最低权益={min_eq}%, Crisis触发={crisis_days}天; "
                  f"最大回撤 A={dd_a}% / C={dd_c}%; 代理判定={outcome}")

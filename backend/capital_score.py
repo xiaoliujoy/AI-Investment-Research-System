@@ -29,6 +29,7 @@ capital_score.py — Stock Capital Score（个股资金强度评分）
 from __future__ import annotations
 import sqlite3
 from database.models import get_db
+from universe import is_stock
 
 # ── 权重（与用户定义一致）──
 W_FUND = 30.0
@@ -40,12 +41,6 @@ W_RISK = 15.0
 
 # ST / 退市 / 风险命名特征
 _RISK_NAME_TOKENS = ("ST", "*ST", "退", "N ")
-
-
-def _is_stock(code: str) -> bool:
-    if not code:
-        return False
-    return code[0] in ("6", "0", "3") or code.startswith(("83", "87", "920"))
 
 
 def _is_risk_name(name: str) -> bool:
@@ -212,7 +207,7 @@ def compute_scores(date: str, window: int = 5, verbose: bool = False) -> dict:
     # 8) 逐股打分
     scores = {}
     for code in today_flow:
-        if not _is_stock(code):
+        if not is_stock(code):
             continue
         name = act.get(code, (0.0, code))[1]
         ems = em_of.get(code, [])

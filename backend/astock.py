@@ -20,6 +20,8 @@ import urllib.request
 from datetime import datetime, timedelta
 from pathlib import Path
 
+from universe import market_of
+
 UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36"
 
 # Eastmoney public app identifiers for the hot-stock-rank API.
@@ -30,12 +32,13 @@ EM_GLOBAL_ID = os.environ.get("EM_GLOBAL_ID", "786e4c21-70dc-435a-93bb-38")
 
 
 def get_prefix(code: str) -> str:
-    """6 位代码 → 交易所前缀。"""
-    if code.startswith(("6", "9")):
-        return "sh"
-    if code.startswith("8"):
-        return "bj"
-    return "sz"
+    """6 位代码 → 交易所前缀（sh/bj/sz）。
+
+    交易所判定统一走 :func:`universe.market_of`（单一事实源）。
+    北交所严格收敛为 83/87/920；88x（板块指数伪代码）/4x（新三板）归「其他」→ sz，
+    不再被误当作北交所——这是相对历史「整段 8 当北交所」的校正。
+    """
+    return {"沪市": "sh", "深市": "sz", "北交所": "bj", "其他": "sz"}[market_of(code)]
 
 
 class DependencyMissing(RuntimeError):
@@ -225,7 +228,8 @@ def individual_info(code: str) -> dict:
 def disclosure(code: str) -> list[dict]:
     """巨潮公告全文列表（akshare cninfo，本环境不稳，保留作备用）。"""
     ak = _akshare()
-    market = "沪市" if code.startswith("6") else ("北交所" if code.startswith("8") else "深市")
+    # 交易所判定统一走 universe.market_of（单一事实源）
+    market = market_of(code)
     df = ak.stock_zh_a_disclosure_report_cninfo(symbol=code, market=market)
     return df.head(30).to_dict("records") if df is not None and not df.empty else []
 

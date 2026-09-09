@@ -20,18 +20,19 @@ net_amount 数据源说明（重要）：
   python build_sector_daily.py --nullify-historical  # 将 <=2026-07-19 的 net_amount 置 NULL
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 
 import argparse
 import sqlite3
 import time
 from pathlib import Path
 
-DB = str(Path(__file__).resolve().parent / "database" / "vibe_research.db")
+DB = str(_DB_PATH)
 
 
 def connect():
     """打开连接并施加容错：WAL 日志 + 长 busy_timeout，避免并发写锁。"""
-    conn = sqlite3.connect(DB, timeout=60)
+    conn = get_conn(timeout=60)
     conn.execute("PRAGMA busy_timeout=60000")
     try:
         conn.execute("PRAGMA journal_mode=WAL")

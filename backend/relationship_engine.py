@@ -28,13 +28,14 @@ Observation / CRO）里最值得先落地的：它直接产出"新的 Alpha 来�
   - output/observations.json         （假设/规律库，跨日持久化，只追加不覆盖）
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 import os
 import json
 import sqlite3
 import datetime
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-DB = os.path.join(BASE, "database", "vibe_research.db")
+DB = str(_DB_PATH)
 OUT = os.path.join(BASE, "output")
 REL_FILE = os.path.join(OUT, "relationship_report.json")
 OBS_FILE = os.path.join(OUT, "observations.json")
@@ -81,7 +82,7 @@ HYPOTHESIS_SEEDS = [
 # ═══════════════════════════════════════════════════════
 
 def _con():
-    return sqlite3.connect(DB)
+    return get_conn()
 
 
 def _stock_pct(code: str, n: int = 60):

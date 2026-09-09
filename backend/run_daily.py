@@ -24,6 +24,7 @@
   - step1 已知同花顺偶发 403，内置 1 次重试；失败自动降级到本地 industry_map×stock_daily 聚合。
   - 运行日志写 output/run_daily.log.json + output/run_daily.log.txt。
 """
+from db import get_conn, _DB_PATH
 import os
 import sys
 import json
@@ -119,11 +120,11 @@ def wait_for_today_ready(max_attempts=6, backoff=20):
     仅校验行数（数据是否写完），不校验 ma20——ma20 就绪由 tech_fill 负责，缺失则由
     build_derived 的非致命延后逻辑兜底，避免新上市股 ma20 合法为空导致本门死等。
     """
-    db = os.path.join(ROOT, "database", "vibe_research.db")
+    db = str(_DB_PATH)
     for i in range(max_attempts):
         td, cnt = None, 0
         try:
-            conn = sqlite3.connect(db, timeout=30)
+            conn = get_conn(timeout=30)
             td = conn.execute("SELECT MAX(date) FROM stock_daily").fetchone()[0]
             if td:
                 cnt = conn.execute(

@@ -1,7 +1,8 @@
+from db import get_conn, _DB_PATH
 import sqlite3, os, json
 
-DB = "database/vibe_research.db"
-con = sqlite3.connect(DB)
+DB = str(_DB_PATH)
+con = get_conn()
 
 def maxdate(t, c="date"):
     try:

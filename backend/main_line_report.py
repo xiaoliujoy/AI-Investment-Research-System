@@ -15,6 +15,7 @@
   python main_line_report.py --date 2026-07-09
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 
 import argparse
 import os
@@ -22,13 +23,13 @@ import sqlite3
 from datetime import date as dmod
 from pathlib import Path
 
-DB = Path(__file__).parent / "database" / "vibe_research.db"
+DB = str(_DB_PATH)
 REPORT_DIR = Path(__file__).parent.parent / "reports"
 REPORT_DIR.mkdir(exist_ok=True)
 
 
 def get_db():
-    return sqlite3.connect(str(DB))
+    return get_conn()
 
 
 def latest_full_day(c):

@@ -10,6 +10,9 @@ Phase A-2: 主线板块数据底座（step1 多源容错 + 去同花顺硬依赖
 重要：沙箱仅 dead 代理，akshare 调用前必须清掉 http_proxy/https_proxy。
 产出：output/sector_mainline.json（含 data_sources 溯源字段）。
 """
+
+from db import get_conn, _DB_PATH
+
 import os
 import time
 import json
@@ -32,7 +35,7 @@ requests.Session.request = _request_with_timeout
 import akshare as ak
 
 _BASE = Path(__file__).resolve().parent
-DB = str(_BASE / "database" / "vibe_research.db")
+DB = str(_DB_PATH)
 OUT = str(_BASE / "output")
 os.makedirs(OUT, exist_ok=True)
 
@@ -46,7 +49,7 @@ except Exception:
 
 
 def _q(sql, args=()):
-    c = sqlite3.connect(DB, timeout=30)
+    c = get_conn(timeout=30)
     try:
         return c.execute(sql, args).fetchall()
     finally:
@@ -169,7 +172,7 @@ def get_sector_amount_local(dates):
     """同花顺90行业(经 crosswalk→东财板块) 的 板块成交额(Σ成员amount,亿元) + 等权收盘价序列。
     完全本地：industry_map(东财成分) × stock_daily。用于同花顺不可达时的兜底。"""
     cw = {r[0]: r[1] for r in _q("SELECT thx_name, em_code FROM sector_crosswalk")}
-    c = sqlite3.connect(DB, timeout=30)
+    c = get_conn(timeout=30)
     c.row_factory = sqlite3.Row
     try:
         rows = []

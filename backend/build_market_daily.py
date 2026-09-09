@@ -29,15 +29,18 @@
   python build_market_daily.py --start 2026-07-15 --end 2026-07-31
   python build_market_daily.py --start 2026-07-15 --end 2026-07-31 --dry-run
 """
+
+from db import get_conn as db_conn, _DB_PATH
+
 import sqlite3
 import os
 import argparse
 
-DB = os.path.join(os.path.dirname(__file__), "database", "vibe_research.db")
+DB = str(_DB_PATH)
 
 
 def get_conn():
-    return sqlite3.connect(DB)
+    return db_conn()
 
 
 def has_source(con, date: str) -> int:

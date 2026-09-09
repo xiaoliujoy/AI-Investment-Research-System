@@ -13,6 +13,7 @@
   python sector_pipeline.py --rebuild-map  # 强制重建 板块->个股 映射
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 
 import argparse
 import sqlite3
@@ -20,12 +21,12 @@ import sys
 import time
 from pathlib import Path
 
-DB = Path(__file__).parent / "database" / "vibe_research.db"
+DB = str(_DB_PATH)
 VENV_PY = Path(r"C:\Users\JOY\.workbuddy\binaries\python\envs\default\Scripts\python.exe")
 
 
 def get_db():
-    return sqlite3.connect(str(DB))
+    return get_conn()
 
 
 def latest_full_day(c) -> str:

@@ -15,6 +15,7 @@
   · reconcile 用「信号日→次日」收益率判定判断对错，并统计你是否跟单（执行纪律）。
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 
 import argparse
 import sqlite3
@@ -28,7 +29,7 @@ import narrative_layers as ne
 def _resolve_signal_id(date, code):
     """按 (code, date) 关联最近的系统信号（rec_type='signal'）。"""
     try:
-        c = sqlite3.connect(ne.DB)
+        c = get_conn()
         row = c.execute(
             "SELECT id FROM trade_journal WHERE rec_type='signal' AND code=? "
             "AND trade_date<=? ORDER BY trade_date DESC LIMIT 1",
@@ -107,7 +108,7 @@ def cmd_reconcile(args):
 
 
 def cmd_list(args):
-    c = sqlite3.connect(ne.DB)
+    c = get_conn()
     c.row_factory = sqlite3.Row
     rows = c.execute("SELECT * FROM trade_journal ORDER BY trade_date DESC LIMIT ?",
                      (args.n,)).fetchall()

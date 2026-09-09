@@ -38,6 +38,7 @@ import os
 import json
 import sys
 import datetime
+from db import get_conn
 import re
 from dataclasses import dataclass, field
 from typing import Optional
@@ -1323,9 +1324,7 @@ def _build_historical(brain, tree) -> HistoricalBlock:
         j = rec.get("judgment", {})
         e = rec.get("execution", {})
         try:
-            import sqlite3 as _sq
-            db_path = os.path.join(ROOT, "database", "vibe_research.db")
-            _c = _sq.connect(db_path)
+            _c = get_conn()
             n_sig = _c.execute(
                 "SELECT COUNT(*) FROM trade_journal WHERE rec_type='signal'").fetchone()[0]
             n_trade = _c.execute(
@@ -1915,9 +1914,7 @@ _GLOBAL_BOARD_SPEC = [
 def _global_latest_change(symbol):
     """返回 (change_pct, date) 最近一日相对前一日涨跌；无数据返回 (None, None)。"""
     try:
-        import sqlite3
-        db = os.path.join(ROOT, "database", "vibe_research.db")
-        con = sqlite3.connect(db)
+        con = get_conn()
         rows = con.execute(
             "SELECT date, close FROM global_history WHERE symbol=? "
             "ORDER BY date DESC LIMIT 2", (symbol,)).fetchall()

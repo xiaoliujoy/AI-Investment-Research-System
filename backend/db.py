@@ -47,11 +47,17 @@ def exists() -> bool:
     return os.path.exists(_DB_PATH)
 
 
-def get_conn() -> sqlite3.Connection:
+def get_conn(timeout: int = 5) -> sqlite3.Connection:
     """Return a connection to the research DB.
 
     Raises FileNotFoundError if the DB is missing (fail loud, not silent).
+
+    Args:
+        timeout: busy-timeout in seconds passed to ``sqlite3.connect``.
+            Default 5 matches sqlite3's own default; callers that previously
+            passed ``timeout=30``/``60`` should forward the same value so the
+            WAL concurrency behaviour is preserved (P1-C migration).
     """
     if not exists():
         raise FileNotFoundError(f"research DB not found: {_DB_PATH}")
-    return sqlite3.connect(_DB_PATH)
+    return sqlite3.connect(_DB_PATH, timeout=timeout)

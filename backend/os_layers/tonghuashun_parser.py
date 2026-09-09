@@ -7,6 +7,9 @@
 输出归一化 CSV + 写入 vibe_research.db (tonghuashun_stock_trade / tonghuashun_futures_trade)
 股票额外做 FIFO 配对, 输出 tonghuashun_stock_realized (逐股已实现盈亏)
 """
+
+from db import get_conn, _DB_PATH
+
 import argparse
 import csv
 import os
@@ -14,7 +17,7 @@ import sqlite3
 import sys
 from datetime import date
 
-DB = os.path.join(os.path.dirname(__file__), "..", "..", "backend", "database", "vibe_research.db")
+DB = str(_DB_PATH)
 OUT = os.path.join(os.path.dirname(__file__), "..", "..", "mt5_raw")
 
 
@@ -146,7 +149,7 @@ def parse_futures_xlsx(path):
 
 # ---------------------------------------------------------------------------
 def save(db_table, cols, rows):
-    con = sqlite3.connect(DB)
+    con = get_conn()
     con.execute("DROP TABLE IF EXISTS %s" % db_table)
     con.execute("CREATE TABLE %s (%s)" % (db_table, ", ".join("%s TEXT" % c if c in ("trade_date", "code", "name", "op", "account", "market", "exchange", "instrument", "bs", "oc", "sh") else "%s REAL" % c for c in cols)))
     placeholders = ",".join("?" * len(cols))

@@ -25,6 +25,7 @@ fill_daily_quotes.py — 个股日线东财兜底抓取（Data OS）
   - 北交所(8xx/92x) push2 不覆盖，保持缺省（流动性低，可接受）。
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 
 import os
 import sys
@@ -36,7 +37,7 @@ import urllib.parse
 import datetime
 from pathlib import Path
 
-DB = str(Path(__file__).parent / "database" / "vibe_research.db")
+DB = str(_DB_PATH)
 PZ = 100
 TIMEOUT = 20
 HEADERS = {
@@ -115,7 +116,7 @@ def main():
         time.sleep(0.08)
     print(f"[fill_daily_quotes] 抓到 {len(all_rows)} 只")
 
-    con = sqlite3.connect(DB)
+    con = get_conn()
     cur = con.cursor()
     cnt = 0
     skipped = 0

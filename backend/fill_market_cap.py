@@ -13,6 +13,8 @@ fill_market_cap —— 市值数据源（Data OS）。
       用作"市值区间"人工过滤提示完全够用；写入最新交易日的行。
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
+from universe import is_stock
 
 import os
 import sqlite3
@@ -21,7 +23,7 @@ import time
 import urllib.request
 from pathlib import Path
 
-DB = str(Path(__file__).parent / "database" / "vibe_research.db")
+DB = str(_DB_PATH)
 BATCH = 60
 HEADERS = {"User-Agent": "Mozilla/5.0", "Referer": "https://gu.qq.com/"}
 
@@ -74,7 +76,7 @@ def _fetch_batch(codes):
 def fill(date=None, verbose=True):
     """回填指定交易日（默认最新）的市值。返回 {date, total, updated, failed}。"""
     _clear_proxy()
-    c = sqlite3.connect(DB, timeout=30)
+    c = get_conn(timeout=30)
     c.execute("PRAGMA busy_timeout=30000")  # 等待锁而非直接报错
     if date is None:
         # 选最近的"完整交易日"（行数>1000），避开 step1 实时接口插入的极少量最新日
@@ -85,11 +87,8 @@ def fill(date=None, verbose=True):
         "SELECT code FROM stock_daily WHERE date=? ORDER BY code", (date,)).fetchall()]
     # 只回填 A 股个股主体：沪(6)/深(0)/创业(3)/北交(83/87/920)。
     # 排除 88x/880x（通达信板块指数伪代码）、11/12(可转债)、5/15/16(ETF/基金) 等非个股。
-    def _is_stock(x):
-        if x.startswith(("11", "12", "13", "15", "16", "18", "88", "5")):
-            return False
-        return x[0] in ("6", "0", "3") or x.startswith(("83", "87", "920"))
-    stock_codes = [x for x in codes if _is_stock(x)]
+    # P1-C · C10：成员资格规则收敛到 universe.is_stock（单一事实源，行为等价）。
+    stock_codes = [x for x in codes if is_stock(x)]
     if verbose:
         print(f"[market_cap] 交易日={date} 待回填个股={len(stock_codes)}（总行={len(codes)}）")
 

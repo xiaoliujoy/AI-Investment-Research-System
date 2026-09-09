@@ -17,9 +17,12 @@ Regime Backtest Dashboard (Phase 1.9A: Regime Validation)
 
 输出：output/regime_backtest_{today}.json / .html / .md
 """
+
+from db import get_conn, _DB_PATH
+
 import sqlite3, json, os, datetime, statistics
 
-DB = 'database/vibe_research.db'
+DB = str(_DB_PATH)
 OUT = 'output'
 TODAY = datetime.date.today().strftime('%Y-%m-%d')
 
@@ -29,7 +32,7 @@ CAP = 0.21  # 单日收益截断，剔除单位错误
 
 
 def connect():
-    con = sqlite3.connect(DB)
+    con = get_conn()
     con.execute('PRAGMA busy_timeout=15000')
     return con
 

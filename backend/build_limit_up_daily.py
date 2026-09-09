@@ -42,16 +42,19 @@
   python build_limit_up_daily.py --start 2026-07-18 --end 2026-07-31
   python build_limit_up_daily.py --start 2026-07-18 --end 2026-07-31 --dry-run
 """
+
+from db import get_conn as db_conn, _DB_PATH
+
 import argparse
 import os
 import sqlite3
 import sys
 
-DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database", "vibe_research.db")
+DB = str(_DB_PATH)
 
 
 def get_conn():
-    return sqlite3.connect(DB)
+    return db_conn()
 
 
 def all_dates(con):

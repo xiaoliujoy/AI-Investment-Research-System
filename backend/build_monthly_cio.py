@@ -13,10 +13,13 @@ Monthly CIO Report v0.1 — 模板定义 + 草稿生成
 全球资产（标普500/纳指100/恒生科技/黄金ETF/国债ETF）目前库里没有 -> 诚实标"待接入数据"。
 四维宏观目前库里没有 -> 诚实标"待接入宏观数据"。
 """
+
+from db import get_conn, _DB_PATH
+
 import sqlite3, json, os
 from cio_decision_engine import produce_decision, REGIME_LABEL
 
-DB = os.path.join(os.path.dirname(__file__), 'database', 'vibe_research.db')
+DB = str(_DB_PATH)
 OUT = os.path.join(os.path.dirname(__file__), 'output')
 
 # 全球资产（待接入数据，诚实留空，不编造评分）
@@ -30,7 +33,7 @@ GLOBAL_ASSETS = [
 
 
 def _conn():
-    con = sqlite3.connect(DB)
+    con = get_conn()
     con.row_factory = sqlite3.Row
     return con
 

@@ -11,16 +11,19 @@
 
 运行：python decision_tree.py
 """
+
+from db import get_conn, _DB_PATH
+
 import sqlite3, json, os, datetime
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(BASE, "output")
-DB = os.path.join(BASE, "database", "vibe_research.db")
+DB = str(_DB_PATH)
 os.makedirs(OUT, exist_ok=True)
 
 
 def q(sql, args=()):
-    c = sqlite3.connect(DB)
+    c = get_conn()
     c.row_factory = sqlite3.Row
     try:
         return [dict(r) for r in c.execute(sql, args).fetchall()]

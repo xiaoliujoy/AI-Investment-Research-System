@@ -14,11 +14,14 @@ Signal Loss Incident (2026-08-04 ~ 2026-08-14) 保留在样本内，单独标记
 输出：
   backend/audit/cio_baseline.json
 """
+
+from db import get_conn, _DB_PATH
+
 import sqlite3, json, glob, re, os
 from collections import defaultdict
 
 ROOT = "C:/Users/LIU/WorkBuddy/个人AI研投系统"
-DB = os.path.join(ROOT, "backend/database/vibe_research.db")
+DB = str(_DB_PATH)
 ARCHIVE = os.path.join(ROOT, "backend/output/archive/brain_report_2026-*.json")
 MEMO_DIR = os.path.join(ROOT, "backend/output")
 OUT_JSON = os.path.join(ROOT, "backend/audit/cio_baseline.json")
@@ -107,7 +110,7 @@ memo = load_memo()
 print("[p] ic", len(ic), "memo", len(memo), flush=True)
 
 # ---------- 基础数据（避免 stock_daily 全表扫描） ----------
-con = sqlite3.connect(DB); cur = con.cursor()
+con = get_conn(); cur = con.cursor()
 # 交易日历从 sector_daily（小表）取
 cur.execute("SELECT DISTINCT date FROM sector_daily ORDER BY date")
 tdates = [r[0] for r in cur.fetchall()]

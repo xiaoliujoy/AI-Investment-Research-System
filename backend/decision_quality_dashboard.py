@@ -17,15 +17,18 @@ Decision Quality Dashboard（Phase 2.0）— Checkpoint C 四指标
   - "冲突决策"：decision_conflict_type IS NOT NULL（信号-市场依据不一致，提前症状）。
   - "有价值冲突"：risk高但后来真跌（Risk 领先）；"无价值冲突"：risk高市场续涨（过度防御）。
 """
+
+from db import get_conn, _DB_PATH
+
 import sqlite3, json, os, datetime
 
-DB = os.path.join(os.path.dirname(__file__), 'database', 'vibe_research.db')
+DB = str(_DB_PATH)
 OUT = os.path.join(os.path.dirname(__file__), '..', 'output')
 TODAY = datetime.date.today().strftime('%Y-%m-%d')
 
 
 def compute():
-    con = sqlite3.connect(DB); con.row_factory = sqlite3.Row
+    con = get_conn(); con.row_factory = sqlite3.Row
     n_dec = con.execute("SELECT COUNT(*) FROM cio_decision_history").fetchone()[0]
     n_fail = con.execute("SELECT COUNT(*) FROM risk_budget_failure_log").fetchone()[0]
     n_crisis = con.execute(

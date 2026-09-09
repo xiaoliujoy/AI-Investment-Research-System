@@ -24,6 +24,7 @@ narrative_layers —— 八层决策树的【叙事/宏观层数据函数】。
     DB                       → SQLite 路径常量（trade_log_cli 复用）
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 
 import os
 import sys
@@ -36,7 +37,7 @@ _BASE = os.path.dirname(os.path.abspath(__file__))
 if _BASE not in sys.path:
     sys.path.insert(0, _BASE)
 
-DB = os.path.join(_BASE, "database", "vibe_research.db")
+DB = str(_DB_PATH)
 _OUTPUT = os.path.join(_BASE, "output")
 
 
@@ -475,7 +476,7 @@ def add_journal(trade_date, code, action, sector="", name="", reason="",
 
     rec_type='trade'（默认，用户执行录入，向后兼容）或 'signal'（系统判断自动通电）。
     """
-    conn = sqlite3.connect(DB)
+    conn = get_conn()
     try:
         _ensure_journal_table(conn)
         conn.execute(
@@ -549,7 +550,7 @@ def log_daily_signals(memo, top_n_sectors=3, top_n_stocks=5) -> int:
     star_of = {getattr(m, "sector", ""): getattr(m, "star_rating", "")
                for m in mains if getattr(m, "sector", "")}
 
-    conn = sqlite3.connect(DB)
+    conn = get_conn()
     try:
         _ensure_journal_table(conn)
         seen = {r[0] for r in conn.execute(
@@ -596,7 +597,7 @@ def reconcile_journal(as_of=None) -> dict:
     if as_of is None:
         as_of = datetime.date.today().isoformat()
     try:
-        conn = sqlite3.connect(DB)
+        conn = get_conn()
         _ensure_journal_table(conn)
         conn.row_factory = sqlite3.Row
         rows = [dict(r) for r in conn.execute(
@@ -724,7 +725,7 @@ def monthly_pattern() -> dict:
     无记录时优雅返回 count=0（不报错），由 learning_feedback 判为「样本积累中」。
     """
     try:
-        conn = sqlite3.connect(DB)
+        conn = get_conn()
         _ensure_journal_table(conn)
         conn.row_factory = sqlite3.Row
         rows = [dict(r) for r in conn.execute(

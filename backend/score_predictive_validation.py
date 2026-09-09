@@ -19,9 +19,12 @@ Score Predictive Validation (Phase 1.9C)
 
 输出：output/score_validation_{today}.json / .md
 """
+
+from db import get_conn, _DB_PATH
+
 import sqlite3, json, os, datetime, statistics, math
 
-DB = 'database/vibe_research.db'
+DB = str(_DB_PATH)
 OUT = 'output'
 TODAY = datetime.date.today().strftime('%Y-%m-%d')
 HORIZONS = [5, 20, 60]
@@ -39,7 +42,7 @@ BUCKETS = [
 
 
 def connect():
-    con = sqlite3.connect(DB)
+    con = get_conn()
     con.execute('PRAGMA busy_timeout=15000')
     return con
 

@@ -9,17 +9,20 @@ L7 个股风险维度（本地，从 stock_daily 计算，零外部依赖）
 设计：不改变既有「市场风险 + 行业风险」的仓位预算逻辑，仅新增「个股风险」第三维，
       供 L7 综合分加权，并在看板逐只标注，辅助用户人工下单前的最后一道风控。
 """
+
+from db import get_conn, _DB_PATH
+
 import os
 import math
 import sqlite3
 import statistics
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-DB = os.path.join(BASE, "database", "vibe_research.db")
+DB = str(_DB_PATH)
 
 
 def _q(sql, args=()):
-    c = sqlite3.connect(DB)
+    c = get_conn()
     c.row_factory = sqlite3.Row
     try:
         return [dict(r) for r in c.execute(sql, args).fetchall()]

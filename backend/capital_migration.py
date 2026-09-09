@@ -22,6 +22,9 @@
 
 输出：build() 返回 dict，结构见 build()  docstring。
 """
+
+from db import get_conn, _DB_PATH
+
 import json
 import os
 import sqlite3
@@ -30,7 +33,7 @@ from datetime import datetime, timedelta
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(ROOT, "output")
 HISTORY_PATH = os.path.join(OUT, "sector_flow_history.json")
-DB_PATH = os.path.join(ROOT, "database", "vibe_research.db")
+DB_PATH = _DB_PATH
 
 # ETF / 主题关键词（用于跨资产闭环归类）
 THEME_KEYWORDS = {
@@ -147,7 +150,7 @@ def _global_change(symbols):
     if not os.path.exists(DB_PATH):
         return {}
     try:
-        con = sqlite3.connect(DB_PATH)
+        con = get_conn()
         cur = con.cursor()
         out = {}
         for sym in symbols:

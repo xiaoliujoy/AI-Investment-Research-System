@@ -43,6 +43,9 @@ v3 相对 v2 的三处改造（v2 三处硬阻塞的修复）：
 
 写库：intraday_watch_signal(date, time_point, sector) 唯一，重复运行 UPSERT。
 """
+
+from db import get_conn as db_conn, _DB_PATH
+
 import argparse
 import glob
 import json
@@ -51,7 +54,7 @@ import re
 import sqlite3
 from datetime import date
 
-DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database", "vibe_research.db")
+DB = str(_DB_PATH)
 
 # ---- 阶段定义 ----------------------------------------------------------------
 STAGES = ("open", "morning", "midday", "afternoon", "close")
@@ -86,7 +89,7 @@ def stage_of(hhmm: str) -> str:
 
 # ---- DB ----------------------------------------------------------------------
 def get_conn():
-    return sqlite3.connect(DB)
+    return db_conn()
 
 
 def ensure_table(c):

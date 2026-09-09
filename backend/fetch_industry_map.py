@@ -14,6 +14,9 @@ Step2 成分映射：从东财 datacenter (RPT_BOARD_CONSTITUENT, 沙箱内可�
   python fetch_industry_map.py          # 全量拉取并写库
   python fetch_industry_map.py --check  # 仅统计覆盖率，不写库
 """
+
+from db import get_conn, _DB_PATH
+
 import argparse
 import sqlite3
 import time
@@ -22,7 +25,7 @@ import requests
 import akshare as ak
 import pandas as pd
 
-DB = "C:/Users/LIU/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db"
+DB = str(_DB_PATH)
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36"
 BASE = "https://datacenter-web.eastmoney.com/api/data/v1/get?"
 
@@ -129,7 +132,7 @@ def main():
         return
 
     # 写库
-    con = sqlite3.connect(DB)
+    con = get_conn()
     con.execute("DROP TABLE IF EXISTS industry_map")
     con.execute("""CREATE TABLE industry_map (
         stock_code TEXT, industry_code TEXT, industry_name TEXT, board_type INTEGER,

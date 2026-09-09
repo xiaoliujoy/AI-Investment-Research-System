@@ -15,13 +15,16 @@
   python ingest_sector_flow_westock.py --json output/westock_fundflow_20260804.json
   python ingest_sector_flow_westock.py --date 2026-08-04   # 默认读 output/westock_fundflow_{date}.json
 """
+
+from db import get_conn as db_conn, _DB_PATH
+
 import argparse
 import json
 import os
 import sqlite3
 import sys
 
-DB = os.path.join(os.path.dirname(__file__), "database", "vibe_research.db")
+DB = str(_DB_PATH)
 HERE = os.path.dirname(__file__)
 
 
@@ -34,7 +37,7 @@ def norm(s: str) -> str:
 
 
 def get_conn():
-    return sqlite3.connect(DB)
+    return db_conn()
 
 
 def ensure_table(conn):

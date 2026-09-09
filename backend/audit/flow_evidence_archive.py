@@ -27,6 +27,7 @@ Decision Provenance 的第一块基础设施，并支持每日自动快照（含
   python flow_evidence_archive.py --flow-report /path/to/flow_report.json
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 import argparse
 import json
 import os
@@ -41,7 +42,7 @@ OUTPUT = BACKEND / "output"
 ARCHIVE_DIR = OUTPUT / "archive" / "flow_snapshots"
 MANIFEST = ARCHIVE_DIR / "archive_manifest.jsonl"
 FLOW_REPORT = OUTPUT / "flow_report.json"
-DB_PATH = BACKEND / "database" / "vibe_research.db"
+DB_PATH = str(_DB_PATH)
 
 SCHEMA_VERSION = "1.1"
 SNAPSHOT_TYPE = "flow_evidence"
@@ -235,7 +236,7 @@ def build_snapshot(today: str, flow_path: pathlib.Path, flow_report_as_of: str) 
     db_statuses = {}
     if DB_PATH.exists():
         try:
-            con = sqlite3.connect(str(DB_PATH))
+            con = get_conn()
             cur = con.cursor()
             real_ashare = build_real_ashare_capital(cur, today)
             for t in ["stock_flow_daily", "sector_daily"]:

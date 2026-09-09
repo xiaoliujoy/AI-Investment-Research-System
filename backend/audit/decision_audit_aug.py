@@ -12,15 +12,18 @@
   backend/audit/audit_aug.json        结构化结果
   backend/audit/audit_aug_report.md   人类可读报告
 """
+
+from db import get_conn, _DB_PATH
+
 import json, glob, os, re, sqlite3
 from collections import defaultdict, OrderedDict
 
 ROOT = "C:/Users/LIU/WorkBuddy/个人AI研投系统"
-DB   = os.path.join(ROOT, "backend/database/vibe_research.db")
+DB = str(_DB_PATH)
 OUT  = os.path.join(ROOT, "backend/audit")
 os.makedirs(OUT, exist_ok=True)
 
-con = sqlite3.connect(DB)
+con = get_conn()
 con.row_factory = sqlite3.Row
 cur = con.cursor()
 

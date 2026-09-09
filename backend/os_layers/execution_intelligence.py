@@ -20,10 +20,13 @@ A/B/C/D 定义（与 trading_discipline_engine.abcd_analysis 一致）：
   三指标：逻辑存活率=方向正确率；利润捕获率=方向正确者 capture 中位；提前退出率=(C+D)/方向正确
   信念兑现率 = 方向对且 capture>=0.5 / 方向对
 """
+
+from db import get_conn, _DB_PATH
+
 import os, json, sqlite3, statistics, re
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DB = os.path.join(HERE, "..", "database", "vibe_research.db")
+DB = str(_DB_PATH)
 OUT = os.path.join(HERE, "..", "..", "mt5_raw", "execution_intelligence.json")
 
 # 期货品种 -> 合约乘数(元/价格点/手)
@@ -35,7 +38,7 @@ OPT_RE = re.compile(r'^[a-zA-Z]+\d+[CP]\d+$')
 
 
 def _con():
-    return sqlite3.connect(DB)
+    return get_conn()
 
 
 def _norm(d):

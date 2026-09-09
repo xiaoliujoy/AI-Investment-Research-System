@@ -57,6 +57,9 @@
   # 计算信念兑现率（基于 mt5_raw/trade_path.csv）
   python trading_discipline_engine.py belief --csv mt5_raw/trade_path.csv
 """
+
+from db import get_conn, _DB_PATH
+
 import argparse
 import csv
 import os
@@ -66,7 +69,7 @@ import sys
 from datetime import date
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-DB = os.path.join(HERE, "..", "database", "vibe_research.db")
+DB = str(_DB_PATH)
 REFLECTION_MD = os.path.join(HERE, "..", "..", "docs", "trading_coach", "reflections.md")
 
 # 平仓层认知映射（与 trader_log.py 保持一致；自我报告，非诊断）
@@ -79,7 +82,7 @@ SG_MAP = {"a": "A", "b": "B", "c": "C"}
 
 
 def _con():
-    con = sqlite3.connect(DB)
+    con = get_conn()
     con.execute("PRAGMA foreign_keys=OFF")
     return con
 

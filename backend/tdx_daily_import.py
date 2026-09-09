@@ -15,6 +15,7 @@
   python tdx_daily_import.py --full    # 无视最新日，从 2000 起全量重导
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 
 import argparse
 import sqlite3
@@ -24,12 +25,12 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent))
 import import_tdx
 
-DB = str(Path(__file__).parent / "database" / "vibe_research.db")
+DB = str(_DB_PATH)
 
 
 def _latest() -> str | None:
     try:
-        c = sqlite3.connect(DB)
+        c = get_conn()
         d = c.execute("SELECT MAX(date) FROM stock_daily").fetchone()[0]
         c.close()
         return d

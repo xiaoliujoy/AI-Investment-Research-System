@@ -25,6 +25,7 @@ run_pathA_global_backfill.py —— 全球数据解墙「路径 A」一键脚本
       Stooq 当前对程序化 CSV 请求返回 HTML 拦截页，故退为最后兜底；若 Yahoo 偶发不可达会自动回退。
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 
 import os
 import sys
@@ -43,7 +44,7 @@ requests.Session.request = _request_with_timeout
 VENV_PY = r"C:\Users\JOY\.workbuddy\binaries\python\envs\default\Scripts\python.exe"
 HERE = os.path.dirname(os.path.abspath(__file__))
 BACKFILL = os.path.join(HERE, "global_history_backfill.py")
-DB = os.path.join(HERE, "database", "vibe_research.db")
+DB = str(_DB_PATH)
 
 # 看板里「未接入」的 8 个符号（全部走 yfinance 兜底，键名与 cio_agent._GLOBAL_BOARD_SPEC 一致）
 TARGET_SYMBOLS = ["NDX", "SOXX", "HSTECH", "DXY", "US2Y", "US10Y", "TIPS", "BTC"]
@@ -95,7 +96,7 @@ def _verify(symbols):
     if not os.path.exists(DB):
         print(f"[警告] 未找到数据库：{DB}")
         return
-    con = sqlite3.connect(DB)
+    con = get_conn()
     print("\n── 回填落地校验（global_history 行数）──")
     for sym in symbols:
         try:
@@ -112,7 +113,7 @@ def _rows_of(mod, sym):
     import sqlite3
     if not os.path.exists(DB):
         return 0
-    con = sqlite3.connect(DB)
+    con = get_conn()
     try:
         return con.execute(
             "SELECT COUNT(*) FROM global_history WHERE symbol=?", (sym,)).fetchone()[0]

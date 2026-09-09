@@ -18,12 +18,16 @@ Tushare 第 3 数据源 provider（latent：需 token + 沙箱出口可达）
   - 个股主力净流入：pro.moneyflow(trade_date=...) 全市场单日，net_mf_amount(元) → 亿元。
   - 板块净额：本地 industry_map 成员 x 个股净额 聚合（复用东财成分映射，避免再次拉取板块接口）。
 """
+
+from db import get_conn, _DB_PATH
+
 import os
 import socket
 import sqlite3
+from universe import market_of
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-DB = os.path.join(BASE, "database", "vibe_research.db")
+DB = str(_DB_PATH)
 TOKEN_FILE = os.path.join(BASE, ".tushare_token")
 
 
@@ -57,13 +61,14 @@ def is_available():
 
 
 def _ts_code(code6):
-    if code6.startswith("6"):
-        return code6 + ".SH"
-    if code6.startswith(("0", "3")):
-        return code6 + ".SZ"
-    if code6.startswith(("4", "8")):
-        return code6 + ".BJ"
-    return code6
+    """6 位代码 → tushare ts_code（.SH/.SZ/.BJ）。北交所严格收敛为 83/87/920；
+    其余（含 9/4/88/5/11 等）原样返回，与 universe.market_of 对齐。"""
+    return {
+        "沪市": code6 + ".SH",
+        "深市": code6 + ".SZ",
+        "北交所": code6 + ".BJ",
+        "其他": code6,
+    }[market_of(code6)]
 
 
 def individual_fund_flow(trade_date):
@@ -99,7 +104,7 @@ def sector_fund_flow(trade_date):
     indiv = individual_fund_flow(trade_date)
     if not indiv:
         return {}
-    c = sqlite3.connect(DB)
+    c = get_conn()
     rows = c.execute("SELECT stock_code, industry_code FROM industry_map").fetchall()
     c.close()
     sec = {}

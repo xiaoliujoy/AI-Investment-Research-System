@@ -13,6 +13,9 @@
   - 每个主线板块的 产业/资金/技术/情绪 四龙头
   - 板块资金净流入（本地聚合 = Σ 成分股主力净流入），与 step1 在线口径交叉验证
 """
+
+from db import get_conn, _DB_PATH
+
 import os
 import re
 import json
@@ -23,7 +26,7 @@ for k in ['http_proxy', 'https_proxy', 'HTTP_PROXY', 'HTTPS_PROXY', 'all_proxy',
     os.environ.pop(k, None)
 import akshare as ak
 
-DB = "C:/Users/LIU/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db"
+DB = str(_DB_PATH)
 OUT = "C:/Users/LIU/WorkBuddy/个人AI研投系统/backend/output"
 
 
@@ -66,7 +69,7 @@ def resolve_em_code(c, thx_sector):
 
 
 def industry_members(c, em_code):
-    """东财板块代码 -> [(stock_code, stock_name)]，排除北交所/转债。"""
+    """东财板块代码 -> [(stock_code, stock_name)]，含北交所(83/87/920)、排除转债(11/12)/新三板(88)/ETF基金(5)。"""
     rows = c.execute(
         """SELECT im.stock_code, COALESCE(si.name, '') 
            FROM industry_map im LEFT JOIN stock_info si ON im.stock_code = si.code
@@ -98,7 +101,7 @@ def load_net_flow(force=False):
 
 
 def compute_leaders(date, main_sectors, net_flow=None):
-    c = sqlite3.connect(DB)
+    c = get_conn()
     c.row_factory = sqlite3.Row
     if net_flow is None:
         net_flow, _ = load_net_flow()

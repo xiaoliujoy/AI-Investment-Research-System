@@ -25,6 +25,7 @@ global_history_backfill.py —— 跨市场历史回填（打通韩股/纳指/�
 （与 run_daily.py 的 _VENV_PY 一致）。
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 import os
 import sys
 import csv
@@ -34,7 +35,7 @@ import datetime
 import argparse
 
 BASE = os.path.dirname(os.path.abspath(__file__))
-DB = os.path.join(BASE, "database", "vibe_research.db")
+DB = str(_DB_PATH)
 
 # 我们的内部代码 -> (akshare 函数, 键, 友好名)
 SINA_SYMBOLS = {
@@ -97,7 +98,7 @@ BINANCE_SYMBOLS = {
 
 
 def _con():
-    return sqlite3.connect(DB)
+    return get_conn()
 
 
 def ensure_table():

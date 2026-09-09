@@ -14,6 +14,9 @@ Narrative Engine —— 「为什么」引擎（用户审计问题二的核心�
 输出：output/narrative_report.json
 依赖：output/sector_mainline.json（板块资金）、output/global_history（经 backfill）
 """
+
+from db import get_conn, _DB_PATH
+
 import os
 import sys
 import json
@@ -29,7 +32,7 @@ def _request_with_timeout(self, method, url, **kwargs):
 requests.Session.request = _request_with_timeout
 
 # 修正：DB 在 backend/database（原 ".." 误指到上层目录，导致 global_driver 静默读空库）
-DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database", "vibe_research.db")
+DB = str(_DB_PATH)
 OUTPUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output")
 CACHE_DIR = os.path.join(OUTPUT, ".narrative_cache")
 os.makedirs(CACHE_DIR, exist_ok=True)
@@ -225,7 +228,7 @@ def _global_driver():
     out = {}
     try:
         import sqlite3
-        con = sqlite3.connect(DB, timeout=30)
+        con = get_conn(timeout=30)
         for sym, name in [("KS11", "韩国KOSPI"), ("TWII", "台湾加权"), ("NKY", "日经225")]:
             cur = con.execute(
                 "SELECT date, close, change_pct FROM global_history WHERE symbol=? "

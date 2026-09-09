@@ -11,12 +11,13 @@
   change_pct               (当日涨跌幅)
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 
 import sqlite3
 import time
 from pathlib import Path
 
-DB = Path(__file__).parent / "database" / "vibe_research.db"
+DB = str(_DB_PATH)
 WINDOW = 120          # 实际回填的交易日窗口
 LOOKBACK = 60         # 额外缓冲（保证 MA60 有足够前序数据）
 
@@ -83,7 +84,7 @@ def compute_for_stock(rows):
 
 def main():
     t0 = time.time()
-    c = sqlite3.connect(str(DB), timeout=30)
+    c = get_conn(timeout=30)
     lookback_cut, fill_cut = get_recent_cutoffs(c)
     print(f"缓冲起点(含) = {lookback_cut}  回填起点(含) = {fill_cut}")
 

@@ -23,9 +23,12 @@ Risk Budget Backtest (Phase 1.9B) — 价值验证点
   - 机会仓 10% 在所有策略中均排除，保证公平。
   - 零未来函数：regime score 只用当日及之前最新值。
 """
+
+from db import get_conn, _DB_PATH
+
 import sqlite3, json, os, datetime, math
 
-DB = 'database/vibe_research.db'
+DB = str(_DB_PATH)
 OUT = 'output'
 TODAY = datetime.date.today().strftime('%Y-%m-%d')
 
@@ -42,7 +45,7 @@ from risk_budget import score_to_budget
 
 
 def connect():
-    con = sqlite3.connect(DB)
+    con = get_conn()
     con.execute('PRAGMA busy_timeout=15000')
     return con
 

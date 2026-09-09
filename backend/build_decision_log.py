@@ -33,20 +33,21 @@ research_decision_log —— 研究决策日志 v0.1（Trading OS · Research Me
   python build_decision_log.py export
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 import argparse
 import json
 import sqlite3
 from datetime import datetime, date
 from pathlib import Path
 
-DB = str(Path(__file__).parent / "database" / "vibe_research.db")
+DB = str(_DB_PATH)
 OUT = Path(__file__).parent / "output"
 FLOW_REAL_START = "2026-07-20"  # 个股真实逐日资金流起点
 ALLOWED_ACTION = {"BUY", "SELL", "WAIT", "NO TRADE"}
 
 
 def connect():
-    c = sqlite3.connect(DB, timeout=30)
+    c = get_conn(timeout=30)
     c.execute("PRAGMA busy_timeout=30000")
     return c
 

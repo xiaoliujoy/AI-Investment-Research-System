@@ -23,6 +23,7 @@ https://github.com/Elian-dan/AI-Portfolio-Compass-public）的
 输出：build() 返回 dict（矩阵 + 总体健康度 + 告警），并写 output/freshness_report.json。
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 
 import os
 import json
@@ -31,7 +32,7 @@ import datetime
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(ROOT, "output")
-DB_PATH = os.path.join(ROOT, "database", "vibe_research.db")
+DB_PATH = str(_DB_PATH)
 REPORT_PATH = os.path.join(OUT, "freshness_report.json")
 
 # ── 新鲜度规则（日级批量系统适配版）──
@@ -82,7 +83,7 @@ def _parse_date(s) -> Optional[datetime.date]:
 def _tdx_latest() -> Optional[str]:
     """TDX 个股日线最新交易日 = 市场数据地面真值。"""
     try:
-        con = sqlite3.connect(DB_PATH)
+        con = get_conn()
         row = con.execute("SELECT MAX(date) FROM stock_daily").fetchone()
         con.close()
         return row[0] if row else None
@@ -92,7 +93,7 @@ def _tdx_latest() -> Optional[str]:
 
 def _global_latest() -> Optional[str]:
     try:
-        con = sqlite3.connect(DB_PATH)
+        con = get_conn()
         row = con.execute("SELECT MAX(date) FROM global_history").fetchone()
         con.close()
         return row[0] if row else None

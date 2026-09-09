@@ -17,15 +17,18 @@
     膨胀均匀可相互抵消，作为比值保留。
   - 输出一句验证 verdict，供 playbook 的「资金+情绪验证」段与推送继承。
 """
+
+from db import get_conn, _DB_PATH
+
 import os
 import sqlite3
 
-DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database", "vibe_research.db")
+DB = str(_DB_PATH)
 EXCLUDE_IDX = "(code LIKE '880%' OR code LIKE '999%' OR code LIKE '399%')"
 
 
 def _conn():
-    c = sqlite3.connect(DB)
+    c = get_conn()
     c.row_factory = sqlite3.Row
     return c
 

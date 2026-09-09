@@ -7,7 +7,7 @@ data_health —— 数据健康校验层（Data Integrity Layer · Trading OS P0
 从机制上消灭「数据层幻觉」：系统宁可空仓，也不拿不全的数据下注。
 
 校验项（均可量化）：
-  1. 股票数量   ：当日真个股（剔除 ETF/转债/指数/北交所）应 ≥ 4000
+  1. 股票数量   ：当日真个股（沪6/深0/创业3/北交83·87·920；剔除 ETF/转债/指数/新三板）应 ≥ 4000
   2. 个股资金流 ：stock_flow_daily 当日覆盖（占真个股）应 ≥ 80%（龙头资金第四环）
   3. 市值覆盖   ：真个股市值（market_cap>0）应 ≥ 90%（候选硬筛可信度）
   4. ST 过滤     ：limit_up_daily.is_st 列已启用（结构上已落，标记完成）
@@ -18,12 +18,14 @@ data_health —— 数据健康校验层（Data Integrity Layer · Trading OS P0
     summary, n_stocks, flow_cov, cap_cov }
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
+from universe import is_stock
 
 import os
 import sqlite3
 from pathlib import Path
 
-DB = str(Path(__file__).parent / "database" / "vibe_research.db")
+DB = str(_DB_PATH)
 
 # 校验阈值（与用户「主交易池覆盖 >95%」目标对齐，留工程余量）
 MIN_STOCKS = 4000
@@ -31,20 +33,14 @@ MIN_FLOW_COV = 80.0
 MIN_CAP_COV = 90.0
 
 
-def _is_stock(code: str) -> bool:
-    """真个股判定（与全系统一致）：剔除 ETF/转债/指数/北交所低流动标的。"""
-    if not code:
-        return False
-    if code[0] in ("6", "0", "3"):
-        return True
-    if code.startswith(("83", "87", "920")):   # 北交所
-        return True
-    return False
+# P1-C · C10：真个股判定收敛到 universe.is_stock（单一事实源，行为等价）。
+# 历史此处曾有一份 `_is_stock` 副本，且其 docstring 误写「剔除北交所」——
+# 实际规则包含北交所（83/87/920）。现删除副本，规则只留 universe.py 一份。
 
 
 def check(trade_date: str = None) -> dict:
     """体检当日数据。返回健康报告 dict。"""
-    c = sqlite3.connect(DB)
+    c = get_conn()
     c.row_factory = sqlite3.Row
     try:
         if trade_date is None:
@@ -57,7 +53,7 @@ def check(trade_date: str = None) -> dict:
         # 1) 真个股集合 + 数量
         rows = [r[0] for r in c.execute(
             "SELECT code FROM stock_daily WHERE date=?", (trade_date,)).fetchall()]
-        real = [x for x in rows if _is_stock(x)]
+        real = [x for x in rows if is_stock(x)]
         n_stocks = len(real)
         real_ph = "(" + ",".join("?" * len(real)) + ")" if real else "(NULL)"
 

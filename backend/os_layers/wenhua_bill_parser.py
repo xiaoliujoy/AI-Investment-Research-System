@@ -9,6 +9,9 @@
 本脚本: 遍历所有账单, 抽取成交记录 + 资金状况 + 出入金, 输出归一化账本 CSV。
 只读源文件, 不修改任何客户端数据。
 """
+
+from db import get_conn, _DB_PATH
+
 import argparse
 import csv
 import glob
@@ -20,7 +23,7 @@ from datetime import date
 
 DEFAULT_BILL_DIR = r"D:\wh6通用版\Users\0-1200-F201E306EF12FE5E833539BE7442E463\Data\Bill"
 OUT_CSV = os.path.join(os.path.dirname(__file__), "..", "..", "mt5_raw", "wenhua_futures_trades.csv")
-OUT_DB = os.path.join(os.path.dirname(__file__), "..", "..", "backend", "database", "vibe_research.db")
+OUT_DB = str(_DB_PATH)
 
 
 def _split_row(line):

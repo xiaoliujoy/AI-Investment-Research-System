@@ -24,19 +24,20 @@ data_quality_check —— 每日数据质量自检（Research OS 基础设施，
   python data_quality_check.py --date 2026-07-31
 """
 from __future__ import annotations
+from db import get_conn, _DB_PATH
 import argparse
 import json
 import sqlite3
 from datetime import datetime, date
 from pathlib import Path
 
-DB = str(Path(__file__).parent / "database" / "vibe_research.db")
+DB = str(_DB_PATH)
 OUT = Path(__file__).parent / "output"
 FLOW_REAL_START = "2026-07-20"  # stock_flow_daily 真实逐日资金流起点（早于该日为复制快照，已诚实置 NULL）
 
 
 def connect():
-    c = sqlite3.connect(DB, timeout=30)
+    c = get_conn(timeout=30)
     c.execute("PRAGMA busy_timeout=30000")
     return c
 

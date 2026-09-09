@@ -8,6 +8,9 @@ step2 · 板块→成分股 映射构建（同花顺数据域 d/q.10jqka.com.cn�
 用法：python build_industry_mapping.py
 注意：沙箱仅 dead 代理，调用前必须清 http_proxy/https_proxy。
 """
+
+from db import get_conn, _DB_PATH
+
 import os, re, time, sqlite3, json
 for k in ['http_proxy', 'https_proxy', 'HTTP_PROXY', 'HTTPS_PROXY', 'all_proxy', 'ALL_PROXY']:
     os.environ.pop(k, None)
@@ -16,7 +19,7 @@ import requests
 from py_mini_racer import MiniRacer
 import akshare.stock_feature.stock_board_industry_ths as ths_mod
 
-DB = "C:/Users/LIU/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db"
+DB = str(_DB_PATH)
 UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.90 Safari/537.36"
 
 
@@ -27,7 +30,7 @@ def get_v():
 
 
 def conn():
-    c = sqlite3.connect(DB)
+    c = get_conn()
     c.execute("""CREATE TABLE IF NOT EXISTS stock_info(
         code TEXT PRIMARY KEY, name TEXT)""")
     c.execute("""CREATE TABLE IF NOT EXISTS industry_map(

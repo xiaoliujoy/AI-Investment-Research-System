@@ -44,13 +44,16 @@
   exit_decision_state   → 平仓时刻主导认知（自我报告，非诊断；待 Q2 验证）
   mfe/mae               → Phase 2 MFE/MAE 轨迹重建（止损问题 vs 入场问题）
 """
+
+from db import get_conn, _DB_PATH
+
 import os
 import re
 import sqlite3
 import sys
 from datetime import date
 
-DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database", "vibe_research.db")
+DB = str(_DB_PATH)
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS trade_execution (
@@ -121,7 +124,7 @@ EDS_MAP = {"a": "wrong_exit", "b": "pain_threshold", "c": "weak_exit",
 
 
 def init():
-    con = sqlite3.connect(DB)
+    con = get_conn()
     con.executescript(SCHEMA)
     # 迁移：补齐 E3 / MFE-MAE 列（兼容 A0 早期已建表）
     cols = {r[1] for r in con.execute("PRAGMA table_info(trade_execution)").fetchall()}
@@ -176,7 +179,7 @@ def log_one():
     eds = ask("平仓时主导想法 exit_decision_state [a怕错/b怕亏/c偏弱/d茫然/e其他] (可选, 回车跳过): ", "")
     exit_decision_state = EDS_MAP.get(eds, None)
 
-    con = sqlite3.connect(DB)
+    con = get_conn()
     con.execute(
         """INSERT INTO trade_execution
            (trade_date, market_type, symbol, direction, exec_status, planned,
@@ -202,7 +205,7 @@ def log_one():
 
 
 def show_recent(n=10):
-    con = sqlite3.connect(DB)
+    con = get_conn()
     rows = con.execute(
         """SELECT id, trade_date, market_type, symbol, direction,
                   exec_status, planned, decision_state,
@@ -270,7 +273,7 @@ def cmd_quick(spec):
         print("解析失败:", err)
         return
     reason = ("entry=%.2f" % data["entry"]) + ((" sl=%.2f" % data["sl"]) if data["sl"] else "")
-    con = sqlite3.connect(DB)
+    con = get_conn()
     cur = con.execute(
         """INSERT INTO trade_execution
            (trade_date, market_type, symbol, direction, exec_status, planned,
@@ -292,7 +295,7 @@ def cmd_quick(spec):
 
 
 def cmd_exit(tid, price, trigger="", eds=""):
-    con = sqlite3.connect(DB)
+    con = get_conn()
     exit_trigger = ET_MAP.get((trigger or "").lower(), None)
     exit_decision_state = EDS_MAP.get((eds or "").lower(), None)
     con.execute(

@@ -18,10 +18,13 @@ Risk Governance Layer（Phase 2.0）— 风险治理层（旁路观察 / 飞行�
   - 阈值用【文档默认值】，非历史回测拟合。
   - 恢复为【渐进式 step ramp】，不做硬反转，避免熊市反弹陷阱。
 """
+
+from db import get_conn, _DB_PATH
+
 import sqlite3, json, os, sys, datetime
 from risk_budget import score_to_budget
 
-DB = os.path.join(os.path.dirname(__file__), 'database', 'vibe_research.db')
+DB = str(_DB_PATH)
 GOVERNANCE_VERSION = '2.0'
 
 CRISIS_AGING_REVIEW = 30     # 第30天提示复核
@@ -33,7 +36,7 @@ OPP_COST_BREADTH = 0.60      # 上涨家数占比 > 此值视为广度恢复
 
 
 def latest_breadth(as_of=None):
-    con = sqlite3.connect(DB); con.row_factory = sqlite3.Row
+    con = get_conn(); con.row_factory = sqlite3.Row
     cur = con.cursor()
     if as_of:
         cur.execute("SELECT * FROM market_daily WHERE date<=? ORDER BY date DESC LIMIT 1", (as_of,))

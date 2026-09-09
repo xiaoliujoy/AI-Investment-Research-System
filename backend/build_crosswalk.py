@@ -7,12 +7,15 @@ build_crosswalk.py
 
 用法：python build_crosswalk.py
 """
+
+from db import get_conn, _DB_PATH
+
 import json
 import os
 import re
 import sqlite3
 
-DB = "C:/Users/LIU/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db"
+DB = str(_DB_PATH)
 _ML = os.path.join(os.path.dirname(__file__), "output", "sector_mainline.json")
 
 # 同花顺名 -> 东财板块名（针对模糊仍易错的少量手工覆盖）
@@ -49,7 +52,7 @@ def sim(a, b):
 
 
 def main():
-    con = sqlite3.connect(DB)
+    con = get_conn()
     boards = con.execute(
         "SELECT industry_code, industry_name, board_type FROM board_list").fetchall()
     # 归一化索引：同一归一名可能对应 Ⅱ/Ⅲ 多级，优先选更宽泛的(无高级后缀、名字短、t2)
