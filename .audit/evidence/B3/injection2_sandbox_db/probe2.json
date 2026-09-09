@@ -1,0 +1,33 @@
+{
+ "sandbox": "C:/Users/LIU/AppData/Local/Temp/b3inj2/vibe_research.db",
+ "canonical_connect_attempts": 38,
+ "tables": {
+  "commodity_daily": 22193,
+  "commodity_factor_daily": 0,
+  "commodity_supply_daily": 0,
+  "commodity_symbol_map": 8,
+  "data_snapshot": 0,
+  "decision_item": 0,
+  "decision_run": 0,
+  "decision_version": 0,
+  "evidence": 0,
+  "global_market_daily": 0,
+  "global_rps": 0,
+  "global_score": 0,
+  "limit_up_daily": 0,
+  "market_daily": 0,
+  "option_chain_raw": 0,
+  "option_omi_daily": 0,
+  "option_watchlist": 6,
+  "outcome_attribution": 0,
+  "regime_history": 0,
+  "release_gate": 0,
+  "sector_daily": 0,
+  "shadow_run": 0,
+  "stock_capital_score": 0,
+  "stock_daily": 0,
+  "stock_flow_daily": 0,
+  "trade_signals": 0,
+  "watchlist": 0
+ }
+}

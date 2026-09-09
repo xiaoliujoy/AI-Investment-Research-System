@@ -1,0 +1,2277 @@
+{
+  "inventory": [
+    [
+      "backend/au_holding_analysis.py",
+      12,
+      "C-cwdrel",
+      "DB=os.path.join(ROOT,\"backend/database/vibe_research.db\")"
+    ],
+    [
+      "backend/build_crosswalk.py",
+      15,
+      "C-cwdrel",
+      "DB = \"C:/Users/LIU/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db\""
+    ],
+    [
+      "backend/build_decision_log.py",
+      42,
+      "C-hardcode",
+      "DB = str(Path(__file__).parent / \"database\" / \"vibe_research.db\")"
+    ],
+    [
+      "backend/build_derived_tables.py",
+      49,
+      "C-hardcode",
+      "DB = os.path.join(ROOT, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/build_failure_log.py",
+      31,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(__file__), 'database', 'vibe_research.db')"
+    ],
+    [
+      "backend/build_industry_mapping.py",
+      19,
+      "C-cwdrel",
+      "DB = \"C:/Users/LIU/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db\""
+    ],
+    [
+      "backend/build_limit_up_daily.py",
+      50,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/build_market_daily.py",
+      36,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(__file__), \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/build_monthly_cio.py",
+      19,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(__file__), 'database', 'vibe_research.db')"
+    ],
+    [
+      "backend/build_sector_daily.py",
+      29,
+      "C-hardcode",
+      "DB = str(Path(__file__).resolve().parent / \"database\" / \"vibe_research.db\")"
+    ],
+    [
+      "backend/build_sector_mainline.py",
+      35,
+      "D-other",
+      "DB = str(_BASE / \"database\" / \"vibe_research.db\")"
+    ],
+    [
+      "backend/build_weekly_intel.py",
+      35,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(__file__), \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/capital_migration.py",
+      21,
+      "C-cwdrel",
+      "    backend/database/vibe_research.db -> global_history (SOXX/KOSPI/科创50，若有)"
+    ],
+    [
+      "backend/capital_migration.py",
+      33,
+      "C-hardcode",
+      "DB_PATH = os.path.join(ROOT, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/cio_decision_engine.py",
+      21,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(__file__), 'database', 'vibe_research.db')"
+    ],
+    [
+      "backend/conftest.py",
+      31,
+      "D-other",
+      "  - 沙箱文件名刻意不含 `vibe_research.db` 子串，避免与 P0-B 拒绝判据自相冲突。"
+    ],
+    [
+      "backend/conftest.py",
+      45,
+      "C-hardcode",
+      "CANON_DB = os.path.normpath(os.path.join(BACKEND, \"database\", \"vibe_research.db\"))"
+    ],
+    [
+      "backend/conftest.py",
+      46,
+      "D-comment",
+      "# 沙箱库文件名：刻意不含 \"vibe_research.db\" 子串"
+    ],
+    [
+      "backend/conftest.py",
+      57,
+      "D-other",
+      "    return \"vibe_research.db\" in s"
+    ],
+    [
+      "backend/daily_collect.py",
+      180,
+      "C-hardcode",
+      "    db = os.path.join(ROOT, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/daily_collect.py",
+      214,
+      "C-hardcode",
+      "    db = os.path.join(ROOT, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/daily_collect.py",
+      264,
+      "C-hardcode",
+      "    db = os.path.join(ROOT, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/data_freshness.py",
+      34,
+      "C-hardcode",
+      "DB_PATH = os.path.join(ROOT, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/data_health.py",
+      26,
+      "C-hardcode",
+      "DB = str(Path(__file__).parent / \"database\" / \"vibe_research.db\")"
+    ],
+    [
+      "backend/data_quality_check.py",
+      33,
+      "C-hardcode",
+      "DB = str(Path(__file__).parent / \"database\" / \"vibe_research.db\")"
+    ],
+    [
+      "backend/db.py",
+      29,
+      "D-other",
+      "        \"vibe_research.db\","
+    ],
+    [
+      "backend/decision_quality_dashboard.py",
+      22,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(__file__), 'database', 'vibe_research.db')"
+    ],
+    [
+      "backend/decision_tree.py",
+      18,
+      "C-hardcode",
+      "DB = os.path.join(BASE, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/deep_mine.py",
+      13,
+      "C-cwdrel",
+      "DB = os.path.join(ROOT, \"backend/database/vibe_research.db\")"
+    ],
+    [
+      "backend/export_three_trades.py",
+      14,
+      "C-cwdrel",
+      "DB = os.path.join(ROOT, \"backend/database/vibe_research.db\")"
+    ],
+    [
+      "backend/fetch_industry_map.py",
+      25,
+      "C-cwdrel",
+      "DB = \"C:/Users/LIU/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db\""
+    ],
+    [
+      "backend/fill_daily_quotes.py",
+      39,
+      "C-hardcode",
+      "DB = str(Path(__file__).parent / \"database\" / \"vibe_research.db\")"
+    ],
+    [
+      "backend/fill_market_cap.py",
+      24,
+      "C-hardcode",
+      "DB = str(Path(__file__).parent / \"database\" / \"vibe_research.db\")"
+    ],
+    [
+      "backend/fill_stock_flow.py",
+      35,
+      "C-hardcode",
+      "DB = str(Path(__file__).parent / \"database\" / \"vibe_research.db\")"
+    ],
+    [
+      "backend/global_history_backfill.py",
+      37,
+      "C-hardcode",
+      "DB = os.path.join(BASE, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/ingest_sector_flow_westock.py",
+      24,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(__file__), \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/intraday_watch_runner.py",
+      54,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/leader_engine.py",
+      26,
+      "C-cwdrel",
+      "DB = \"C:/Users/LIU/WorkBuddy/个人AI研投系统/backend/database/vibe_research.db\""
+    ],
+    [
+      "backend/main_line_report.py",
+      25,
+      "C-hardcode",
+      "DB = Path(__file__).parent / \"database\" / \"vibe_research.db\""
+    ],
+    [
+      "backend/narrative_engine.py",
+      32,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/narrative_layers.py",
+      39,
+      "C-hardcode",
+      "DB = os.path.join(_BASE, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/panqian_ingest.py",
+      41,
+      "C-hardcode",
+      "        db = os.path.join(BASE, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/panqian_parser.py",
+      100,
+      "C-hardcode",
+      "        db = os.path.join(BASE, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/regime_backtest.py",
+      22,
+      "C-cwdrel",
+      "DB = 'database/vibe_research.db'"
+    ],
+    [
+      "backend/relationship_engine.py",
+      37,
+      "C-hardcode",
+      "DB = os.path.join(BASE, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/risk_budget_backtest.py",
+      28,
+      "C-cwdrel",
+      "DB = 'database/vibe_research.db'"
+    ],
+    [
+      "backend/risk_budget_stress_sim.py",
+      29,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(__file__), 'database', 'vibe_research.db')"
+    ],
+    [
+      "backend/risk_governance.py",
+      24,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(__file__), 'database', 'vibe_research.db')"
+    ],
+    [
+      "backend/risk_stock.py",
+      18,
+      "C-hardcode",
+      "DB = os.path.join(BASE, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/run_daily.py",
+      122,
+      "C-hardcode",
+      "    db = os.path.join(ROOT, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/run_pathA_global_backfill.py",
+      46,
+      "C-hardcode",
+      "DB = os.path.join(HERE, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/scenario_engine.py",
+      21,
+      "C-cwdrel",
+      "    database/vibe_research.db     (global_history: SOXX/KOSPI/科创50)"
+    ],
+    [
+      "backend/scenario_engine.py",
+      36,
+      "C-hardcode",
+      "DB_PATH = os.path.join(ROOT, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/score_predictive_validation.py",
+      24,
+      "C-cwdrel",
+      "DB = 'database/vibe_research.db'"
+    ],
+    [
+      "backend/sector_pipeline.py",
+      23,
+      "C-hardcode",
+      "DB = Path(__file__).parent / \"database\" / \"vibe_research.db\""
+    ],
+    [
+      "backend/sentiment.py",
+      23,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/shadow_evaluator.py",
+      11,
+      "D-other",
+      "  - 本模块【只读】vibe_research.db 与冻结快照，绝不写入、绝不改写任何生产裁决。"
+    ],
+    [
+      "backend/tdx_daily_import.py",
+      27,
+      "C-hardcode",
+      "DB = str(Path(__file__).parent / \"database\" / \"vibe_research.db\")"
+    ],
+    [
+      "backend/tech_fill.py",
+      19,
+      "C-hardcode",
+      "DB = Path(__file__).parent / \"database\" / \"vibe_research.db\""
+    ],
+    [
+      "backend/trader_log.py",
+      53,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(os.path.abspath(__file__)), \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/trade_review.py",
+      32,
+      "C-cwdrel",
+      "  backend/database/vibe_research.db -> stock_daily（TDX 本地，查成交后收盘价）"
+    ],
+    [
+      "backend/trade_review.py",
+      48,
+      "C-hardcode",
+      "DB_PATH = os.path.join(ROOT, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/trading_dna_v1.2.py",
+      14,
+      "C-cwdrel",
+      "DB=os.path.join(ROOT,\"backend/database/vibe_research.db\")"
+    ],
+    [
+      "backend/trading_dna_v1.py",
+      12,
+      "C-cwdrel",
+      "DB = os.path.join(ROOT, \"backend/database/vibe_research.db\")"
+    ],
+    [
+      "backend/tushare_provider.py",
+      26,
+      "C-hardcode",
+      "DB = os.path.join(BASE, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/write_decision_ledger.py",
+      6,
+      "D-other",
+      "Decision Ledger / Evidence / Snapshot Manifest / Version 到 vibe_research.db。"
+    ],
+    [
+      "backend/_add_systemic.py",
+      2,
+      "C-cwdrel",
+      "DB = r\"C:\\Users\\JOY\\WorkBuddy\\个人AI研投系统\\backend\\database\\vibe_research.db\""
+    ],
+    [
+      "backend/_audit2.py",
+      3,
+      "C-cwdrel",
+      "DB = \"database/vibe_research.db\""
+    ],
+    [
+      "backend/_audit_data.py",
+      3,
+      "C-cwdrel",
+      "DB = \"database/vibe_research.db\""
+    ],
+    [
+      "backend/_backup_db_to_d.py",
+      11,
+      "C-cwdrel",
+      "    r\"C:\\Users\\JOY\\WorkBuddy\\个人AI研投系统\\backend\\database\\vibe_research.db\","
+    ],
+    [
+      "backend/_backup_db_to_d.py",
+      12,
+      "C-abs",
+      "    r\"C:\\Users\\JOY\\WorkBuddy\\个人AI研投系统\\backend\\vibe_research.db\","
+    ],
+    [
+      "backend/_fix_agsc_tmp.py",
+      28,
+      "C-direct",
+      "con = sqlite3.connect(\"database/vibe_research.db\")"
+    ],
+    [
+      "backend/_healthcheck_preopen.py",
+      7,
+      "C-cwdrel",
+      "    r\"C:\\Users\\JOY\\WorkBuddy\\个人AI研投系统\\backend\\database\\vibe_research.db\","
+    ],
+    [
+      "backend/_healthcheck_preopen.py",
+      8,
+      "C-abs",
+      "    r\"C:\\Users\\JOY\\WorkBuddy\\个人AI研投系统\\backend\\vibe_research.db\","
+    ],
+    [
+      "backend/_inspect2.py",
+      2,
+      "C-cwdrel",
+      "db = r'C:\\Users\\JOY\\WorkBuddy\\个人AI研投系统\\backend\\database\\vibe_research.db'"
+    ],
+    [
+      "backend/_inspect_db.py",
+      2,
+      "C-cwdrel",
+      "db = r'C:\\Users\\JOY\\WorkBuddy\\个人AI研投系统\\backend\\database\\vibe_research.db'"
+    ],
+    [
+      "backend/_quick_today_import.py",
+      8,
+      "C-cwdrel",
+      "DB = Path(\"database/vibe_research.db\")"
+    ],
+    [
+      "backend/audit/cio_historical_baseline.py",
+      21,
+      "C-cwdrel",
+      "DB = os.path.join(ROOT, \"backend/database/vibe_research.db\")"
+    ],
+    [
+      "backend/audit/decision_audit_aug.py",
+      19,
+      "C-cwdrel",
+      "DB   = os.path.join(ROOT, \"backend/database/vibe_research.db\")"
+    ],
+    [
+      "backend/audit/flow_evidence_archive.py",
+      44,
+      "D-other",
+      "DB_PATH = BACKEND / \"database\" / \"vibe_research.db\""
+    ],
+    [
+      "backend/brain/cio_agent.py",
+      1327,
+      "C-hardcode",
+      "            db_path = os.path.join(ROOT, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/brain/cio_agent.py",
+      1919,
+      "C-hardcode",
+      "        db = os.path.join(ROOT, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/database/models.py",
+      15,
+      "A-db",
+      "_DEFAULT_DB_PATH = Path(__file__).parent.parent / \"database\" / \"vibe_research.db\""
+    ],
+    [
+      "backend/gold_engine/data_adapter/gold_data.py",
+      40,
+      "D-other",
+      "DB_PATH = BACK / \"database\" / \"vibe_research.db\""
+    ],
+    [
+      "backend/notify/research_memo.py",
+      76,
+      "D-other",
+      "                           \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/observation/breadth_cross_check.py",
+      27,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(__file__), \"..\", \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/os_layers/execution_intelligence.py",
+      26,
+      "C-hardcode",
+      "DB = os.path.join(HERE, \"..\", \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/os_layers/tonghuashun_parser.py",
+      7,
+      "D-other",
+      "输出归一化 CSV + 写入 vibe_research.db (tonghuashun_stock_trade / tonghuashun_futures_trade)"
+    ],
+    [
+      "backend/os_layers/tonghuashun_parser.py",
+      17,
+      "C-hardcode",
+      "DB = os.path.join(os.path.dirname(__file__), \"..\", \"..\", \"backend\", \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/os_layers/trading_discipline_engine.py",
+      69,
+      "C-hardcode",
+      "DB = os.path.join(HERE, \"..\", \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/os_layers/wenhua_bill_parser.py",
+      23,
+      "C-hardcode",
+      "OUT_DB = os.path.join(os.path.dirname(__file__), \"..\", \"..\", \"backend\", \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/tests/replay_engine.py",
+      15,
+      "D-other",
+      "  2) 可追溯：若 vibe_research.db 已存该 run_id 的 shadow_run / decision_item，"
+    ],
+    [
+      "backend/tests/test_data_health_fail_closed.py",
+      53,
+      "C-hardcode",
+      "DB_PATH = os.path.join(BACKEND, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/tests/test_data_health_fail_closed.py",
+      58,
+      "D-other",
+      "    \"\"\"生产库零写入守卫（T1 #3 铁律）：本测试不得改动 vibe_research.db。\"\"\""
+    ],
+    [
+      "backend/tests/test_decision_ledger_phase1b.py",
+      35,
+      "B-models",
+      "    models.DB_PATH = Path(tmp) / \"vibe_research.db\""
+    ],
+    [
+      "backend/tests/test_investment_committee_sentiment_contract.py",
+      31,
+      "C-hardcode",
+      "DB_PATH = os.path.join(BACKEND, \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "backend/tests/test_phase1c_regression.py",
+      136,
+      "B-models",
+      "    models.DB_PATH = Path(tmp) / \"vibe_research.db\""
+    ],
+    [
+      "backend/tests/test_phase1d_shadow_replay.py",
+      42,
+      "B-models",
+      "    models.DB_PATH = Path(tmp) / \"vibe_research.db\""
+    ],
+    [
+      "backend/tests/test_phase1e_shadow_evaluator.py",
+      46,
+      "B-models",
+      "    models.DB_PATH = Path(_TMP) / \"vibe_research.db\""
+    ],
+    [
+      "backend/tests/test_pipeline_failure_visibility.py",
+      47,
+      "D-comment",
+      "    # backend/database/vibe_research.db 并创建空库。这里一并打桩，"
+    ],
+    [
+      "backend/tests/test_prod_db_guard.py",
+      22,
+      "C-hardcode",
+      "CANON_DB = os.path.normpath(os.path.join(BACKEND, \"database\", \"vibe_research.db\"))"
+    ],
+    [
+      "backend/tests/test_prod_db_guard.py",
+      29,
+      "C-hardcode",
+      "    os.path.join(\"backend\", \"database\", \"vibe_research.db\"),   # CWD 相对路径"
+    ],
+    [
+      "backend/tests/test_prod_db_guard.py",
+      30,
+      "C-cwdrel",
+      "    \"database/vibe_research.db\",                     # 研究脚本用的相对路径形式"
+    ],
+    [
+      "backend/tests/test_prod_db_guard.py",
+      32,
+      "C-hardcode",
+      "    os.path.normpath(os.path.join(BACKEND, \"vibe_research.db\")),  # 历史空壳候选"
+    ],
+    [
+      "backend/tests/test_prod_db_guard.py",
+      55,
+      "D-other",
+      "    assert \"vibe_research.db\" not in sandbox, \\"
+    ],
+    [
+      "backend/tests/test_subprocess_db_isolation.py",
+      31,
+      "C-hardcode",
+      "CANON_DB = os.path.normpath(os.path.join(BACKEND, \"database\", \"vibe_research.db\"))"
+    ],
+    [
+      "trading_os/attribution_sink.py",
+      92,
+      "C-cwdrel",
+      "    def __init__(self, db_path: str = \"backend/database/vibe_research.db\", table: str = ATTRIBUTION_TABLE):"
+    ],
+    [
+      "trading_os/g2_supervisor.py",
+      56,
+      "C-hardcode",
+      "DEFAULT_DB = os.path.join(os.path.dirname(_HERE), \"backend\", \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "trading_os/submit_close.py",
+      43,
+      "D-comment",
+      "# 归因库：默认与 G2 一致的 vibe_research.db（见 AttributionSink 默认 db_path）"
+    ],
+    [
+      "trading_os/submit_close.py",
+      44,
+      "C-hardcode",
+      "DEFAULT_DB = os.path.join(os.path.dirname(_HERE), \"backend\", \"database\", \"vibe_research.db\")"
+    ],
+    [
+      "trading_os/submit_close.py",
+      142,
+      "D-other",
+      "    ap.add_argument(\"--db\", default=DEFAULT_DB, help=\"归因 SQLite 路径（默认 vibe_research.db）\")"
+    ],
+    [
+      "daily-os/app.py",
+      21,
+      "C-hardcode",
+      "TRADING_DB = os.path.normpath(os.path.join(BASE_DIR, \"..\", \"backend\", \"database\", \"vibe_research.db\"))"
+    ],
+    [
+      "daily-os/test_integration.py",
+      8,
+      "D-other",
+      "核心不变量：回写只落在「临时交易 OS 库」，绝不触碰真实主库 vibe_research.db。"
+    ]
+  ],
+  "per_file": {
+    "backend/_add_systemic.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          2,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/_audit2.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          3,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/_audit_data.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          3,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/_backup_db_to_d.py": {
+      "n": 2,
+      "classes": [
+        "C-abs",
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          11,
+          "C-cwdrel"
+        ],
+        [
+          12,
+          "C-abs"
+        ]
+      ]
+    },
+    "backend/_fix_agsc_tmp.py": {
+      "n": 1,
+      "classes": [
+        "C-direct"
+      ],
+      "has_direct": true,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          28,
+          "C-direct"
+        ]
+      ]
+    },
+    "backend/_healthcheck_preopen.py": {
+      "n": 2,
+      "classes": [
+        "C-abs",
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          7,
+          "C-cwdrel"
+        ],
+        [
+          8,
+          "C-abs"
+        ]
+      ]
+    },
+    "backend/_inspect2.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          2,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/_inspect_db.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          2,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/_quick_today_import.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          8,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/au_holding_analysis.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          12,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/audit/cio_historical_baseline.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          21,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/audit/decision_audit_aug.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          19,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/audit/flow_evidence_archive.py": {
+      "n": 1,
+      "classes": [
+        "D-other"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          44,
+          "D-other"
+        ]
+      ]
+    },
+    "backend/brain/cio_agent.py": {
+      "n": 2,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          1327,
+          "C-hardcode"
+        ],
+        [
+          1919,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/build_crosswalk.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          15,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/build_decision_log.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          42,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/build_derived_tables.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          49,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/build_failure_log.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          31,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/build_industry_mapping.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          19,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/build_limit_up_daily.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          50,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/build_market_daily.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          36,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/build_monthly_cio.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          19,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/build_sector_daily.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          29,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/build_sector_mainline.py": {
+      "n": 1,
+      "classes": [
+        "D-other"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          35,
+          "D-other"
+        ]
+      ]
+    },
+    "backend/build_weekly_intel.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          35,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/capital_migration.py": {
+      "n": 2,
+      "classes": [
+        "C-cwdrel",
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          21,
+          "C-cwdrel"
+        ],
+        [
+          33,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/cio_decision_engine.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          21,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/conftest.py": {
+      "n": 4,
+      "classes": [
+        "C-hardcode",
+        "D-comment",
+        "D-other"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          31,
+          "D-other"
+        ],
+        [
+          45,
+          "C-hardcode"
+        ],
+        [
+          46,
+          "D-comment"
+        ],
+        [
+          57,
+          "D-other"
+        ]
+      ]
+    },
+    "backend/daily_collect.py": {
+      "n": 3,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          180,
+          "C-hardcode"
+        ],
+        [
+          214,
+          "C-hardcode"
+        ],
+        [
+          264,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/data_freshness.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          34,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/data_health.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          26,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/data_quality_check.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          33,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/database/models.py": {
+      "n": 1,
+      "classes": [
+        "A-db"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          15,
+          "A-db"
+        ]
+      ]
+    },
+    "backend/db.py": {
+      "n": 1,
+      "classes": [
+        "D-other"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          29,
+          "D-other"
+        ]
+      ]
+    },
+    "backend/decision_quality_dashboard.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          22,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/decision_tree.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          18,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/deep_mine.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          13,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/export_three_trades.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          14,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/fetch_industry_map.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          25,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/fill_daily_quotes.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          39,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/fill_market_cap.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          24,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/fill_stock_flow.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          35,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/global_history_backfill.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          37,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/gold_engine/data_adapter/gold_data.py": {
+      "n": 1,
+      "classes": [
+        "D-other"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          40,
+          "D-other"
+        ]
+      ]
+    },
+    "backend/ingest_sector_flow_westock.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          24,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/intraday_watch_runner.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          54,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/leader_engine.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          26,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/main_line_report.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          25,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/narrative_engine.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          32,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/narrative_layers.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          39,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/notify/research_memo.py": {
+      "n": 1,
+      "classes": [
+        "D-other"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          76,
+          "D-other"
+        ]
+      ]
+    },
+    "backend/observation/breadth_cross_check.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          27,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/os_layers/execution_intelligence.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          26,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/os_layers/tonghuashun_parser.py": {
+      "n": 2,
+      "classes": [
+        "C-hardcode",
+        "D-other"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          7,
+          "D-other"
+        ],
+        [
+          17,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/os_layers/trading_discipline_engine.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          69,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/os_layers/wenhua_bill_parser.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          23,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/panqian_ingest.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          41,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/panqian_parser.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          100,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/regime_backtest.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          22,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/relationship_engine.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          37,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/risk_budget_backtest.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          28,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/risk_budget_stress_sim.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          29,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/risk_governance.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          24,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/risk_stock.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          18,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/run_daily.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          122,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/run_pathA_global_backfill.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          46,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/scenario_engine.py": {
+      "n": 2,
+      "classes": [
+        "C-cwdrel",
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          21,
+          "C-cwdrel"
+        ],
+        [
+          36,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/score_predictive_validation.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          24,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/sector_pipeline.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          23,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/sentiment.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          23,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/shadow_evaluator.py": {
+      "n": 1,
+      "classes": [
+        "D-other"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          11,
+          "D-other"
+        ]
+      ]
+    },
+    "backend/tdx_daily_import.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          27,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/tech_fill.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          19,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/tests/replay_engine.py": {
+      "n": 1,
+      "classes": [
+        "D-other"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          15,
+          "D-other"
+        ]
+      ]
+    },
+    "backend/tests/test_data_health_fail_closed.py": {
+      "n": 2,
+      "classes": [
+        "C-hardcode",
+        "D-other"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          53,
+          "C-hardcode"
+        ],
+        [
+          58,
+          "D-other"
+        ]
+      ]
+    },
+    "backend/tests/test_decision_ledger_phase1b.py": {
+      "n": 1,
+      "classes": [
+        "B-models"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          35,
+          "B-models"
+        ]
+      ]
+    },
+    "backend/tests/test_investment_committee_sentiment_contract.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          31,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/tests/test_phase1c_regression.py": {
+      "n": 1,
+      "classes": [
+        "B-models"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          136,
+          "B-models"
+        ]
+      ]
+    },
+    "backend/tests/test_phase1d_shadow_replay.py": {
+      "n": 1,
+      "classes": [
+        "B-models"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          42,
+          "B-models"
+        ]
+      ]
+    },
+    "backend/tests/test_phase1e_shadow_evaluator.py": {
+      "n": 1,
+      "classes": [
+        "B-models"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          46,
+          "B-models"
+        ]
+      ]
+    },
+    "backend/tests/test_pipeline_failure_visibility.py": {
+      "n": 1,
+      "classes": [
+        "D-comment"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          47,
+          "D-comment"
+        ]
+      ]
+    },
+    "backend/tests/test_prod_db_guard.py": {
+      "n": 5,
+      "classes": [
+        "C-cwdrel",
+        "C-hardcode",
+        "D-other"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          22,
+          "C-hardcode"
+        ],
+        [
+          29,
+          "C-hardcode"
+        ],
+        [
+          30,
+          "C-cwdrel"
+        ],
+        [
+          32,
+          "C-hardcode"
+        ],
+        [
+          55,
+          "D-other"
+        ]
+      ]
+    },
+    "backend/tests/test_subprocess_db_isolation.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          31,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/trade_review.py": {
+      "n": 2,
+      "classes": [
+        "C-cwdrel",
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          32,
+          "C-cwdrel"
+        ],
+        [
+          48,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/trader_log.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          53,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/trading_dna_v1.2.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          14,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/trading_dna_v1.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          12,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "backend/tushare_provider.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          26,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "backend/write_decision_ledger.py": {
+      "n": 1,
+      "classes": [
+        "D-other"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          6,
+          "D-other"
+        ]
+      ]
+    },
+    "daily-os/app.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          21,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "daily-os/test_integration.py": {
+      "n": 1,
+      "classes": [
+        "D-other"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          8,
+          "D-other"
+        ]
+      ]
+    },
+    "trading_os/attribution_sink.py": {
+      "n": 1,
+      "classes": [
+        "C-cwdrel"
+      ],
+      "has_direct": false,
+      "has_cwdrel": true,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          92,
+          "C-cwdrel"
+        ]
+      ]
+    },
+    "trading_os/g2_supervisor.py": {
+      "n": 1,
+      "classes": [
+        "C-hardcode"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          56,
+          "C-hardcode"
+        ]
+      ]
+    },
+    "trading_os/submit_close.py": {
+      "n": 3,
+      "classes": [
+        "C-hardcode",
+        "D-comment",
+        "D-other"
+      ],
+      "has_direct": false,
+      "has_cwdrel": false,
+      "has_write": false,
+      "has_ddl": false,
+      "lines": [
+        [
+          43,
+          "D-comment"
+        ],
+        [
+          44,
+          "C-hardcode"
+        ],
+        [
+          142,
+          "D-other"
+        ]
+      ]
+    }
+  }
+}

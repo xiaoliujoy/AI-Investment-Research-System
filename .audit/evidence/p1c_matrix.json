@@ -1,0 +1,1713 @@
+[
+  {
+    "rel": "backend/write_decision_ledger.py",
+    "matched_lines": [
+      6
+    ],
+    "n": 1,
+    "direct_open": false,
+    "single_source": true,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "A/B single-source (OK, already unified)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/_add_systemic.py",
+    "matched_lines": [
+      2
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/_fix_agsc_tmp.py",
+    "matched_lines": [
+      28
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/_quick_today_import.py",
+    "matched_lines": [
+      8
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/audit/cio_historical_baseline.py",
+    "matched_lines": [
+      21
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/brain/cio_agent.py",
+    "matched_lines": [
+      1327,
+      1919
+    ],
+    "n": 2,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/build_crosswalk.py",
+    "matched_lines": [
+      15
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/build_decision_log.py",
+    "matched_lines": [
+      42
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/build_derived_tables.py",
+    "matched_lines": [
+      49
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/build_failure_log.py",
+    "matched_lines": [
+      31
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/build_industry_mapping.py",
+    "matched_lines": [
+      19
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/build_limit_up_daily.py",
+    "matched_lines": [
+      50
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/build_market_daily.py",
+    "matched_lines": [
+      36
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/build_sector_daily.py",
+    "matched_lines": [
+      29
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/build_weekly_intel.py",
+    "matched_lines": [
+      35
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/cio_decision_engine.py",
+    "matched_lines": [
+      21
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/daily_collect.py",
+    "matched_lines": [
+      180,
+      214,
+      264
+    ],
+    "n": 3,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/data_quality_check.py",
+    "matched_lines": [
+      33
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/fetch_industry_map.py",
+    "matched_lines": [
+      25
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/fill_daily_quotes.py",
+    "matched_lines": [
+      39
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/fill_market_cap.py",
+    "matched_lines": [
+      24
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/fill_stock_flow.py",
+    "matched_lines": [
+      35
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/global_history_backfill.py",
+    "matched_lines": [
+      37
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/ingest_sector_flow_westock.py",
+    "matched_lines": [
+      24
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/intraday_watch_runner.py",
+    "matched_lines": [
+      54
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/narrative_layers.py",
+    "matched_lines": [
+      39
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/notify/research_memo.py",
+    "matched_lines": [
+      76
+    ],
+    "n": 1,
+    "direct_open": false,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/os_layers/tonghuashun_parser.py",
+    "matched_lines": [
+      7,
+      17
+    ],
+    "n": 2,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/os_layers/trading_discipline_engine.py",
+    "matched_lines": [
+      69
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/os_layers/wenhua_bill_parser.py",
+    "matched_lines": [
+      23
+    ],
+    "n": 1,
+    "direct_open": false,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/relationship_engine.py",
+    "matched_lines": [
+      37
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/risk_budget_stress_sim.py",
+    "matched_lines": [
+      29
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/sector_pipeline.py",
+    "matched_lines": [
+      23
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/shadow_evaluator.py",
+    "matched_lines": [
+      11
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/tdx_daily_import.py",
+    "matched_lines": [
+      27
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/tech_fill.py",
+    "matched_lines": [
+      19
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/trader_log.py",
+    "matched_lines": [
+      53
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "daily-os/app.py",
+    "matched_lines": [
+      21
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "trading_os/attribution_sink.py",
+    "matched_lines": [
+      92
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "trading_os/g2_supervisor.py",
+    "matched_lines": [
+      56
+    ],
+    "n": 1,
+    "direct_open": false,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "trading_os/submit_close.py",
+    "matched_lines": [
+      43,
+      44,
+      142
+    ],
+    "n": 3,
+    "direct_open": false,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C2 WRITE (must unify)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/database/models.py",
+    "matched_lines": [
+      15
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": true,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "ROOT single-source (defines DB_PATH)",
+    "relevance": "PROD-WRITE"
+  },
+  {
+    "rel": "backend/_audit2.py",
+    "matched_lines": [
+      3
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/_audit_data.py",
+    "matched_lines": [
+      3
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/_healthcheck_preopen.py",
+    "matched_lines": [
+      7,
+      8
+    ],
+    "n": 2,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/_inspect2.py",
+    "matched_lines": [
+      2
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/_inspect_db.py",
+    "matched_lines": [
+      2
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/au_holding_analysis.py",
+    "matched_lines": [
+      12
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/audit/decision_audit_aug.py",
+    "matched_lines": [
+      19
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/build_monthly_cio.py",
+    "matched_lines": [
+      19
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/build_sector_mainline.py",
+    "matched_lines": [
+      35
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/capital_migration.py",
+    "matched_lines": [
+      21,
+      33
+    ],
+    "n": 2,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/data_freshness.py",
+    "matched_lines": [
+      34
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/data_health.py",
+    "matched_lines": [
+      26
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/decision_quality_dashboard.py",
+    "matched_lines": [
+      22
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/decision_tree.py",
+    "matched_lines": [
+      18
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/deep_mine.py",
+    "matched_lines": [
+      13
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/export_three_trades.py",
+    "matched_lines": [
+      14
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/gold_engine/data_adapter/gold_data.py",
+    "matched_lines": [
+      40
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/leader_engine.py",
+    "matched_lines": [
+      26
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/main_line_report.py",
+    "matched_lines": [
+      25
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/narrative_engine.py",
+    "matched_lines": [
+      32
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/observation/breadth_cross_check.py",
+    "matched_lines": [
+      27
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/os_layers/execution_intelligence.py",
+    "matched_lines": [
+      26
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/regime_backtest.py",
+    "matched_lines": [
+      22
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/risk_budget_backtest.py",
+    "matched_lines": [
+      28
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/risk_governance.py",
+    "matched_lines": [
+      24
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/risk_stock.py",
+    "matched_lines": [
+      18
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/run_daily.py",
+    "matched_lines": [
+      122
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/run_pathA_global_backfill.py",
+    "matched_lines": [
+      46
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/scenario_engine.py",
+    "matched_lines": [
+      21,
+      36
+    ],
+    "n": 2,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/score_predictive_validation.py",
+    "matched_lines": [
+      24
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/sentiment.py",
+    "matched_lines": [
+      23
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/trade_review.py",
+    "matched_lines": [
+      32,
+      48
+    ],
+    "n": 2,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/trading_dna_v1.2.py",
+    "matched_lines": [
+      14
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/trading_dna_v1.py",
+    "matched_lines": [
+      12
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/tushare_provider.py",
+    "matched_lines": [
+      26
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C3 READ (migratable to single source)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/audit/flow_evidence_archive.py",
+    "matched_lines": [
+      44
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": true,
+    "mclass": "C4-tool-read (legit points to canonical)",
+    "relevance": "TOOL-READ"
+  },
+  {
+    "rel": "backend/panqian_ingest.py",
+    "matched_lines": [
+      41
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": true,
+    "mclass": "C4-tool-read (legit points to canonical)",
+    "relevance": "TOOL-READ"
+  },
+  {
+    "rel": "backend/panqian_parser.py",
+    "matched_lines": [
+      100
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": true,
+    "mclass": "C4-tool-read (legit points to canonical)",
+    "relevance": "TOOL-READ"
+  },
+  {
+    "rel": "backend/_backup_db_to_d.py",
+    "matched_lines": [
+      11,
+      12
+    ],
+    "n": 2,
+    "direct_open": false,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "C5 CWD-rel (fix path base)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/db.py",
+    "matched_lines": [
+      29
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": true,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": false,
+    "is_tool": false,
+    "mclass": "ROOT single-source (defines DB_PATH)",
+    "relevance": "PROD-READ"
+  },
+  {
+    "rel": "backend/conftest.py",
+    "matched_lines": [
+      31,
+      45,
+      46,
+      57
+    ],
+    "n": 4,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": true,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": true,
+    "is_tool": false,
+    "mclass": "TEST/GUARD (excluded)",
+    "relevance": "TEST"
+  },
+  {
+    "rel": "backend/tests/replay_engine.py",
+    "matched_lines": [
+      15
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": true,
+    "is_tool": false,
+    "mclass": "TEST/GUARD (excluded)",
+    "relevance": "TEST"
+  },
+  {
+    "rel": "backend/tests/test_data_health_fail_closed.py",
+    "matched_lines": [
+      53,
+      58
+    ],
+    "n": 2,
+    "direct_open": false,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": true,
+    "is_tool": false,
+    "mclass": "TEST/GUARD (excluded)",
+    "relevance": "TEST"
+  },
+  {
+    "rel": "backend/tests/test_decision_ledger_phase1b.py",
+    "matched_lines": [
+      35
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": true,
+    "is_tool": false,
+    "mclass": "TEST/GUARD (excluded)",
+    "relevance": "TEST"
+  },
+  {
+    "rel": "backend/tests/test_investment_committee_sentiment_contract.py",
+    "matched_lines": [
+      31
+    ],
+    "n": 1,
+    "direct_open": false,
+    "single_source": false,
+    "env_override": false,
+    "write": false,
+    "ddl": false,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": true,
+    "is_tool": false,
+    "mclass": "TEST/GUARD (excluded)",
+    "relevance": "TEST"
+  },
+  {
+    "rel": "backend/tests/test_phase1c_regression.py",
+    "matched_lines": [
+      136
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": true,
+    "is_tool": false,
+    "mclass": "TEST/GUARD (excluded)",
+    "relevance": "TEST"
+  },
+  {
+    "rel": "backend/tests/test_phase1d_shadow_replay.py",
+    "matched_lines": [
+      42
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": true,
+    "is_tool": false,
+    "mclass": "TEST/GUARD (excluded)",
+    "relevance": "TEST"
+  },
+  {
+    "rel": "backend/tests/test_phase1e_shadow_evaluator.py",
+    "matched_lines": [
+      46
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": true,
+    "is_tool": false,
+    "mclass": "TEST/GUARD (excluded)",
+    "relevance": "TEST"
+  },
+  {
+    "rel": "backend/tests/test_pipeline_failure_visibility.py",
+    "matched_lines": [
+      47
+    ],
+    "n": 1,
+    "direct_open": false,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": true,
+    "is_tool": false,
+    "mclass": "TEST/GUARD (excluded)",
+    "relevance": "TEST"
+  },
+  {
+    "rel": "backend/tests/test_prod_db_guard.py",
+    "matched_lines": [
+      22,
+      29,
+      30,
+      32,
+      55
+    ],
+    "n": 5,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": false,
+    "write": true,
+    "ddl": false,
+    "cwd_rel": true,
+    "has_abs": false,
+    "is_test": true,
+    "is_tool": false,
+    "mclass": "TEST/GUARD (excluded)",
+    "relevance": "TEST"
+  },
+  {
+    "rel": "backend/tests/test_subprocess_db_isolation.py",
+    "matched_lines": [
+      31
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": true,
+    "env_override": true,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": true,
+    "is_tool": false,
+    "mclass": "TEST/GUARD (excluded)",
+    "relevance": "TEST"
+  },
+  {
+    "rel": "daily-os/test_integration.py",
+    "matched_lines": [
+      8
+    ],
+    "n": 1,
+    "direct_open": true,
+    "single_source": false,
+    "env_override": false,
+    "write": true,
+    "ddl": true,
+    "cwd_rel": false,
+    "has_abs": false,
+    "is_test": true,
+    "is_tool": false,
+    "mclass": "TEST/GUARD (excluded)",
+    "relevance": "TEST"
+  }
+]

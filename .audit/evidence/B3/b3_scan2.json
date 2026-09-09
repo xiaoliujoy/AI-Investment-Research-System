@@ -1,0 +1,1272 @@
+[
+ {
+  "file": "backend/au_holding_analysis.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/backtest_engine.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/build_crosswalk.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 3,
+  "ddl": 2,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/build_decision_log.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 4,
+  "ddl": 1,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/build_derived_tables.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/build_failure_log.py",
+  "conn": [
+   "models.init_db",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 2,
+  "ddl": 1,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/build_industry_mapping.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 6,
+  "ddl": 2,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/build_limit_up_daily.py",
+  "conn": [
+   "db.get_conn",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 4,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/build_market_daily.py",
+  "conn": [
+   "db.get_conn",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 2,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/build_monthly_cio.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/build_sector_daily.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 4,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/build_sector_mainline.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/build_weekly_intel.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 3,
+  "ddl": 1,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/capital_migration.py",
+  "conn": [
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/capital_score.py",
+  "conn": [
+   "models.get_db",
+   "models.init_db"
+  ],
+  "dml": 3,
+  "ddl": 1,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/cio_decision_engine.py",
+  "conn": [
+   "models.init_db",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 2,
+  "ddl": 3,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/commodity_health.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/daily_collect.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 3,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/data_freshness.py",
+  "conn": [
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/data_health.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/data_quality_check.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 2,
+  "ddl": 1,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/db.py",
+  "conn": [
+   "db.get_conn",
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/decision_quality_dashboard.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/decision_tree.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/deep_mine.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/export_three_trades.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/fetch_industry_map.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 9,
+  "ddl": 6,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/fill_daily_quotes.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 1,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/fill_market_cap.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 1,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/fill_stock_flow.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 4,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/global_history_backfill.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 3,
+  "ddl": 1,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/import_tdx.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 3,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/ingest_sector_flow_westock.py",
+  "conn": [
+   "db.get_conn",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 4,
+  "ddl": 2,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/intraday_watch_runner.py",
+  "conn": [
+   "db.get_conn",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 3,
+  "ddl": 1,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/leader_engine.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/main_line_report.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/market_amount.py",
+  "conn": [
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 3,
+  "ddl": 1,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/narrative_engine.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/narrative_layers.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 3,
+  "ddl": 2,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/panqian_ingest.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/panqian_parser.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/regime_backtest.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/regime_history.py",
+  "conn": [
+   "db.get_conn"
+  ],
+  "dml": 2,
+  "ddl": 1,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/relationship_engine.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/release_gate.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 2,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/risk_budget_backtest.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/risk_budget_stress_sim.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 1,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/risk_governance.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/risk_stock.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/run_daily.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/run_pathA_global_backfill.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/scenario_engine.py",
+  "conn": [
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/score_predictive_validation.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/sector_pipeline.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 4,
+  "ddl": 2,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/sentiment.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/shadow_evaluator.py",
+  "conn": [
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/tdx_daily_import.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 1,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/tech_fill.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 4,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/trader_log.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 4,
+  "ddl": 3,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/trade_log_cli.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/trade_review.py",
+  "conn": [
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/trading_dna_v1.2.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/trading_dna_v1.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/tushare_provider.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/write_decision_ledger.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 8,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/_add_systemic.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 1,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/_audit2.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/_audit_data.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/_fix_agsc_tmp.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/_healthcheck_preopen.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/_inspect2.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/_inspect_db.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/_quick_today_import.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 8,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/.workbuddy/automations/automation-1786030229208/healthcheck.py",
+  "conn": [
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/asset_intelligence/asset_intelligence_health.py",
+  "conn": [
+   "models_DB_PATH"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/asset_intelligence/history.py",
+  "conn": [
+   "db.get_conn",
+   "models_DB_PATH"
+  ],
+  "dml": 3,
+  "ddl": 1,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/asset_intelligence/protocol.py",
+  "conn": [
+   "models_DB_PATH"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/asset_intelligence/validator.py",
+  "conn": [
+   "models_DB_PATH"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/asset_intelligence/tests/test_universe_history.py",
+  "conn": [
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": true
+ },
+ {
+  "file": "backend/asset_intelligence/tests/test_validation.py",
+  "conn": [
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 5,
+  "ddl": 1,
+  "iso": [],
+  "is_test": true
+ },
+ {
+  "file": "backend/asset_intelligence/validation/confidence_eval.py",
+  "conn": [
+   "db.get_conn"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/asset_intelligence/validation/regime_eval.py",
+  "conn": [
+   "db.get_conn"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/asset_intelligence/validation/returns.py",
+  "conn": [
+   "db.get_conn"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/asset_intelligence/validation/signal_eval.py",
+  "conn": [
+   "db.get_conn"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/audit/cio_historical_baseline.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/audit/decision_audit_aug.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/audit/flow_evidence_archive.py",
+  "conn": [
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/brain/cio_agent.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/commodity_engine/adapter.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/commodity_engine/collector.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 9,
+  "ddl": 7,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/commodity_engine/scoring.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 3,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/commodity_engine/snapshot.py",
+  "conn": [
+   "db.get_conn",
+   "models_DB_PATH"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/database/backfiller.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/database/collector.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/database/models.py",
+  "conn": [
+   "models.init_db",
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 14,
+  "ddl": 35,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/global_market/data_adapter/collector.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 2,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/global_market/indicators/divergence.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/global_market/indicators/relative_strength.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/global_market/indicators/technology_cycle.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/global_market/scoring/global_score.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/gold_engine/data_adapter/gold_data.py",
+  "conn": [
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/observation/breadth_cross_check.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/omi/storage.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 6,
+  "ddl": 5,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/os_layers/execution_intelligence.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/os_layers/tonghuashun_parser.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 2,
+  "ddl": 2,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/os_layers/trading_discipline_engine.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 8,
+  "ddl": 7,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/os_layers/_test_plan_v2.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 1,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/tests/replay_engine.py",
+  "conn": [
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": true
+ },
+ {
+  "file": "backend/tests/test_data_health_fail_closed.py",
+  "conn": [
+   "models_DB_PATH"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [
+   "monkeypatch",
+   "autouse"
+  ],
+  "is_test": true
+ },
+ {
+  "file": "backend/tests/test_decision_ledger_phase1b.py",
+  "conn": [
+   "models.init_db",
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [
+   "monkeypatch",
+   "tmpdir"
+  ],
+  "is_test": true
+ },
+ {
+  "file": "backend/tests/test_investment_committee_sentiment_contract.py",
+  "conn": [
+   "models_DB_PATH"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [
+   "autouse"
+  ],
+  "is_test": true
+ },
+ {
+  "file": "backend/tests/test_phase1c_regression.py",
+  "conn": [
+   "models.init_db",
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [
+   "tmpdir"
+  ],
+  "is_test": true
+ },
+ {
+  "file": "backend/tests/test_phase1d_shadow_replay.py",
+  "conn": [
+   "models.init_db",
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [
+   "monkeypatch",
+   "tmpdir"
+  ],
+  "is_test": true
+ },
+ {
+  "file": "backend/tests/test_phase1e_shadow_evaluator.py",
+  "conn": [
+   "models.init_db",
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 3,
+  "ddl": 0,
+  "iso": [
+   "monkeypatch",
+   "tmpdir"
+  ],
+  "is_test": true
+ },
+ {
+  "file": "backend/tests/test_westock_cross_check.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [
+   "memory"
+  ],
+  "is_test": true
+ },
+ {
+  "file": "backend/trade_signal/signals.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "backend/watchlist/manager.py",
+  "conn": [
+   "models.get_db"
+  ],
+  "dml": 3,
+  "ddl": 0,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "daily-os/app.py",
+  "conn": [
+   "models.init_db",
+   "models_DB_PATH",
+   "raw_sqlite3_connect"
+  ],
+  "dml": 7,
+  "ddl": 1,
+  "iso": [],
+  "is_test": false
+ },
+ {
+  "file": "daily-os/conftest.py",
+  "conn": [
+   "models.init_db",
+   "models_DB_PATH"
+  ],
+  "dml": 0,
+  "ddl": 0,
+  "iso": [
+   "tmp_path"
+  ],
+  "is_test": false
+ },
+ {
+  "file": "daily-os/test_integration.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 1,
+  "ddl": 2,
+  "iso": [
+   "tmp_path"
+  ],
+  "is_test": true
+ },
+ {
+  "file": "trading_os/attribution_sink.py",
+  "conn": [
+   "raw_sqlite3_connect"
+  ],
+  "dml": 2,
+  "ddl": 1,
+  "iso": [
+   "memory"
+  ],
+  "is_test": false
+ }
+]

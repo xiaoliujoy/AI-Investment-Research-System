@@ -1,0 +1,311 @@
+[
+ {
+  "file": "backend/asset_intelligence/tests/test_universe_history.py",
+  "touches_db": true,
+  "iso": [
+   "monkeypatch_any",
+   "patch_dbpath",
+   "tmpfile"
+  ],
+  "dml": 0,
+  "ntest": 7
+ },
+ {
+  "file": "backend/asset_intelligence/tests/test_validation.py",
+  "touches_db": true,
+  "iso": [
+   "monkeypatch_any",
+   "patch_dbpath",
+   "tmpfile"
+  ],
+  "dml": 5,
+  "ntest": 7
+ },
+ {
+  "file": "backend/test_gate.py",
+  "touches_db": true,
+  "iso": [
+   "monkeypatch_any"
+  ],
+  "dml": 0,
+  "ntest": 0
+ },
+ {
+  "file": "backend/tests/replay_engine.py",
+  "touches_db": true,
+  "iso": [],
+  "dml": 0,
+  "ntest": 0
+ },
+ {
+  "file": "backend/tests/test_data_health_fail_closed.py",
+  "touches_db": true,
+  "iso": [
+   "autouse",
+   "monkeypatch_any"
+  ],
+  "dml": 0,
+  "ntest": 3
+ },
+ {
+  "file": "backend/tests/test_decision_ledger_phase1b.py",
+  "touches_db": true,
+  "iso": [
+   "monkeypatch_any",
+   "patch_dbpath",
+   "tmpfile"
+  ],
+  "dml": 0,
+  "ntest": 0
+ },
+ {
+  "file": "backend/tests/test_investment_committee_sentiment_contract.py",
+  "touches_db": true,
+  "iso": [
+   "autouse"
+  ],
+  "dml": 0,
+  "ntest": 4
+ },
+ {
+  "file": "backend/tests/test_phase1c_regression.py",
+  "touches_db": true,
+  "iso": [
+   "patch_dbpath",
+   "tmpfile"
+  ],
+  "dml": 0,
+  "ntest": 0
+ },
+ {
+  "file": "backend/tests/test_phase1d_shadow_replay.py",
+  "touches_db": true,
+  "iso": [
+   "monkeypatch_any",
+   "patch_dbpath",
+   "tmpfile"
+  ],
+  "dml": 0,
+  "ntest": 0
+ },
+ {
+  "file": "backend/tests/test_phase1e_shadow_evaluator.py",
+  "touches_db": true,
+  "iso": [
+   "monkeypatch_any",
+   "patch_dbpath",
+   "tmpfile"
+  ],
+  "dml": 3,
+  "ntest": 0
+ },
+ {
+  "file": "backend/tests/test_westock_cross_check.py",
+  "touches_db": true,
+  "iso": [
+   "memory"
+  ],
+  "dml": 0,
+  "ntest": 5
+ },
+ {
+  "file": "daily-os/test_integration.py",
+  "touches_db": true,
+  "iso": [
+   "tmpfile"
+  ],
+  "dml": 1,
+  "ntest": 1
+ },
+ {
+  "file": "backend/asset_intelligence/tests/test_protocol.py",
+  "touches_db": false,
+  "iso": [],
+  "dml": 0,
+  "ntest": 17
+ },
+ {
+  "file": "backend/asset_intelligence/tests/test_universe_snapshot.py",
+  "touches_db": false,
+  "iso": [],
+  "dml": 0,
+  "ntest": 5
+ },
+ {
+  "file": "backend/equity_engine/tests/test_equity_adapter.py",
+  "touches_db": false,
+  "iso": [],
+  "dml": 0,
+  "ntest": 9
+ },
+ {
+  "file": "backend/os_layers/momentum_incremental_test.py",
+  "touches_db": false,
+  "iso": [],
+  "dml": 0,
+  "ntest": 0
+ },
+ {
+  "file": "backend/os_layers/redteam_pressure_test.py",
+  "touches_db": false,
+  "iso": [],
+  "dml": 0,
+  "ntest": 0
+ },
+ {
+  "file": "backend/test_constitution.py",
+  "touches_db": false,
+  "iso": [],
+  "dml": 0,
+  "ntest": 0
+ },
+ {
+  "file": "backend/test_flow_e2e.py",
+  "touches_db": false,
+  "iso": [],
+  "dml": 0,
+  "ntest": 0
+ },
+ {
+  "file": "backend/test_scoring.py",
+  "touches_db": false,
+  "iso": [
+   "tmpfile"
+  ],
+  "dml": 0,
+  "ntest": 18
+ },
+ {
+  "file": "backend/tests/build_golden_master.py",
+  "touches_db": false,
+  "iso": [],
+  "dml": 0,
+  "ntest": 0
+ },
+ {
+  "file": "backend/tests/test_api.py",
+  "touches_db": false,
+  "iso": [
+   "monkeypatch_any"
+  ],
+  "dml": 0,
+  "ntest": 8
+ },
+ {
+  "file": "backend/tests/test_fixes.py",
+  "touches_db": false,
+  "iso": [
+   "monkeypatch_any",
+   "tmpfile"
+  ],
+  "dml": 0,
+  "ntest": 11
+ },
+ {
+  "file": "backend/tests/test_live.py",
+  "touches_db": false,
+  "iso": [],
+  "dml": 0,
+  "ntest": 9
+ },
+ {
+  "file": "backend/tests/test_panqian_hotlist.py",
+  "touches_db": false,
+  "iso": [],
+  "dml": 0,
+  "ntest": 4
+ },
+ {
+  "file": "backend/tests/test_pipeline_failure_visibility.py",
+  "touches_db": false,
+  "iso": [
+   "monkeypatch_any"
+  ],
+  "dml": 0,
+  "ntest": 2
+ },
+ {
+  "file": "backend/tests/test_pure.py",
+  "touches_db": false,
+  "iso": [],
+  "dml": 0,
+  "ntest": 5
+ },
+ {
+  "file": "backend/tests/test_reports_and_security.py",
+  "touches_db": false,
+  "iso": [
+   "monkeypatch_any"
+  ],
+  "dml": 0,
+  "ntest": 10
+ },
+ {
+  "file": "daily-os/test_e2e.py",
+  "touches_db": false,
+  "iso": [],
+  "dml": 0,
+  "ntest": 1
+ },
+ {
+  "file": "quant-lab/tests/test_h1_fetch_resilience.py",
+  "touches_db": false,
+  "iso": [
+   "monkeypatch_any"
+  ],
+  "dml": 0,
+  "ntest": 8
+ },
+ {
+  "file": "tests/test_redteam_trigger_smoke.py",
+  "touches_db": false,
+  "iso": [
+   "monkeypatch_any",
+   "tmpfile"
+  ],
+  "dml": 0,
+  "ntest": 3
+ },
+ {
+  "file": "tests/test_validate_redteam_record.py",
+  "touches_db": false,
+  "iso": [],
+  "dml": 0,
+  "ntest": 3
+ },
+ {
+  "file": "trading_os/tests/conftest.py",
+  "touches_db": false,
+  "iso": [],
+  "dml": 0,
+  "ntest": 0
+ },
+ {
+  "file": "trading_os/tests/test_g2_bridge_attribution.py",
+  "touches_db": false,
+  "iso": [
+   "memory",
+   "monkeypatch_any",
+   "tmpfile"
+  ],
+  "dml": 0,
+  "ntest": 20
+ },
+ {
+  "file": "trading_os/tests/test_g2_supervisor.py",
+  "touches_db": false,
+  "iso": [
+   "memory",
+   "tmpfile"
+  ],
+  "dml": 0,
+  "ntest": 5
+ },
+ {
+  "file": "trading_os/tests/test_risk_calculator.py",
+  "touches_db": false,
+  "iso": [],
+  "dml": 0,
+  "ntest": 21
+ }
+]

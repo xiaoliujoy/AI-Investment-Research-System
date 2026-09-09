@@ -167,3 +167,7 @@ backend/imports/
 
 # 根目录一次性临时脚本（_tmp_ 前缀 scratch，非源码，不公开）
 _tmp_*.py
+
+# P1-C · 审计证据：B3 injection#1 原始命中日志（5.9MB）。
+# 结论已固化在 DB_LOCATION_AUDIT_B3_2026-09-09.md，原件保留本地、不进 Git history。
+.audit/evidence/B3/injection1_probe_log.json

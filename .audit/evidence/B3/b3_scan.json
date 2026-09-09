@@ -1,0 +1,395 @@
+[
+ {
+  "file": "backend/database/models.py",
+  "write_hits": 50,
+  "ddl": 35,
+  "dml": 14,
+  "has_initdb": true,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 824
+ },
+ {
+  "file": "backend/fetch_industry_map.py",
+  "write_hits": 15,
+  "ddl": 6,
+  "dml": 9,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 161
+ },
+ {
+  "file": "backend/write_decision_ledger.py",
+  "write_hits": 8,
+  "ddl": 0,
+  "dml": 8,
+  "has_initdb": true,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 366
+ },
+ {
+  "file": "backend/_quick_today_import.py",
+  "write_hits": 8,
+  "ddl": 0,
+  "dml": 8,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 109
+ },
+ {
+  "file": "backend/os_layers/trading_discipline_engine.py",
+  "write_hits": 15,
+  "ddl": 7,
+  "dml": 7,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 683
+ },
+ {
+  "file": "daily-os/app.py",
+  "write_hits": 8,
+  "ddl": 1,
+  "dml": 7,
+  "has_initdb": true,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 376
+ },
+ {
+  "file": "backend/build_industry_mapping.py",
+  "write_hits": 8,
+  "ddl": 2,
+  "dml": 6,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 119
+ },
+ {
+  "file": "backend/ingest_sector_flow_westock.py",
+  "write_hits": 6,
+  "ddl": 2,
+  "dml": 4,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 456
+ },
+ {
+  "file": "backend/sector_pipeline.py",
+  "write_hits": 6,
+  "ddl": 2,
+  "dml": 4,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 202
+ },
+ {
+  "file": "backend/build_decision_log.py",
+  "write_hits": 5,
+  "ddl": 1,
+  "dml": 4,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 286
+ },
+ {
+  "file": "backend/build_limit_up_daily.py",
+  "write_hits": 4,
+  "ddl": 0,
+  "dml": 4,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 259
+ },
+ {
+  "file": "backend/build_sector_daily.py",
+  "write_hits": 5,
+  "ddl": 0,
+  "dml": 4,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 161
+ },
+ {
+  "file": "backend/fill_stock_flow.py",
+  "write_hits": 4,
+  "ddl": 0,
+  "dml": 4,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 152
+ },
+ {
+  "file": "backend/tech_fill.py",
+  "write_hits": 4,
+  "ddl": 0,
+  "dml": 4,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 139
+ },
+ {
+  "file": "backend/trader_log.py",
+  "write_hits": 7,
+  "ddl": 3,
+  "dml": 3,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 338
+ },
+ {
+  "file": "backend/build_crosswalk.py",
+  "write_hits": 5,
+  "ddl": 2,
+  "dml": 3,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 131
+ },
+ {
+  "file": "backend/narrative_layers.py",
+  "write_hits": 5,
+  "ddl": 2,
+  "dml": 3,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 850
+ },
+ {
+  "file": "backend/build_weekly_intel.py",
+  "write_hits": 4,
+  "ddl": 1,
+  "dml": 3,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 368
+ },
+ {
+  "file": "backend/global_history_backfill.py",
+  "write_hits": 4,
+  "ddl": 1,
+  "dml": 3,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 468
+ },
+ {
+  "file": "backend/intraday_watch_runner.py",
+  "write_hits": 4,
+  "ddl": 1,
+  "dml": 3,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 543
+ },
+ {
+  "file": "backend/os_layers/wenhua_bill_parser.py",
+  "write_hits": 4,
+  "ddl": 1,
+  "dml": 3,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 219
+ },
+ {
+  "file": "backend/daily_collect.py",
+  "write_hits": 3,
+  "ddl": 0,
+  "dml": 3,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 423
+ },
+ {
+  "file": "backend/tests/test_phase1e_shadow_evaluator.py",
+  "write_hits": 3,
+  "ddl": 0,
+  "dml": 3,
+  "has_initdb": true,
+  "isolation": [
+   "monkeypatch",
+   "patch_dbpath",
+   "tmp_dir"
+  ],
+  "is_test": true,
+  "is_automation": false,
+  "loc": 247
+ },
+ {
+  "file": "backend/cio_decision_engine.py",
+  "write_hits": 5,
+  "ddl": 3,
+  "dml": 2,
+  "has_initdb": true,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 262
+ },
+ {
+  "file": "backend/os_layers/tonghuashun_parser.py",
+  "write_hits": 4,
+  "ddl": 2,
+  "dml": 2,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 212
+ },
+ {
+  "file": "backend/build_failure_log.py",
+  "write_hits": 3,
+  "ddl": 1,
+  "dml": 2,
+  "has_initdb": true,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 189
+ },
+ {
+  "file": "backend/data_quality_check.py",
+  "write_hits": 3,
+  "ddl": 1,
+  "dml": 2,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 171
+ },
+ {
+  "file": "trading_os/attribution_sink.py",
+  "write_hits": 3,
+  "ddl": 1,
+  "dml": 2,
+  "has_initdb": false,
+  "isolation": [
+   "memory_db"
+  ],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 225
+ },
+ {
+  "file": "backend/build_market_daily.py",
+  "write_hits": 2,
+  "ddl": 0,
+  "dml": 2,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 229
+ },
+ {
+  "file": "daily-os/test_integration.py",
+  "write_hits": 3,
+  "ddl": 2,
+  "dml": 1,
+  "has_initdb": false,
+  "isolation": [
+   "tmp_path"
+  ],
+  "is_test": true,
+  "is_automation": false,
+  "loc": 98
+ },
+ {
+  "file": "backend/fill_daily_quotes.py",
+  "write_hits": 1,
+  "ddl": 0,
+  "dml": 1,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 155
+ },
+ {
+  "file": "backend/fill_market_cap.py",
+  "write_hits": 1,
+  "ddl": 0,
+  "dml": 1,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 149
+ },
+ {
+  "file": "backend/risk_budget_stress_sim.py",
+  "write_hits": 1,
+  "ddl": 0,
+  "dml": 1,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 356
+ },
+ {
+  "file": "backend/tdx_daily_import.py",
+  "write_hits": 1,
+  "ddl": 0,
+  "dml": 1,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 62
+ },
+ {
+  "file": "backend/_add_systemic.py",
+  "write_hits": 1,
+  "ddl": 0,
+  "dml": 1,
+  "has_initdb": false,
+  "isolation": [],
+  "is_test": false,
+  "is_automation": false,
+  "loc": 20
+ }
+]

@@ -1,0 +1,28 @@
+{
+  "size": 5087100928,
+  "mtime_ns": 1788925503359543700,
+  "sha256": "30d293093b456242f56465388e5c09cfbac79c25cd85d0965db94ff1245d5d75",
+  "rowcounts": {
+    "stock_daily": 23492078,
+    "sector_daily": 5254829,
+    "commodity_daily": 32540,
+    "stock_flow_daily": 266189,
+    "market_daily": 41,
+    "limit_up_daily": 3884,
+    "stock_info": 5530,
+    "sector_flow_daily": "ERR:no such table: sector_flow_daily",
+    "decision_tree_log": "ERR:no such table: decision_tree_log",
+    "investment_committee": "ERR:no such table: investment_committee",
+    "main_net_buy": "ERR:no such table: main_net_buy",
+    "intraday_watch_signal": 176
+  },
+  "maxdate": {
+    "stock_daily": "2026-09-04",
+    "sector_daily": "2026-09-04",
+    "commodity_daily": "2026-09-04",
+    "stock_flow_daily": "2026-09-04",
+    "market_daily": "2026-09-04",
+    "limit_up_daily": "2026-09-04",
+    "intraday_watch_signal": "2026-08-13"
+  }
+}
