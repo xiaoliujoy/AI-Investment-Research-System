@@ -33,8 +33,16 @@ def get_db():
 
 
 def latest_full_day(c):
+    """最新交易日（**F17b 修复**）。
+
+    旧实现：`ORDER BY COUNT(*) DESC LIMIT 1` —— 取的是「**行数最多的那天**」。
+    缺陷：2026-07-21 清洗后行数由 9,327 降至 5,553，行数排序会恒定选中
+    **2026-07-20** 这类陈旧日期，导致主线报告默认读约 40 个交易日前的数据（P0，F17b）。
+
+    正确语义：**最新日期**（latest date semantics ≠ maximum row-count semantics）。
+    """
     return c.execute(
-        "SELECT date FROM stock_daily GROUP BY date ORDER BY COUNT(*) DESC LIMIT 1"
+        "SELECT date FROM stock_daily GROUP BY date ORDER BY date DESC LIMIT 1"
     ).fetchone()[0]
 
 
@@ -89,7 +97,15 @@ def ranking_main_line(c, days):
         amt_growth = (amt / pa - 1) if pa > 0 else 0
         profit = (up - dwn) if (up is not None and dwn is not None) else 0
         # 综合分（归一化前用原始量级，仅排序用）: 5日净流入(亿) + 成交额放大% + 赚钱效应
-        score = cum_net / 1e8 + amt_growth * 50 + profit
+        #
+        # ⚠️ **F17 修复（2026-09-24）**：原为 `cum_net / 1e8`。
+        #    单位溯源：`stock_flow_daily.main_net_buy` = 亿元（models.py:170，东财 f62）
+        #              → `sector_daily.net_amount` = SUM(main_net_buy) = **亿元**
+        #              → `cum_net` 已是亿元，再 /1e8 会把它压到 ~1e-8 量级，
+        #                 相对 amt_growth*50（~10）与 profit（~200）贡献约 0.0019 ppm，
+        #                「资金」维度在主线评分中形同虚设，违反「资金+成交额并重」。
+        #    修复 = 去掉错误的 /1e8（**不改权重**：amt_growth 系数 50、profit 原样保留）。
+        score = cum_net + amt_growth * 50 + profit
         out.append((sec, net, amt, chg, up, dwn, cum_net, amt_growth, profit, score))
     out.sort(key=lambda x: x[-1], reverse=True)
     return out
@@ -97,10 +113,15 @@ def ranking_main_line(c, days):
 
 def candidates_in_sector(c, day, sector, enrich=None):
     rows = c.execute(
+        # P0C-FIX-001（P1）：`main_net_buy` 原取自 stock_daily —— 该列由 TDX 导入，
+        # TDX 不提供主力净流入 → **100% NULL 死列**，导致报告「主力净流入」列恒为 "-"。
+        # 真实资金流在独立表 stock_flow_daily（东财 f62，单位亿元）。
+        # 用 LEFT JOIN 以保证无资金流数据的个股仍出现在候选列表（mn=None → 显式「无数据」）。
         """SELECT s.code, s.name, s.close, s.change_pct, s.ma20, s.ma60,
                   s.volume_ratio, s.high_20d, s.low_20d, s.is_new_high_20d,
-                  s.market_cap, s.main_net_buy
+                  s.market_cap, f.main_net_buy
            FROM stock_daily s
+           LEFT JOIN stock_flow_daily f ON f.code = s.code AND f.date = s.date
            JOIN sector_membership m ON s.code = m.code
            WHERE s.date=? AND m.sector_name=?
            ORDER BY s.volume_ratio DESC NULLS LAST""",
@@ -110,6 +131,7 @@ def candidates_in_sector(c, day, sector, enrich=None):
 
 
 def fmt(v, kind="num"):
+    """入参单位 = **元** 时用它（内部会 /1e8 换算成亿元）。"""
     if v is None:
         return "-"
     if kind == "pct":
@@ -121,6 +143,18 @@ def fmt(v, kind="num"):
     if kind == "float2":
         return f"{v:.2f}"
     return str(v)
+
+
+def fmt_yi(v):
+    """入参**已是亿元**时用它（不再缩放）。
+
+    适用：`sector_daily.net_amount`、5 日累计净流入 `cum`、
+    `stock_flow_daily.main_net_buy`、`stock_daily.market_cap`。
+    ⚠️ 这些字段走 `fmt(v,'yi')` 会被二次 /1e8 → 恒定显示 0.00亿（F17 同源缺陷）。
+    """
+    if v is None:
+        return "-"
+    return f"{v:.2f}亿"
 
 
 def enrich_market(day):
@@ -161,27 +195,28 @@ def main():
 
     lines = []
     lines.append(f"# 主线板块与候选个股 · {day}\n")
-    lines.append("> 维度说明：**资金净流入** 与 **成交额** 并重（均为东财/TDX真实数据）。\n")
+    lines.append("> 维度说明：**资金净流入**（stock_flow_daily · 东财主力净流入）与 **成交额**（stock_daily）并重；"
+                 "个股当日无资金流数据时显示「无数据」，不做 0 值填充。\n")
     lines.append("> Step2 个股仅圈候选+给数据支撑，**硬过滤(20MA>60MA/市值/量比)由你人工看图完成**。\n")
 
     lines.append("## ① 当日板块资金净流入 Top10\n")
     lines.append("| 排名 | 板块 | 资金净流入 | 成交额 | 涨跌幅 | 涨/跌家数 |")
     lines.append("|---|---|---|---|---|---|")
     for i, (sec, net, amt, chg, up, dwn) in enumerate(r1, 1):
-        lines.append(f"| {i} | {sec} | {fmt(net,'yi')} | {fmt(amt,'yi')} | {fmt(chg,'pct')} | {up}/{dwn} |")
+        lines.append(f"| {i} | {sec} | {fmt_yi(net)} | {fmt(amt,'yi')} | {fmt(chg,'pct')} | {up}/{dwn} |")
 
     lines.append("\n## ② 近5日累计资金净流入 Top5\n")
     lines.append("| 排名 | 板块 | 5日累计净流入 | 5日累计成交额 |")
     lines.append("|---|---|---|---|")
     for i, (sec, s, a) in enumerate(r5, 1):
-        lines.append(f"| {i} | {sec} | {fmt(s,'yi')} | {fmt(a,'yi')} |")
+        lines.append(f"| {i} | {sec} | {fmt_yi(s)} | {fmt(a,'yi')} |")
 
     lines.append("\n## ③ 综合主线评分（选 1~3 个板块的依据）\n")
     lines.append("评分 = 5日累计净流入 + 成交额放大%×50 + 赚钱效应(涨-跌家数)\n")
     lines.append("| 排名 | 板块 | 当日净流入 | 5日累计净流入 | 成交额较前期 | 赚钱效应 | 综合分 |")
     lines.append("|---|---|---|---|---|---|---|")
     for i, (sec, net, amt, chg, up, dwn, cum, gr, prof, score) in enumerate(rm[:15], 1):
-        lines.append(f"| {i} | {sec} | {fmt(net,'yi')} | {fmt(cum,'yi')} | {gr*100:+.1f}% | {prof} | {score:.1f} |")
+        lines.append(f"| {i} | {sec} | {fmt_yi(net)} | {fmt_yi(cum)} | {gr*100:+.1f}% | {prof} | {score:.1f} |")
 
     # 选主线板块（top 8 供用户挑 1~3）
     main_sectors = [x[0] for x in rm[:8]]
@@ -200,9 +235,20 @@ def main():
             brk = "🚀" if inh == 1 else ""
             capv = enrich.get(code, (cap, mn))[0] if enrich else cap
             mnv = enrich.get(code, (cap, mn))[1] if enrich else mn
+            # P0C-FIX-001 + UNIT-001：`market_cap` 与 `main_net_buy` 物理口径均为「亿元」，
+            # 而 fmt(...,'yi') 假设入参为「元」再 ÷1e8 —— 直接套用会恒定输出 0.00亿
+            # （如 market_cap=2270.49 亿 → 0.00亿）。故统一按亿元原值格式化。
+            # ⚠️ 缺失显式化：无数据显示「无数据」，禁止以 0 / "-" 静默降级（治理规则 R3）。
+            #
+            # ⚠️ 已知边界（已登记，本轮不改动）：`--enrich` 分支取 akshare
+            #    `stock_zh_a_spot_em()`，其「总市值 / 主力净流入-净额」口径为「元」，
+            #    与 DB 的「亿元」相差 1e8。该分支依赖网络且当前未启用、无法实测，
+            #    故本轮仅统一 DB 路径单位，enrich 路径单位归一化留待单独授权处理。
+            cap_txt = f"{capv:.2f}亿" if capv is not None else "无数据"
+            mn_txt = f"{mnv:.2f}亿" if mnv is not None else "无数据"
             lines.append(
                 f"| {code} | {name} | {fmt(close,'float2')} | {fmt(chg,'pct')} | {fmt(vr,'float2')} | "
-                f"{fmt(ma20,'float2')} | {fmt(ma60,'float2')} | {ma_ok} | {brk} | {fmt(capv,'yi')} | {fmt(mnv,'yi')} |"
+                f"{fmt(ma20,'float2')} | {fmt(ma60,'float2')} | {ma_ok} | {brk} | {cap_txt} | {mn_txt} |"
             )
 
     out = "\n".join(lines) + "\n"
@@ -212,7 +258,7 @@ def main():
     # 终端摘要
     print("\n=== 当日净流入 Top5 ===")
     for sec, net, *_ in r1[:5]:
-        print(f"  {sec}: {net/1e8:.2f}亿")
+        print(f"  {sec}: {fmt_yi(net)}")
     print("=== 综合主线前5 ===")
     for sec, *_rest in rm[:5]:
         print(f"  {sec}")
