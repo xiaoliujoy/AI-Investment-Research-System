@@ -19,8 +19,14 @@ G2 人工辅助 —— 平仓意图录入 + 平仓监听循环（独立通道，
 
 运行（两个独立终端）：
   终端A（开仓 Bridge，已有）： 见 PreReg SOP 步骤2
-  终端B（平仓监听）：          python trading_os/submit_close.py --serve
+  终端B（平仓监听）：          python trading_os/submit_close.py --serve --mode mock
   终端C（录入平仓）：          python trading_os/submit_close.py
+
+【G01 存储边界（2026-09-24）】
+  `--serve` 旧实现无模式声明即构造 `AttributionSink`（默认连 canonical 生产库 + DDL + commit），
+  是 G01 的**第二个入口**。现已要求 `--mode {mock,test}` 显式声明：
+  缺失 → UNKNOWN → 拒绝并 exit 2；MOCK/TEST 只允许 `:memory:`。
+  归因库路径不再有"默认生产库"常量：DEFAULT_DB 已删除。
 """
 from __future__ import annotations
 import argparse
@@ -35,13 +41,14 @@ if _HERE not in sys.path:
 
 from circuit_breaker import CircuitBreaker
 from attribution_sink import AttributionSink
+import storage_policy
 
 DATA_DIR = os.path.join(_HERE, "data")
 CLOSE_INTENT_PATH = os.path.join(DATA_DIR, "close_intent.json")
 CLOSE_RESULT_PATH = os.path.join(DATA_DIR, "execution_result_close.json")
 EXEC_RESULT_PATH = os.path.join(DATA_DIR, "execution_result.json")
-# 归因库：默认与 G2 一致的 vibe_research.db（见 AttributionSink 默认 db_path）
-DEFAULT_DB = os.path.join(os.path.dirname(_HERE), "backend", "database", "vibe_research.db")
+# ⚠️ G01：已删除 DEFAULT_DB（原为 canonical 生产库路径常量）。
+#    归因存储目标由 storage_policy 按 --mode 裁决，MOCK/TEST 只允许 ':memory:'。
 
 
 def _prompt(msg: str) -> str:
@@ -139,12 +146,25 @@ def close_loop(
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--serve", action="store_true", help="启动平仓监听循环（消费 close_intent.json）")
-    ap.add_argument("--db", default=DEFAULT_DB, help="归因 SQLite 路径（默认 vibe_research.db）")
+    ap.add_argument("--mode", choices=["mock", "test"], default=None,
+                    help="--serve 必填：存储模式。缺失 → UNKNOWN → 拒绝并 exit 2（G01 fail-closed）")
+    ap.add_argument("--db", default=None,
+                    help="归因 SQLite 路径（MOCK/TEST 只允许 ':memory:'；不传即 ':memory:'）")
     args = ap.parse_args()
 
     if args.serve:
+        # ── G01：先裁决模式与目标，再构造 sink ──
+        mode = storage_policy.resolve_mode(mock=False, mode_arg=args.mode)
+        try:
+            target = storage_policy.resolve_db_target(mode, args.db)
+        except storage_policy.StoragePolicyError as e:
+            print(f"[FAIL] 存储边界拒绝（G01）：{e}")
+            print("       提示：--serve 必须显式 --mode {mock,test}；MOCK/TEST 只允许 ':memory:'。")
+            sys.exit(2)
+
         cb = CircuitBreaker()
-        sink = AttributionSink(db_path=args.db)
+        sink = AttributionSink(db_target=target)   # 构造期零 I/O
+        sink.open()                                 # 连接由策略层签发
         print(f"[close_loop] 已启动，监听 {CLOSE_INTENT_PATH} ... (Ctrl+C 停止)")
         try:
             close_loop(cb, sink, interval=0.5)

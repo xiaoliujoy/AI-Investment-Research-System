@@ -30,6 +30,16 @@ G2 阶段 —— 单进程执行守护（方案 A：统管开仓监听 + Tick �
 运行：
   实盘：python trading_os/g2_supervisor.py
   Mock：python trading_os/g2_supervisor.py --mock   （供本地无 MT5 时验证链路）
+
+【G01 存储边界（2026-09-24）】
+  旧实现先构造 `AttributionSink`（默认连 canonical 生产库 + DDL + commit）
+  **再**判断 `--mock`，导致 mock 也会污染生产库。现已改为：
+    1. 先 `storage_policy.resolve_mode(mock=…)` 裁决模式（无 I/O）；
+    2. `resolve_db_target(mode, args.db)`：MOCK 只允许 `:memory:`，
+       任何文件目标（含 `--db` 显式传入）一律 exit 2，不回退；
+    3. 之后才构造 sink（构造期零 I/O），再显式 `sink.open()`。
+  非 mock（UNKNOWN/PRODUCTION）在 G01-a 同样被拒（PRODUCTION 归 G01-b）。
+  归因库路径不再有"默认生产库"常量：DEFAULT_DB 已删除。
 """
 from __future__ import annotations
 import argparse
@@ -46,6 +56,7 @@ if _HERE not in sys.path:
 from circuit_breaker import CircuitBreaker
 from attribution_sink import AttributionSink
 from mt5_bridge import process_intent, MockMT5Client
+import storage_policy
 
 DATA_DIR = os.path.join(_HERE, "data")
 INTENT_PATH = os.path.join(DATA_DIR, "order_intent.json")
@@ -53,7 +64,8 @@ CLOSE_INTENT_PATH = os.path.join(DATA_DIR, "close_intent.json")
 EXEC_RESULT_PATH = os.path.join(DATA_DIR, "execution_result.json")
 CLOSE_RESULT_PATH = os.path.join(DATA_DIR, "execution_result_close.json")
 SPEC_PATH = os.path.join(DATA_DIR, "xauusd_spec.json")
-DEFAULT_DB = os.path.join(os.path.dirname(_HERE), "backend", "database", "vibe_research.db")
+# ⚠️ G01：已删除 DEFAULT_DB（原为 canonical 生产库路径常量）。
+#    归因存储目标不再有"默认生产库"，由 storage_policy 按模式裁决，MOCK/TEST 只允许 :memory:。
 
 
 # ---------------------------------------------------------------------------
@@ -209,7 +221,9 @@ def supervise(
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--mock", action="store_true", help="Mock 模式（无 MT5 时验证链路，不真连）")
-    ap.add_argument("--db", default=DEFAULT_DB, help="归因 SQLite 路径")
+    ap.add_argument("--db", default=None,
+                    help="归因 SQLite 路径（MOCK/TEST 只允许 ':memory:'；不传即 ':memory:'，"
+                         "传任何文件目标一律拒绝并 exit 2）")
     ap.add_argument("--tick-interval", type=float, default=0.5)
     ap.add_argument("--symbol", default="XAUUSD")
     args = ap.parse_args()
@@ -220,8 +234,18 @@ def main() -> None:
     with open(SPEC_PATH, "r", encoding="utf-8") as f:
         spec = json.load(f)
 
+    # ── G01 存储边界：先裁决模式与目标，再构造 sink（构造期零 I/O）──
+    mode = storage_policy.resolve_mode(mock=args.mock, mode_arg=None)
+    try:
+        target = storage_policy.resolve_db_target(mode, args.db)
+    except storage_policy.StoragePolicyError as e:
+        print(f"[FAIL] 存储边界拒绝（G01）：{e}")
+        print("       提示：MOCK/TEST 只允许 ':memory:'；非 mock 模式归 G01-b，当前一律拒绝。")
+        sys.exit(2)
+
     cb = CircuitBreaker()
-    sink = AttributionSink(db_path=args.db)
+    sink = AttributionSink(db_target=target)   # 构造期零 connect / DDL / commit
+    sink.open()                                 # 连接由策略层签发（唯一 connect 点）
 
     if args.mock:
         tick_source = make_mock_tick_source([])  # 空序列：Mock 模式下不采样（由单测注入）

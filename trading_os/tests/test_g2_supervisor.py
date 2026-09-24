@@ -28,6 +28,7 @@ if TRADING_OS not in sys.path:
     sys.path.insert(0, TRADING_OS)
 
 import g2_supervisor as G
+import storage_policy
 from g2_supervisor import supervise, make_mock_tick_source
 from circuit_breaker import CircuitBreaker
 from attribution_sink import AttributionSink
@@ -132,7 +133,8 @@ def test_buy_mfe_giveback_dimensional_consistency():
     """BUY 持仓：注入拉升(2005)→回落(2002)，平仓2002。断言 mfe_r>0 且 giveback_r=mfe_r-realized_r。"""
     paths = _IsolatedPaths()
     cb = CircuitBreaker()
-    sink = AttributionSink(db_path=":memory:")
+    sink = AttributionSink(db_target=storage_policy.test_target())
+    sink.open()   # G01：连接不在构造期建立，须显式 open
     ticks = _AppendableTickSource()
     mock = MockMT5Client(fill_price_override=2000.10, slippage_points=0.0, spread_points=3.0)
     stop = threading.Event()
@@ -183,7 +185,8 @@ def test_sell_mfe_direction():
     """SELL 持仓：有利=价更低。注入下跌(1990)→回升(1993)，平仓1993。"""
     paths = _IsolatedPaths()
     cb = CircuitBreaker()
-    sink = AttributionSink(db_path=":memory:")
+    sink = AttributionSink(db_target=storage_policy.test_target())
+    sink.open()   # G01：连接不在构造期建立，须显式 open
     ticks = _AppendableTickSource()
     mock = MockMT5Client(fill_price_override=1999.90, slippage_points=0.0, spread_points=3.0)
     stop = threading.Event()
@@ -220,7 +223,8 @@ def test_close_without_open_does_not_crash():
     """未开仓直接录平仓意图 → 捕获 ERROR，进程不崩（supervise 继续运行）。"""
     paths = _IsolatedPaths()
     cb = CircuitBreaker()
-    sink = AttributionSink(db_path=":memory:")
+    sink = AttributionSink(db_target=storage_policy.test_target())
+    sink.open()   # G01：连接不在构造期建立，须显式 open
     ticks = _AppendableTickSource()
     mock = MockMT5Client()
     stop = threading.Event()
@@ -247,7 +251,8 @@ def test_corrupt_open_intent_does_not_crash():
     """开仓意图为损坏 JSON → 捕获 ERROR，进程不崩。"""
     paths = _IsolatedPaths()
     cb = CircuitBreaker()
-    sink = AttributionSink(db_path=":memory:")
+    sink = AttributionSink(db_target=storage_policy.test_target())
+    sink.open()   # G01：连接不在构造期建立，须显式 open
     ticks = _AppendableTickSource()
     stop = threading.Event()
     t = _spawn_supervise(cb, sink, MockMT5Client(), ticks, stop, max_iter=500)

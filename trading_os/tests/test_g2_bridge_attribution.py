@@ -21,6 +21,7 @@ import pytest
 from risk_calculator import DEFAULT_RISK_BUDGET
 from circuit_breaker import CircuitBreaker
 from attribution_sink import AttributionSink, ATTRIBUTION_TABLE
+import storage_policy
 from mt5_bridge import (
     process_intent,
     MissingSLRejected,
@@ -46,7 +47,8 @@ NOW = "2026-08-22T10:00:00"
 @pytest.fixture
 def sink():
     # 内存库，纯离线
-    s = AttributionSink(db_path=":memory:", table=ATTRIBUTION_TABLE)
+    s = AttributionSink(db_target=storage_policy.test_target(), table=ATTRIBUTION_TABLE)
+    s.open()   # G01：连接不在构造期建立，须显式 open
     yield s
     s.close()
 

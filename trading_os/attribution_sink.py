@@ -24,14 +24,29 @@ G2 阶段 —— 实时归因汇聚器（与 MT5 运行环境解耦，纯逻辑 
 
 【设计】
   - 纯逻辑，不依赖 MT5、不依赖真实时钟（now 注入）。
-  - 存储连接可注入（默认 sqlite3 文件路径，单测用 :memory:）。
   - 不写任何生产库表以外的数据。
+
+【G01 存储边界（2026-09-24 修复，见 .audit 与 docs/HANDOVER/G01_FIX_DESIGN_v1.2.md）】
+  旧实现 `AttributionSink(db_path=...)` 默认指向 **canonical 生产库**（5GB 主库），
+  且**构造即 connect + DDL + commit**，导致 `g2_supervisor --mock` 也会连生产库建表提交（G01 P0）。现已改为：
+  - `__init__(db_target)` 只接受 `storage_policy.DbTarget`，**零 I/O**（P-3）；
+  - 连接/建表延后到显式 `open()`，且连接只能由 `storage_policy.open_connection()` 签发；
+  - 任何写操作前校验连接来源标记，外部注入的裸连接一律拒绝；
+  - DDL / 写入分别受 `allow_ddl` / `allow_write` 授权位约束，未授权即 raise。
+  ⚠️ 因此调用方必须显式 `sink.open()`，不能再依赖构造即就绪。
 """
 from __future__ import annotations
 
-import sqlite3
 from dataclasses import dataclass, field
 from typing import Optional, Dict, Any
+
+from storage_policy import (
+    DbTarget,
+    StoragePolicyError,
+    assert_policy_issued,
+    open_connection,
+    validate_target,
+)
 
 # 独立归因表名（CAL-D 选项 A）
 ATTRIBUTION_TABLE = "xau_execution_attribution"
@@ -89,13 +104,61 @@ class PositionState:
 
 
 class AttributionSink:
-    def __init__(self, db_path: str = "backend/database/vibe_research.db", table: str = ATTRIBUTION_TABLE):
+    """交易级执行归因汇聚器。
+
+    ⚠️ 构造期**零 I/O**：不 connect、不 DDL、不 commit（G01 P-3）。
+    必须先 `open()` 再落库；存储目标由 `storage_policy.DbTarget` 唯一裁定。
+    """
+
+    def __init__(self, db_target: DbTarget = None, table: str = ATTRIBUTION_TABLE, **kwargs):
+        # 旧签名兜底拦截：db_path=<str> 必须彻底失效，而不是静默走旧路径
+        if "db_path" in kwargs or "db" in kwargs:
+            raise StoragePolicyError(
+                "旧签名 db_path=<str> 已移除（G01）：字符串路径无法证明存储边界，"
+                "请改用 storage_policy.DbTarget。"
+            )
+        # 类型门禁：只接受 DbTarget；字符串路径等一律拒绝（不留"调用方自觉"的后门）
+        if not isinstance(db_target, DbTarget):
+            raise StoragePolicyError(
+                "AttributionSink 只接受 storage_policy.DbTarget，"
+                f"实际传入 {type(db_target).__name__}。"
+                "字符串路径无法证明存储边界，一律拒绝。"
+            )
+        # 二次复核（独立于 DbTarget.__post_init__，防目标对象被篡改后复用）
+        validate_target(db_target)
+
+        self.target = db_target
         self.table = table
-        # check_same_thread=False：G2 守护在后台线程消费平仓并落库，连接须跨线程
-        self._conn = sqlite3.connect(db_path, check_same_thread=False)
-        self._conn.execute(_DDL.replace(ATTRIBUTION_TABLE, self.table))
-        self._conn.commit()
+        self._conn = None
         self._positions: Dict[str, PositionState] = {}
+
+    # ---- 存储生命周期（显式，不在构造期发生）----
+    def open(self):
+        """建立连接并按需建表。连接由策略层签发。"""
+        if self._conn is not None:
+            return self._conn
+        self._conn = open_connection(self.target)
+        self.ensure_schema()
+        return self._conn
+
+    def ensure_schema(self):
+        if not self.target.allow_ddl:
+            raise StoragePolicyError(
+                f"mode={self.target.mode} 未授权 DDL（allow_ddl=False）→ 拒绝建表"
+            )
+        conn = self._require_conn()
+        conn.execute(_DDL.replace(ATTRIBUTION_TABLE, self.table))
+        conn.commit()
+        return self._conn
+
+    def _require_conn(self):
+        """取连接前做来源校验；未 open 或外部注入 → raise。"""
+        if self._conn is None:
+            raise StoragePolicyError(
+                "sink 尚未 open()：G01 后连接不在构造期建立，请先调用 sink.open()"
+            )
+        assert_policy_issued(self._conn)
+        return self._conn
 
     # ---- 开仓登记 ----
     def open_position(
@@ -198,13 +261,20 @@ class AttributionSink:
             "close_ts": close_ts,
             "notes": "",
         }
+        # 写入授权位校验（G01）：未授权即拒绝，不允许"先写再说"
+        if not self.target.allow_write:
+            raise StoragePolicyError(
+                f"mode={self.target.mode} 未授权写入（allow_write=False）→ 拒绝落库"
+            )
+        conn = self._require_conn()   # 连接来源校验（防外部注入的裸连接）
+
         cols = ", ".join(row.keys())
         placeholders = ", ".join("?" for _ in row)
-        self._conn.execute(
+        conn.execute(
             f"INSERT OR REPLACE INTO {self.table} ({cols}) VALUES ({placeholders})",
             tuple(row.values()),
         )
-        self._conn.commit()
+        conn.commit()
 
         # 驱动熔断器闭环（G2 关键回调）
         if circuit_breaker is not None:
@@ -215,10 +285,14 @@ class AttributionSink:
 
     # ---- 查询（单测/调试用） ----
     def get_record(self, order_id: str) -> Optional[Dict[str, Any]]:
-        cur = self._conn.execute(f"SELECT * FROM {self.table} WHERE order_id=?", (order_id,))
+        cur = self._require_conn().execute(
+            f"SELECT * FROM {self.table} WHERE order_id=?", (order_id,)
+        )
         col_names = [d[0] for d in cur.description]
         row = cur.fetchone()
         return dict(zip(col_names, row)) if row else None
 
     def close(self) -> None:
-        self._conn.close()
+        if self._conn is not None:
+            self._conn.close()
+            self._conn = None
