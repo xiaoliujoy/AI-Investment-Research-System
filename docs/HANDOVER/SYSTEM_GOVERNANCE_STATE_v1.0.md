@@ -59,13 +59,13 @@ requirements:
 | STEP_5D2 | **LOCKED** | 同上 | 同上 |
 | STEP_5D3 | **HOLD** | blocker = HISTORICAL_MEMBERSHIP | `CANONICAL_UNIVERSE_GOVERNANCE_R2_2026-09-11.md` §4 |
 | UNIVERSE_ENFORCE | **HOLD** | 待 5C RATIFIED 后验证 | 同上 |
-| G01 | **HOLD (P0)** | 修复已实施 + 回归通过，**待独立复审** | `docs/HANDOVER/G01_CLOSURE_EVIDENCE_2026-09-24.md` |
-| F17 | **HOLD** | UNFIXED（V2 supersede R8 PARTIAL_FIX；dirty tree 未 commit/未 ratify） | `F17_UNIT_LINEAGE_AUDIT_2026-09-14.md`；main_line_report.py:100 二次 /1e8 |
-| F17B | **HOLD** | UNFIXED（fix 在 working tree 未 commit/ratify） | `main_line_report.py:35-38`；test_f17b_latest_full_day.py |
+| G01 | **HOLD (P0)** | FIXED_PENDING_RATIFICATION（commit `7d4b8df`；72 passed incl -O；Codex READONLY 复审） | `docs/HANDOVER/G01_CLOSURE_EVIDENCE_2026-09-24.md` |
+| F17 | **HOLD** | FIXED_PENDING_RATIFICATION（commit `0c033a2`；V2 由 UNFIXED 升级） | `F17_UNIT_LINEAGE_AUDIT_2026-09-14.md`；main_line_report.py:100 二次 /1e8 |
+| F17B | **HOLD** | FIXED_PENDING_RATIFICATION（commit `0c033a2`；latest_full_day ORDER BY date DESC） | `main_line_report.py:35-38`；test_f17b_latest_full_day.py |
 | ARCHITECTURE | **OPEN** | — | R8 §1 |
 | RESEARCH | **OPEN** | — | R8 §1 |
 | NON_PRODUCTION_DEVELOPMENT | **CONDITIONAL_OPEN** | V2 supersede R8 OPEN；4 项 requirements 见 §0.1 | V2 CIO Reconciliation |
-| PUSH | **COMPONENT_GATED** | 见 §3 | R8 §7 |
+| PUSH | **COMPONENT_GATED** | 见 §3（t1-2-release 已推送 origin，main 未动） | R8 §7 |
 | PRODUCTION_RELEASE | **COMPONENT_GATED** | — | R8 §1 |
 
 ---
